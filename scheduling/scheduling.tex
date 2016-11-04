@@ -205,8 +205,9 @@ Finally, for $0\le i\le m$ we add edges from $(0,0)$ to $(1,i)$ with weight $d(0
    \path[every node/.style={font=\sffamily\small}] [->,draw,thick] ($(2)!.8!(11)$) -- node[above] {0} ++ (11);
 
 \end{tikzpicture}
-\caption{All edges from $(t,i)$ to $(t+1,j)$ have weight $d(i,j,\lambda_{t+1})$}
+\caption{Graph for optimal schedule algorithm.}
 \end{figure}
+Note: All edges from $(t,i)$ to $(t+1,j)$ have weight $d(i,j,\lambda_{t+1})$
 
 \subsection{Proof of correctness}
 \begin{prop}
@@ -220,7 +221,7 @@ We can construct a valid path in our graph from $\mathcal{X}$ as follows:\\
 $\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mathcal{X}(t-1)\bigr),\bigl(t,\mathcal{X}(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$.\\
 As each edge $e_t$ in our graph has weight $d\bigl(\mathcal{X}(t-1),\mathcal{X}(t),\lambda_{t}\bigr)$ and hence corresponds to the costs of switching from $\mathcal{X}(t-1)$ to $\mathcal{X}(t)$ servers and processing $\lambda_{t}$ with $\mathcal{X}(t)$ active servers, it directly follows that $P$ is a shortest path of the graph.
 
-	\item[``$\Leftarrow$'':] Let $P=\bigl((0,0)=v_0,\ldots,v_T=(T,0)\bigr)$ with $v_t\in\bigl\{(t,i)\mid 0\le i\le m\bigr\}$ be a shortest path of the graph. Again, it follows from equation~(\ref{eq:balance}) that an optimal schedule is uniquely identified by the sequence $\mathcal{X}$ of active servers.\\
+	\item[``$\Leftarrow$'':] Let $P=\bigl((0,0)=v_0,\ldots,v_T=(T,0)\bigr)$ with $v_t\in\bigl\{(t,i)\mid 0\le i\le m\bigr\}$ be a shortest path of the graph. Again, it follows from lemma~\ref{lem:share} that an optimal schedule is uniquely identified by the sequence $\mathcal{X}$ of active servers.\\
 We can construct a schedule from $P$ by setting $\mathcal{X}=\bigl(v_0(1),\ldots,v_T(1)\bigr)$ where $v_t(1)$ is the second component of the t-th tuple in $P$.\\
 By definition~(\ref{fct:c}) it is guaranteed that $P$ only traverses edges such that there are enough active servers $\forall t\in[T]$. Therefore, the created schedule is feasible. It's optimality directly follows from the definition of the edges' weights.\\
 \end{itemize}
@@ -288,7 +289,77 @@ TODO
 We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $3/2$-approximation algorithm.
 
 \subsection{Graph for a $3/2$-optimal schedule}
-The idea of the construction is to minimize the layers of the graph by using vertices 
+The idea of the construction is to reduce the number of vertices by stop adding m vertices for each timestep but using vertices that approximate the number of active servers.\\
+First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],i\in\bigl\{0,\ldots,\lceil\log_2(m)\rceil\bigr\}$.
+
+\begin{figure}[H]
+\begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
+
+  \node[node] (1) {0,0};
+  \node[node] (4) [below right =of 1] {1,0};
+  \node[node] (3) [above =0.5cm of 4] {1,$2^0$};
+  \node[node] (2) [above right=of 1] {1,$2^b$};
+  \node[node] (6) [right =of 3] {2,$2^0$};
+  \node[node] (5) [right =of 2] {2,$2^b$};
+  \node[node] (7) [right =of 4] {2,0};
+  \node[node] (9) [right =of 6] {T-1,$2^0$};
+  \node[node] (8) [right =of 5] {T-1,$2^b$};
+  \node[node] (10) [right =of 7] {T-1,0};
+  \node[node] (11) [above right =of 10] {T,0};
+
+  \node at ($(5)!.4!(8)$) {\ldots};
+  \node at ($(6)!.4!(9)$) {\ldots};
+  \node at ($(7)!.4!(10)$) {\ldots};
+
+  \node at ($(2)!.5!(3)$) {\vdots};
+  \node at ($(2)!.5!(6)$) {\vdots};
+  \node at ($(5)!.5!(6)$) {\vdots};
+  \node at ($(8)!.5!(9)$) {\vdots};
+
+  \path[every node/.style={font=\sffamily\small}]
+    (1) edge node[left] {$d(0,2^b,\lambda_1)$} (2)
+	edge node[above right=-0.1cm] {$d(0,2^0,\lambda_1)$} (3)
+	edge node[left] {$d(0,0,\lambda_1)$} (4)
+    (2) edge node[above] {$d(2^b,2^b,\lambda_2)$} (5)
+    (3) edge (6)
+	edge (7)
+    (4) edge (6)
+	edge node[below] {$d(0,0,\lambda_2)$} (7)
+    (8) edge node[right] {$0$} (11)
+    (9) edge node[above] {$0$} (11)
+    (10) edge node[above] {$0$} (11);
+
+   \path [->,draw,thick] (1) to ($(1)!.2!(8)$);
+   \path [->,draw,thick] (2) to ($(2)!.4!(6)$);
+   \path [->,draw,thick] (4) to ($(4)!.4!(5)$);
+   \path [->,draw,thick] (3) to ($(3)!.4!(5)$);
+
+   \path [->,draw,thick] ($(3)!.6!(5)$) to (5);
+   \path [->,draw,thick] ($(2)!.6!(6)$) to (6);
+   \path [->,draw,thick] ($(2)!.6!(7)$) to (7);
+
+   \path [->,draw,thick] ($(6)!.6!(8)$) to (8);
+   \path [->,draw,thick] ($(5)!.6!(8)$) to (8);
+
+   \path [->,draw,thick] ($(5)!.6!(9)$) to (9);
+   \path [->,draw,thick] ($(6)!.6!(9)$) to (9);
+   \path [->,draw,thick] ($(7)!.6!(9)$) to (9);
+
+   \path [->,draw,thick] ($(5)!.6!(10)$) to (10);
+   \path [->,draw,thick] ($(6)!.6!(10)$) to (10);
+   \path [->,draw,thick] ($(7)!.6!(10)$) to (10);
+
+   \path[every node/.style={font=\sffamily\small}] [->,draw,thick] ($(2)!.8!(11)$) -- node[above] {0} ++ (11);
+
+\end{tikzpicture}
+\caption{Graph for $3/2$-approximation algorithm}
+\end{figure}
+\begin{prop}
+	A shortest path from $(0,0)$ to $(T,0)$ in the constructed graph delivers a $3/2$-optimal schedule.
+\end{prop}
+\begin{proof}
+	Assume we have an optimal schedule identified by $\mathcal{X}=(x_0,\ldots,x_T)$.
+\end{proof}
 
 \end{sloppypar}
 \end{document}
