@@ -98,15 +98,16 @@ TODO: introduction text
 TODO: rewrite in nice paragraph\\
 Input:
 \begin{itemize}
-	\item $m$: Number of homogeneous servers
-	\item $T$: Number of time steps
-	\item $\beta$: Power up costs
+	\item $m\in\mathbb{N}$: Number of homogeneous servers
+	\item $T\in\mathbb{N}$: Number of time steps
+	\item $\beta\in\mathbb{R}_{\ge 0}$: Power up costs
 	\item $\lambda_0,\ldots,\lambda_{T}\in[0,m]$: Arrival rates
 \end{itemize}
 Notations:
 \begin{itemize}
 	\item Let $\lambda_{i,t}$ be the assigned arrival rate at time t for server i
-	\item Let $\mathcal{X}=(x_0,\ldots,x_T)$ be the number of active servers at time t
+	\item Let $x_t$ be the number of active servers at time t
+	\item Let $\mathcal{X}\coloneqq(x_0,\ldots,x_T)$ be the sequence of active servers
 \end{itemize}
 Requirements:
 \begin{itemize}
