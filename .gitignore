@@ -181,3 +181,6 @@ TSWLatexianTemp*
 
 # owncloud
 .csync_journal*
+
+# temp files
+.fuse_hidden*

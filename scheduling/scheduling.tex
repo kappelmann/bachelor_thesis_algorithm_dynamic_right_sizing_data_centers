@@ -1,7 +1,5 @@
 \documentclass[hidelinks]{article}
-
-\usepackage[english]{babel}
-%% Verwende Umlaute direkt
+\usepackage[english]{babel} %% Verwende Umlaute direkt
 \usepackage[utf8x]{inputenc}
 %% Hyperlinks für interne Referenzen
 \usepackage{hyperref}
@@ -35,8 +33,8 @@
 
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}[section]
-\newtheorem{lem}{Lemma}[section]
-\newtheorem{prop}{Proposition}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
 
 \theoremstyle{definition}
 \newtheorem{defn}[thm]{Definition}
@@ -92,7 +90,7 @@
 \pagenumbering{arabic}
 
 \begin{sloppypar}
-\section{Optimal scheduling for m homogeneous servers}
+\section{Optimal scheduling for m homogeneous servers}\label{sec:opt}
 TODO: introduction text
 \subsection{Input and conventions}
 TODO: rewrite in nice paragraph\\
@@ -119,12 +117,16 @@ Requirements:
 \end{itemize}
 
 \subsection{Preliminaries}
-We show that given a convex cost function $f$, for $x$ active servers and an arrival rate $\lambda$, the best method is to assign each server a load of $\lambda/x$:\\
+\begin{lem}\label{lem:share}
+	Given a convex cost function $f$, $x$ active servers and an arrival rate $\lambda$, the best method is to assign each server a load of $\lambda/x$.
+\end{lem}
+\begin{proof}
 $\forall x\in\mathbb{N},\mu_i\in[0,1]:\sum\limits_{i=1}^{x}{\mu_i}=1:$
-\begin{alignat}{5}
-	f\Bigl(\frac{\lambda}{x}\Bigr)=&&f\Bigl(\sum\limits_{i=1}^x{\frac{\mu_i*\lambda}{x}}\Bigr)&\stackrel{\text{Jensen's inequality}}{\le}&&\sum\limits_{i=1}^x\frac{1}{x}f(\mu_i*\lambda) \nonumber\\
-	\Leftrightarrow&&x*f\Bigl(\frac{\lambda}{x}\Bigr)&\qquad\quad\le&&\sum\limits_{i=1}^xf(\mu_i*\lambda) \label{eq:balance}
-\end{alignat}
+\begin{alignat*}{5}
+	f\Bigl(\frac{\lambda}{x}\Bigr)=&&f\Bigl(\sum\limits_{i=1}^x{\frac{\mu_i*\lambda}{x}}\Bigr)&\stackrel{\text{Jensen's inequality}}{\le}&&\sum\limits_{i=1}^x\frac{1}{x}f(\mu_i*\lambda) \\
+	\Leftrightarrow&&x*f\Bigl(\frac{\lambda}{x}\Bigr)&\qquad\quad\le&&\sum\limits_{i=1}^xf(\mu_i*\lambda)
+\end{alignat*}
+\end{proof}
 We will use this fact in our following construction for an optimal schedule.
 
 \subsection{Graph for an optimal schedule}
@@ -213,7 +215,7 @@ Any given optimal schedule corresponds to a shortest path from $(0,0)$ to $(T,0)
 \begin{proof}
 $ $
 \begin{itemize}
-	\item[``$\Rightarrow$'':] In equation~(\ref{eq:balance}) we have shown that in an optimal schedule each arrival rate $\lambda_t$ will be shared equally on each active server at time t. Therefore, we can denote an optimal schedule uniquely by the sequence $\mathcal{X}$ of active servers.\\
+	\item[``$\Rightarrow$'':] Lemma~\ref{lem:share} shows that in an optimal schedule each arrival rate $\lambda_t$ will be shared equally on each active server at time t. Therefore, we can denote an optimal schedule uniquely by the sequence $\mathcal{X}$ of active servers.\\
 We can construct a valid path in our graph from $\mathcal{X}$ as follows:\\
 $\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mathcal{X}(t-1)\bigr),\bigl(t,\mathcal{X}(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$.\\
 As each edge $e_t$ in our graph has weight $d\bigl(\mathcal{X}(t-1),\mathcal{X}(t),\lambda_{t}\bigr)$ and hence corresponds to the costs of switching from $\mathcal{X}(t-1)$ to $\mathcal{X}(t)$ servers and processing $\lambda_{t}$ with $\mathcal{X}(t)$ active servers, it directly follows that $P$ is a shortest path of the graph.
@@ -278,6 +280,15 @@ For $T,n\rightarrow\infty$ it holds:
 	\mathcal{O}(m+1+(T-2)*(m+1)^2+T-2+m+1)=\mathcal{O}(2*m+T+(T-2)*(m+1)^2)=\mathcal{O}(T*m^2) 
 \end{equation}
 As we need $\log_2(m)$ bits to encode m, the algorithm is exponential in the number of servers.
+
+\subsection{A memory optimized algorithm}
+TODO
+
+\section{A $3/2$-approximation algorithm for monotonically increasing convex f}
+We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $3/2$-approximation algorithm.
+
+\subsection{Graph for a $3/2$-optimal schedule}
+The idea of the construction is to minimize the layers of the graph by using vertices 
 
 \end{sloppypar}
 \end{document}
