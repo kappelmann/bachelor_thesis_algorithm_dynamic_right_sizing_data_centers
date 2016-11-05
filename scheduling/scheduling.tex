@@ -135,7 +135,8 @@ $\forall t\in[T-1]$ and $i,j\in\{0,\ldots,m\}$ we add vertices $(t,i)$ modelling
 In order to warrant that there are at least $\lceil\lambda_t\rceil$ active servers $\forall t\in[T-1]$, we define an auxiliary function which calculates the costs for handling an arrival rate $\lambda$ with $x$ active servers:
 \begin{equation}
 	c(x,\lambda)\coloneqq\begin{cases}
-	  x*f(\lambda/x), & \text{if $\lambda\le x$}\\
+          0 & \text{if $x=0$}\\
+	  x*f(\lambda/x), & \text{if $x\ne 0\wedge\lambda\le x$}\\
 	  \infty, & \text{otherwise}
 	  \end{cases} \label{fct:c}
 \end{equation}
@@ -211,7 +212,7 @@ Note: All edges from $(t,i)$ to $(t+1,j)$ have weight $d(i,j,\lambda_{t+1})$
 
 \subsection{Proof of correctness}
 \begin{prop}
-Any given optimal schedule corresponds to a shortest path from $(0,0)$ to $(T,0)$ in the constructed graph and vice versa.
+Any given optimal schedule corresponds to a shortest path from $(0,0)$ to $(T,0)$ and vice versa.
 \end{prop} 
 \begin{proof}
 $ $
@@ -220,7 +221,6 @@ $ $
 We can construct a valid path in our graph from $\mathcal{X}$ as follows:\\
 $\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mathcal{X}(t-1)\bigr),\bigl(t,\mathcal{X}(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$.\\
 As each edge $e_t$ in our graph has weight $d\bigl(\mathcal{X}(t-1),\mathcal{X}(t),\lambda_{t}\bigr)$ and hence corresponds to the costs of switching from $\mathcal{X}(t-1)$ to $\mathcal{X}(t)$ servers and processing $\lambda_{t}$ with $\mathcal{X}(t)$ active servers, it directly follows that $P$ is a shortest path of the graph.
-
 	\item[``$\Leftarrow$'':] Let $P=\bigl((0,0)=v_0,\ldots,v_T=(T,0)\bigr)$ with $v_t\in\bigl\{(t,i)\mid 0\le i\le m\bigr\}$ be a shortest path of the graph. Again, it follows from lemma~\ref{lem:share} that an optimal schedule is uniquely identified by the sequence $\mathcal{X}$ of active servers.\\
 We can construct a schedule from $P$ by setting $\mathcal{X}=\bigl(v_0(1),\ldots,v_T(1)\bigr)$ where $v_t(1)$ is the second component of the t-th tuple in $P$.\\
 By definition~(\ref{fct:c}) it is guaranteed that $P$ only traverses edges such that there are enough active servers $\forall t\in[T]$. Therefore, the created schedule is feasible. It's optimality directly follows from the definition of the edges' weights.\\
@@ -285,12 +285,12 @@ As we need $\log_2(m)$ bits to encode m, the algorithm is exponential in the num
 \subsection{A memory optimized algorithm}
 TODO
 
-\section{A $3/2$-approximation algorithm for monotonically increasing convex f}
-We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $3/2$-approximation algorithm.
+\section{A $2$-approximation algorithm for monotonically increasing convex f}
+We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $2$-approximation algorithm.
 
-\subsection{Graph for a $3/2$-optimal schedule}
+\subsection{Graph for a $2$-optimal schedule}
 The idea of the construction is to reduce the number of vertices by stop adding m vertices for each timestep but using vertices that approximate the number of active servers.\\
-First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],i\in\bigl\{0,\ldots,\lceil\log_2(m)\rceil\bigr\}$.
+First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$.
 
 \begin{figure}[H]
 \begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
@@ -352,13 +352,48 @@ First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^
    \path[every node/.style={font=\sffamily\small}] [->,draw,thick] ($(2)!.8!(11)$) -- node[above] {0} ++ (11);
 
 \end{tikzpicture}
-\caption{Graph for $3/2$-approximation algorithm}
+\caption{Graph for $2$-approximation algorithm}
 \end{figure}
+
 \begin{prop}
-	A shortest path from $(0,0)$ to $(T,0)$ in the constructed graph delivers a $3/2$-optimal schedule.
+$ $
+\begin{enumerate}[(i)]
+	\item Any given optimal schedule can be transformed to a path from $(0,0)$ to $(T,0)$ which corresponds to a $2$-optimal schedule.
+	\item Any shortest path from $(0,0)$ to $(T,0)$ corresponds to a $2$-optimal schedule.
+\end{enumerate}
 \end{prop}
 \begin{proof}
-	Assume we have an optimal schedule identified by $\mathcal{X}=(x_0,\ldots,x_T)$.
+$ $
+\begin{enumerate}[(i)]
+	\item Assume we have an optimal schedule identified by $\mathcal{X}=(x_0,\ldots,x_T)$. For $0\le t\le T$ we set:
+	\begin{equation}
+		x'_t\coloneqq 
+		\begin{cases}
+		  2^{\lceil\log_2(x_t)\rceil}, & \text{if $x_t>0$}\\
+		  0, & \text{otherwise}
+		\end{cases} 
+	\end{equation}
+	Notice, that $x_t\le x'_t\le 2*x_t$ holds as $x'_t$ is the smallest power of two larger or equal to $x_t$. Now let $\mathcal{X}'\coloneqq(x'_0,\ldots,x'_T)$ be the modified sequence of active servers.
+	We can construct a valid path in our graph from $\mathcal{X'}$ as follows:\\
+	$\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mathcal{X}'(t-1)\bigr),\bigl(t,\mathcal{X}'(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$. By definition~(\ref{fct:c}) it is guaranteed that $P$ only traverses edges such that there are enough active servers $\forall t\in[T]$.\\
+	Lets consider the difference of costs between the constructed path and the optimal schedule. For this, firstly take a look at the costs incurred at every time step $t$ to $t+1$ for $0\le t\le T-1$ in the path
+	\begin{alignat*}{2}
+		d(\mathcal{X}'(t),\mathcal{X}'(t+1),\lambda_{t+1})&=\beta*\min\bigl\{0,\mathcal{X}'(t+1)-\mathcal{X}'(t)\bigr\}+\mathcal{X}'(t+1)*f\Bigl(\frac{\lambda_{t+1}}{\mathcal{X}'(t+1)}\Bigr)\\
+		&\le \beta*\min\bigl\{0,2*\mathcal{X}(t+1)-\mathcal{X}(t)\bigr\}+2*\mathcal{X}(t+1)*f\Bigl(\frac{\lambda_{t+1}}{\mathcal{X}'(t+1)}\Bigr)\\
+		&\le \beta*\min\bigl\{0,2*\mathcal{X}(t+1)-\mathcal{X}(t)\bigr\}+2*\mathcal{X}(t+1)*f\Bigl(\frac{\lambda_{t+1}}{\mathcal{X}(t+1)}\Bigr)\\
+	\end{alignat*}
+	and the schedule:	
+	\begin{alignat*}{2}
+		&d(\mathcal{X}'(t),\mathcal{X}'(t+1),\lambda_{t+1})=\beta*\min\bigl\{0,\mathcal{X}'(t+1)-\mathcal{X}'(t)\bigr\}+\mathcal{X}'(t+1)*f(\lambda_{t+1}/\mathcal{X}'(t+1))
+	\end{alignat*}
+	\begin{alignat*}{2}
+		&d(\mathcal{X}'(t),\mathcal{X}'(t+1),\lambda_{t+1})-d(\mathcal{X}(t),\mathcal{X}(t+1),\lambda_{t+1})\\
+		=&\beta*\min\bigl\{0,\mathcal{X}'(t+1)-\mathcal{X}'(t)\bigr\}+\mathcal{X}'(t+1)*f(\lambda_{t+1}/\mathcal{X}'(t+1))
+	\end{alignat*}
+
+
+	\item Any shortest path from $(0,0)$ to $(T,0)$ corresponds to a $2$-optimal schedule.
+\end{enumerate}
 \end{proof}
 
 \end{sloppypar}
