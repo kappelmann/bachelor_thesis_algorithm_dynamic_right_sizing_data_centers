@@ -1,7 +1,7 @@
 \documentclass[hidelinks]{article}
-\usepackage[english]{babel} %% Verwende Umlaute direkt
+\usepackage[english]{babel} 
 \usepackage[utf8x]{inputenc}
-%% Hyperlinks für interne Referenzen
+%% Hyperlinks 
 \usepackage{hyperref}
 \hypersetup{
     colorlinks,
@@ -10,36 +10,30 @@
     linktoc=all,
     urlcolor={blue!80!black}
 }
-%% Grafiken einbinden
+%% Graphics
 \usepackage{graphicx}
 \usepackage{float}
-%% Paket für Unterabbildungen pro Abbildung
-\usepackage{subfig}
-
-\usepackage{forloop}
 
 \usepackage{enumerate}
+% Math packages
 \usepackage{amsmath}
 \usepackage{amssymb}
+% Algorithms
 \usepackage{algorithm}
 \usepackage[noend]{algpseudocode}
 \newcommand\Let[2]{\State #1 $\gets$ #2}
 \algrenewcomment[1]{\(\qquad \triangleright\) #1}
 \newcommand\Blet[2]{\State \textbf{let} #1 \textbf{be} #2}
-
 \usepackage{mathtools}
 % Proof system
 \usepackage{amsthm}
-
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{lem}[thm]{Lemma}
 \newtheorem{prop}[thm]{Proposition}
-
 \theoremstyle{definition}
 \newtheorem{defn}[thm]{Definition}
 \newtheorem{bsp}[thm]{Example}
-
 \newtheoremstyle{rem} % name
     {\topsep}                    % Space above
     {\topsep}                    % Space below
@@ -49,10 +43,8 @@
     {:}                          % Punctuation after theorem head
     {.5em}                       % Space after theorem head
     {}  % Theorem head spec (can be left empty, meaning ‘normal’)
-
 \theoremstyle{rem}
 \newtheorem*{remark}{Note}
-
 %\usepackage{xpatch}
 %\makeatletter
 %% Remove last point from definitions, theorems, etc.
@@ -62,25 +54,26 @@
 % Seitenränder
 %TODO originally 1.5 in
 \usepackage[margin=1.3in]{geometry}
-% Zitate
+% citations
 \usepackage{cite}
-% Tabellen
+% tables and colors
 \usepackage[table]{xcolor}
-
 % Graphs
 \usepackage{tikz}
 \usetikzlibrary{calc,arrows.meta,positioning}
 \usepackage{tikz-3dplot}
 \usepackage{pgfplots}
-
 \setlength{\parindent}{0pt}
 
-% Titel der Arbeit
+% Title of document
 \title{Power management - Dynamic Programming}
-% Angaben zum Author
+% Author
 \author{Kevin Kappelmann\\
   \multicolumn{1}{p{.7\textwidth}}{\centering\emph{Chair for Theoretical Computer Science,\\
   Technical University of Munich}}}  
+
+% Custom commands
+\newcommand{\mx}{\mathcal{X}}
 
 \pagestyle{plain}
 
@@ -90,8 +83,7 @@
 \pagenumbering{arabic}
 
 \begin{sloppypar}
-\section{Optimal scheduling for m homogeneous servers}\label{sec:opt}
-TODO: introduction text
+\section{Introduction}
 \subsection{Input and conventions}
 TODO: rewrite in nice paragraph\\
 Input:
@@ -105,7 +97,8 @@ Notations:
 \begin{itemize}
 	\item Let $\lambda_{i,t}$ be the assigned arrival rate at time t for server i
 	\item Let $x_t$ be the number of active servers at time t
-	\item Let $\mathcal{X}\coloneqq(x_0,\ldots,x_T)$ be the sequence of active servers
+	\item Let $\mx\coloneqq(x_0,\ldots,x_T)$ be the sequence of active servers
+	\item If $A=(a_0,\ldots,a_n)$ is a tuple with $n+1$ entries, we write $A(i)$ for the i-th component of A with $0\le i\le n$
 \end{itemize}
 Requirements:
 \begin{itemize}
@@ -113,7 +106,7 @@ Requirements:
 	\item Power down costs are w.l.o.g.\ equal to 0
 	\item $\forall t\in \{0,\ldots,T\}:\sum\limits_{i=1}^{m}{\lambda_{i,t}=\lambda_t}$
 	\item $\lambda_0=\lambda_T=0$
-	\item $\mathcal{X}(0)=\mathcal{X}(T)=0$, i.e.\ all servers are powered down at $t=0$ and $t=T$
+	\item $\mx(0)=\mx(T)=0$, i.e.\ all servers are powered down at $t=0$ and $t=T$
 \end{itemize}
 
 \subsection{Preliminaries}
@@ -122,14 +115,21 @@ Requirements:
 \end{lem}
 \begin{proof}
 $\forall x\in\mathbb{N},\mu_i\in[0,1]:\sum\limits_{i=1}^{x}{\mu_i}=1:$
-\begin{alignat*}{5}
-	f\Bigl(\frac{\lambda}{x}\Bigr)=&&f\Bigl(\sum\limits_{i=1}^x{\frac{\mu_i*\lambda}{x}}\Bigr)&\stackrel{\text{Jensen's inequality}}{\le}&&\sum\limits_{i=1}^x\frac{1}{x}f(\mu_i*\lambda) \\
-	\Leftrightarrow&&x*f\Bigl(\frac{\lambda}{x}\Bigr)&\qquad\quad\le&&\sum\limits_{i=1}^xf(\mu_i*\lambda)
+\begin{alignat*}{4}
+	&f\Bigl(\frac{\lambda}{x}\Bigr)&&=f\Bigl(\sum\limits_{i=1}^x{\frac{\mu_i*\lambda}{x}}\Bigr)&&\stackrel{\text{Jensen's inequality}}{\le}&&\sum\limits_{i=1}^x\frac{1}{x}f(\mu_i*\lambda) \\
+	&&&\Leftrightarrow x*f\Bigl(\frac{\lambda}{x}\Bigr)&&\qquad\quad\le&&\sum\limits_{i=1}^xf(\mu_i*\lambda)
 \end{alignat*}
 \end{proof}
-We will use this fact in our following construction for an optimal schedule.
+Lemma~\ref{lem:share} tells us, that having $x_t$ active servers, it is always the best method to equally share $\lambda_t$ on all $x_t$ active servers. This allows us to uniquely identify an optimal schedule by the sequence of numbers of active servers $\mx$.\\ The costs of a schedule are then given by:
+\begin{equation*}
+	costs(\mx)\coloneqq\sum\limits_{t=0}^{T}{\underbrace{\beta*\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_t*f(\lambda_t/t)}
+\end{equation*}
+We call a schedule $\mx$ \textbf{feasible} if $\forall t\in\{0,\ldots,T\}: x_t\ge\lambda_t$. In particular, every optimal schedule is feasible.
 
-\subsection{Graph for an optimal schedule}
+\section{Optimal scheduling for m homogeneous servers}\label{sec:opt}
+TODO: introduction text
+
+\subsection{Graph for an optimal schedule}\label{sec:optgraph}
 We construct a directed acyclic graph as follows:\\
 $\forall t\in[T-1]$ and $i,j\in\{0,\ldots,m\}$ we add vertices $(t,i)$ modelling the number of active servers at time t. Furthermore, we add vertices $(0,0)$ and $(T,0)$ for our initial and final state respectively.\\
 In order to warrant that there are at least $\lceil\lambda_t\rceil$ active servers $\forall t\in[T-1]$, we define an auxiliary function which calculates the costs for handling an arrival rate $\lambda$ with $x$ active servers:
@@ -142,7 +142,7 @@ In order to warrant that there are at least $\lceil\lambda_t\rceil$ active serve
 \end{equation}
 Then, $\forall t\in[T-2]$ and $i,j\in\{0,\ldots,m\}$ we add edges from $(t,i)$ to $(t+1,j)$ with weight
 \begin{equation}
-	d(i,j,\lambda_{t+1})\coloneqq\underbrace{\beta*\min\{0,j-i\}}_{\text{power up costs}}+c(j,\lambda_{t+1})
+	d(i,j,\lambda_{t+1})\coloneqq\beta*\max\{0,j-i\}+c(j,\lambda_{t+1})
 \end{equation}
 Finally, for $0\le i\le m$ we add edges from $(0,0)$ to $(1,i)$ with weight $d(0,i,\lambda_1)$ and from $(T-1,i)$ to $(T,0)$ with weight $d(i,0,\lambda_T)=0$.
 \begin{figure}[H]
@@ -208,22 +208,22 @@ Finally, for $0\le i\le m$ we add edges from $(0,0)$ to $(1,i)$ with weight $d(0
 \end{tikzpicture}
 \caption{Graph for optimal schedule algorithm.}
 \end{figure}
-Note: All edges from $(t,i)$ to $(t+1,j)$ have weight $d(i,j,\lambda_{t+1})$
+\begin{remark} 
+	All edges from $(t,i)$ to $(t+1,j)$ have weight $d(i,j,\lambda_{t+1})$
+\end{remark}
 
-\subsection{Proof of correctness}
 \begin{prop}
-Any given optimal schedule corresponds to a shortest path from $(0,0)$ to $(T,0)$ and vice versa.
+	Any given optimal schedule $\mx$ corresponds to a shortest path $P$ from $(0,0)$ to $(T,0)$ with $costs(\mx)=costs(P)$ and vice versa.
 \end{prop} 
 \begin{proof}
 $ $
 \begin{itemize}
-	\item[``$\Rightarrow$'':] Lemma~\ref{lem:share} shows that in an optimal schedule each arrival rate $\lambda_t$ will be shared equally on each active server at time t. Therefore, we can denote an optimal schedule uniquely by the sequence $\mathcal{X}$ of active servers.\\
-We can construct a valid path in our graph from $\mathcal{X}$ as follows:\\
-$\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mathcal{X}(t-1)\bigr),\bigl(t,\mathcal{X}(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$.\\
-As each edge $e_t$ in our graph has weight $d\bigl(\mathcal{X}(t-1),\mathcal{X}(t),\lambda_{t}\bigr)$ and hence corresponds to the costs of switching from $\mathcal{X}(t-1)$ to $\mathcal{X}(t)$ servers and processing $\lambda_{t}$ with $\mathcal{X}(t)$ active servers, it directly follows that $P$ is a shortest path of the graph.
-	\item[``$\Leftarrow$'':] Let $P=\bigl((0,0)=v_0,\ldots,v_T=(T,0)\bigr)$ with $v_t\in\bigl\{(t,i)\mid 0\le i\le m\bigr\}$ be a shortest path of the graph. Again, it follows from lemma~\ref{lem:share} that an optimal schedule is uniquely identified by the sequence $\mathcal{X}$ of active servers.\\
-We can construct a schedule from $P$ by setting $\mathcal{X}=\bigl(v_0(1),\ldots,v_T(1)\bigr)$ where $v_t(1)$ is the second component of the t-th tuple in $P$.\\
-By definition~(\ref{fct:c}) it is guaranteed that $P$ only traverses edges such that there are enough active servers $\forall t\in[T]$. Therefore, the created schedule is feasible. It's optimality directly follows from the definition of the edges' weights.\\
+	\item[``$\Rightarrow$'':] We construct a feasible path in our graph from $\mx$ as follows:\\
+$\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mx(t-1)\bigr),\bigl(t,\mx(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$.\\
+	As each edge $e_t$ in our graph has weight $d\bigl(\mx(t-1),\mx(t),\lambda_{t}\bigr)$ and hence corresponds to the costs of switching from $\mx(t-1)$ to $\mx(t)$ servers and processing $\lambda_{t}$ with $\mx(t)$ active servers, it directly follows that $P$ is a shortest path of the graph with $costs(P)=costs(\mx)$.
+	\item[``$\Leftarrow$'':] Let $P=\bigl((0,0)=v_0,\ldots,v_T=(T,0)\bigr)$ with $v_t\in\bigl\{(t,i)\mid 0\le i\le m\bigr\}$ be a shortest path of the graph.\\ 
+	We can construct an optimal schedule from $P$ by setting $\mx\coloneqq\bigl(v_0(1),\ldots,v_T(1)\bigr)$\\
+	By definition~(\ref{fct:c}) it is guaranteed that $P$ only traverses edges such that there are enough active servers $\forall t\in[T]$. Therefore, the created schedule is feasible. It's optimality directly follows from the definition of the edges' weights and so does the equality $costs(\mx)=costs(P)$.\\
 \end{itemize}
 \end{proof}
 
@@ -282,16 +282,14 @@ For $T,n\rightarrow\infty$ it holds:
 \end{equation}
 As we need $\log_2(m)$ bits to encode m, the algorithm is exponential in the number of servers.
 
-\subsection{A memory optimized algorithm}
+\subsubsection{A memory optimized algorithm}
 TODO
 
 \section{A $2$-approximation algorithm for monotonically increasing convex f}
 We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $2$-approximation algorithm.
 
 \subsection{Graph for a $2$-optimal schedule}
-The idea of the construction is to reduce the number of vertices by stop adding m vertices for each timestep but using vertices that approximate the number of active servers.\\
-First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$.
-
+We modify our graph from chapter~\ref{sec:optgraph} to the reduce the number of vertices. For this, we stop adding m vertices for each timestep but using vertices that approximate the number of active servers. First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$. All edges and weights are added analogous to chapter~\ref{sec:optgraph}.
 \begin{figure}[H]
 \begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
 
@@ -357,42 +355,79 @@ First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^
 
 \begin{prop}
 $ $
-\begin{enumerate}[(i)]
-	\item Any given optimal schedule can be transformed to a path from $(0,0)$ to $(T,0)$ which corresponds to a $2$-optimal schedule.
-	\item Any shortest path from $(0,0)$ to $(T,0)$ corresponds to a $2$-optimal schedule.
+\begin{enumerate}
+	\item\label{prop:2opt} Any given optimal schedule $\mx$ can be transformed to a $2$-optimal schedule $\mx'$ which corresponds to a path $P$ from $(0,0)$ to $(T,0)$ with $costs(\mx')=costs(P)$.
+	\item Any shortest path $P$ from $(0,0)$ to $(T,0)$ corresponds to a $2$-optimal schedule $\mx'$ with $costs(P)=costs(\mx')$.
 \end{enumerate}
 \end{prop}
 \begin{proof}
 $ $
-\begin{enumerate}[(i)]
-	\item Assume we have an optimal schedule identified by $\mathcal{X}=(x_0,\ldots,x_T)$. For $0\le t\le T$ we set:
+\begin{enumerate}
+	\item Assume we have an optimal schedule identified by $\mx=(x_0,\ldots,x_T)$. For $0\le t\le T$ we set:
 	\begin{equation}
 		x'_t\coloneqq 
 		\begin{cases}
 		  2^{\lceil\log_2(x_t)\rceil}, & \text{if $x_t>0$}\\
 		  0, & \text{otherwise}
-		\end{cases} 
+		\end{cases} \label{def:xprime}
 	\end{equation}
-	Notice, that $x_t\le x'_t\le 2*x_t$ holds as $x'_t$ is the smallest power of two larger or equal to $x_t$. Now let $\mathcal{X}'\coloneqq(x'_0,\ldots,x'_T)$ be the modified sequence of active servers.
-	We can construct a valid path in our graph from $\mathcal{X'}$ as follows:\\
-	$\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mathcal{X}'(t-1)\bigr),\bigl(t,\mathcal{X}'(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$. By definition~(\ref{fct:c}) it is guaranteed that $P$ only traverses edges such that there are enough active servers $\forall t\in[T]$.\\
-	Lets consider the difference of costs between the constructed path and the optimal schedule. For this, firstly take a look at the costs incurred at every time step $t$ to $t+1$ for $0\le t\le T-1$ in the path
-	\begin{alignat*}{2}
-		d(\mathcal{X}'(t),\mathcal{X}'(t+1),\lambda_{t+1})&=\beta*\min\bigl\{0,\mathcal{X}'(t+1)-\mathcal{X}'(t)\bigr\}+\mathcal{X}'(t+1)*f\Bigl(\frac{\lambda_{t+1}}{\mathcal{X}'(t+1)}\Bigr)\\
-		&\le \beta*\min\bigl\{0,2*\mathcal{X}(t+1)-\mathcal{X}(t)\bigr\}+2*\mathcal{X}(t+1)*f\Bigl(\frac{\lambda_{t+1}}{\mathcal{X}'(t+1)}\Bigr)\\
-		&\le \beta*\min\bigl\{0,2*\mathcal{X}(t+1)-\mathcal{X}(t)\bigr\}+2*\mathcal{X}(t+1)*f\Bigl(\frac{\lambda_{t+1}}{\mathcal{X}(t+1)}\Bigr)\\
-	\end{alignat*}
-	and the schedule:	
-	\begin{alignat*}{2}
-		&d(\mathcal{X}'(t),\mathcal{X}'(t+1),\lambda_{t+1})=\beta*\min\bigl\{0,\mathcal{X}'(t+1)-\mathcal{X}'(t)\bigr\}+\mathcal{X}'(t+1)*f(\lambda_{t+1}/\mathcal{X}'(t+1))
-	\end{alignat*}
-	\begin{alignat*}{2}
-		&d(\mathcal{X}'(t),\mathcal{X}'(t+1),\lambda_{t+1})-d(\mathcal{X}(t),\mathcal{X}(t+1),\lambda_{t+1})\\
-		=&\beta*\min\bigl\{0,\mathcal{X}'(t+1)-\mathcal{X}'(t)\bigr\}+\mathcal{X}'(t+1)*f(\lambda_{t+1}/\mathcal{X}'(t+1))
-	\end{alignat*}
-
-
-	\item Any shortest path from $(0,0)$ to $(T,0)$ corresponds to a $2$-optimal schedule.
+	Now let $\mx'\coloneqq(x'_0,\ldots,x'_T)$ be the modified sequence of active servers. Notice that $x_t\le x'_t\le 2*x_t$ holds as $x'_t$ is the smallest power of two larger or equal to $x_t$ and therefore $\mx'$ is feasible. We can construct a feasible path in our graph from $\mathcal{X'}$ as follows:\\
+	$\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mx'(t-1)\bigr),\bigl(t,\mx'(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$. By the definition of the edges' weights it follows $costs(\mx')=costs(P)$.\\
+		Next, lets consider the difference of costs between $\mx'$ and $\mx$ at every time step $t$ to $t+1$ for $0\le t\le T-1$:
+	\begin{enumerate}
+		\item \underline{$x_{t+1}>0$:}
+		The costs incurred by $\mx'$ are given by
+		\begin{alignat}{2}
+			&d\bigl(\mx'(t),\mx'(t+1),\lambda_{t+1}\bigr)&&=\beta*\max\{0,x'_{t+1}-x'_t\}+c(x'_{t+1},\lambda_{t+1})\nonumber\\
+			&\text{($\mx'$ is feasible)}	&&=\beta*\max\{0,x'_{t+1}-x'_t\}+x'_{t+1}*f(\lambda_{t+1}/x'_{t+1})\nonumber\\
+			&\text(\ref{def:xprime}) &&\le\beta*\max\{0,x'_{t+1}-x'_t\}+2*x_{t+1}*f(\lambda_{t+1}/x'_{t+1})\nonumber\\
+			&\text{(f monotonically increasing)} &&\le\beta*\max\{0,x'_{t+1}-x'_t\}+2*x_{t+1}*f(\lambda_{t+1}/x_{t+1})\label{eq:estxprime}
+		\end{alignat}
+		and the costs of $\mx$ by
+		\begin{alignat}{2}
+			&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)&&=\beta*\max\{0,x_{t+1}-x_t\}+c(x_{t+1},\lambda_{t+1})\nonumber\\
+			&\text{($\mx$ is feasible)}&&=\beta*\max\{0,x_{t+1}-x_t\}+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\label{eq:optcosts}
+		\end{alignat}
+		Therefore, we can estimate the difference:
+		\begin{alignat}{3}
+			&&&&&d(\mx'(t),\mx'(t+1),\lambda_{t+1})-d(\mx(t),\mx(t+1),\lambda_{t+1})\nonumber\\
+			&\text{(\ref{eq:estxprime}),(\ref{eq:optcosts})}\quad&&\le\quad&&\beta*\max\{0,x'_{t+1}-x'_t\}-\beta*\max\{0,x_{t+1}-x_t\}+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\nonumber\\
+			&&&=&&\beta*\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\label{eq:difxprime}
+		\end{alignat}
+		At this point, we need another case distinction.
+		\begin{enumerate}[(i)]
+			\item \underline{$x_{t+1}\le x_{t}$:}
+				From (\ref{def:xprime}) it follows that $x'_{t+1}\le x'_{t}$. We continue to simplify~(\ref{eq:difxprime}):
+			\begin{alignat*}{3}
+				&&&&&\beta*\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
+				&&&=\quad&&\beta*(0-0)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
+				&&&=&&x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
+				&&&=&&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)
+			\end{alignat*}
+			$\Rightarrow costs(\mx')=2*costs(\mx)$
+			\item \underline{$x_{t+1} > x_{t}$:}
+			We simplify~(\ref{eq:difxprime}) and obtain
+			\begin{alignat*}{3}
+				&&&&&\beta*\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
+				&&&=\quad&&\beta*(x'_{t+1}-x'_t-x_{t+1}+x_t)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
+				&\text{(\ref{def:xprime})}\quad&&\le&&\beta*(2*x_{t+1}-x_t-x_{t+1}+x_t)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
+				&&&=&&\beta*x_{t+1}+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
+				&&&=&&d\bigl(0,\mx(t+1),\lambda_{t+1}\bigr)\\
+				&&&\ne&&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)
+			\end{alignat*}
+			Here we fail.
+			%$\Rightarrow costs(\mx')=2*costs(\mx)$
+		\end{enumerate}
+		\item \underline{$x_{t+1}=0$:} Then by ($\ref{def:xprime}$) we conclude that $x_{t+1}=x'_{t+1}=0$ and therefore:
+		\begin{alignat*}{2}
+			&&&d(\mx'(t),\mx'(t+1),\lambda_{t+1})-d(\mx(t),\mx(t+1),\lambda_{t+1})\\
+			&=\quad&&\beta*\max\{0,0-x'_t\}+c(0,\lambda_{t+1})-\beta*\max\{0,0-x_t\}-c(0,\lambda_{t+1})\\
+			&=&&0
+		\end{alignat*}
+		$\Rightarrow costs(\mx')=costs(\mx)$
+	\end{enumerate}
+	%As the costs of $\mx'$ are at most twice the costs of $\mx$ at every time step, $\mx'$ corresponds to a $2$-optimal schedule.
+	\item From (\ref{prop:2opt}) we obtain that we can construct a $2$-optimal path $P'$ from any optimal schedule. Now, let $P$ be a shortest path. We have $costs(P)\le costs(P')$ and as every feasible path in $P$ corresponds to an feasible schedule $\mx$ with $costs(P)=costs(\mx)$, $P$ must also be at least $2$-optimal.
 \end{enumerate}
 \end{proof}
 
