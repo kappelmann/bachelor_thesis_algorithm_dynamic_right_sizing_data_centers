@@ -116,13 +116,13 @@ Requirements:
 \begin{proof}
 $\forall x\in\mathbb{N},\mu_i\in[0,1]:\sum\limits_{i=1}^{x}{\mu_i}=1:$
 \begin{alignat*}{4}
-	&f\Bigl(\frac{\lambda}{x}\Bigr)&&=f\Bigl(\sum\limits_{i=1}^x{\frac{\mu_i*\lambda}{x}}\Bigr)&&\stackrel{\text{Jensen's inequality}}{\le}&&\sum\limits_{i=1}^x\frac{1}{x}f(\mu_i*\lambda) \\
-	&&&\Leftrightarrow x*f\Bigl(\frac{\lambda}{x}\Bigr)&&\qquad\quad\le&&\sum\limits_{i=1}^xf(\mu_i*\lambda)
+	&f\Bigl(\frac{\lambda}{x}\Bigr)&&=f\Bigl(\sum\limits_{i=1}^x{\frac{\mu_i\lambda}{x}}\Bigr)&&\stackrel{\text{Jensen's inequality}}{\le}&&\sum\limits_{i=1}^x\frac{1}{x}f(\mu_i\lambda) \\
+	&&&\Leftrightarrow xf\Bigl(\frac{\lambda}{x}\Bigr)&&\qquad\quad\le&&\sum\limits_{i=1}^xf(\mu_i\lambda)
 \end{alignat*}
 \end{proof}
 Lemma~\ref{lem:share} tells us, that having $x_t$ active servers, it is always the best method to equally share $\lambda_t$ on all $x_t$ active servers. This allows us to uniquely identify an optimal schedule by the sequence of numbers of active servers $\mx$.\\ The costs of a schedule are then given by:
 \begin{equation*}
-	costs(\mx)\coloneqq\sum\limits_{t=0}^{T}{\underbrace{\beta*\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_t*f(\lambda_t/t)}
+	costs(\mx)\coloneqq\sum\limits_{t=0}^{T}{\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/t)}
 \end{equation*}
 We call a schedule $\mx$ \textbf{feasible} if $\forall t\in\{0,\ldots,T\}: x_t\ge\lambda_t$. In particular, every optimal schedule is feasible.
 
@@ -136,13 +136,13 @@ In order to warrant that there are at least $\lceil\lambda_t\rceil$ active serve
 \begin{equation}
 	c(x,\lambda)\coloneqq\begin{cases}
           0 & \text{if $x=0$}\\
-	  x*f(\lambda/x), & \text{if $x\ne 0\wedge\lambda\le x$}\\
+	  xf(\lambda/x), & \text{if $x\ne 0\wedge\lambda\le x$}\\
 	  \infty, & \text{otherwise}
 	  \end{cases} \label{fct:c}
 \end{equation}
 Then, $\forall t\in[T-2]$ and $i,j\in\{0,\ldots,m\}$ we add edges from $(t,i)$ to $(t+1,j)$ with weight
 \begin{equation}
-	d(i,j,\lambda_{t+1})\coloneqq\beta*\max\{0,j-i\}+c(j,\lambda_{t+1})
+	d(i,j,\lambda_{t+1})\coloneqq\beta\max\{0,j-i\}+c(j,\lambda_{t+1})
 \end{equation}
 Finally, for $0\le i\le m$ we add edges from $(0,0)$ to $(1,i)$ with weight $d(0,i,\lambda_1)$ and from $(T-1,i)$ to $(T,0)$ with weight $d(i,0,\lambda_T)=0$.
 \begin{figure}[H]
@@ -278,7 +278,7 @@ Schedule: Loop 5,8 and 10 run $m+1$ times, loop 7 runs $T-2$ times\\
 Extract: Loop 5 runs $T-2$ times, argmin 4 takes time $m+1$.\\
 For $T,n\rightarrow\infty$ it holds:
 \begin{equation}
-	\mathcal{O}(m+1+(T-2)*(m+1)^2+T-2+m+1)=\mathcal{O}(2*m+T+(T-2)*(m+1)^2)=\mathcal{O}(T*m^2) 
+	\mathcal{O}(m+1+(T-2)(m+1)^2+T-2+m+1)=\mathcal{O}(2m+T+(T-2)(m+1)^2)=\mathcal{O}(Tm^2) 
 \end{equation}
 As we need $\log_2(m)$ bits to encode m, the algorithm is exponential in the number of servers.
 
@@ -367,64 +367,53 @@ $ $
 	\begin{equation}
 		x'_t\coloneqq 
 		\begin{cases}
-		  2^{\lceil\log_2(x_t)\rceil}, & \text{if $x_t>0$}\\
+		  min\bigl\{2^{\lfloor \log_2(2x_t)\rfloor},2^b\bigr\}, & \text{if $x_t>0$}\\
 		  0, & \text{otherwise}
 		\end{cases} \label{def:xprime}
 	\end{equation}
-	Now let $\mx'\coloneqq(x'_0,\ldots,x'_T)$ be the modified sequence of active servers. Notice that $x_t\le x'_t\le 2*x_t$ holds as $x'_t$ is the smallest power of two larger or equal to $x_t$ and therefore $\mx'$ is feasible. We can construct a feasible path in our graph from $\mathcal{X'}$ as follows:\\
+		Now let $\mx'\coloneqq(x'_0,\ldots,x'_T)$ be the modified sequence of active servers. Notice that \makebox{$x_t\le x'_t\le 2x_t$} holds as $x'_t$ is at most the smallest power of two larger than $x_t$ and therefore $\mx'$ is feasible. We can construct a feasible path in our graph from $\mathcal{X'}$ as follows:\\
 	$\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mx'(t-1)\bigr),\bigl(t,\mx'(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$. By the definition of the edges' weights it follows $costs(\mx')=costs(P)$.\\
 		Next, lets consider the difference of costs between $\mx'$ and $\mx$ at every time step $t$ to $t+1$ for $0\le t\le T-1$:
-	\begin{enumerate}
-		\item \underline{$x_{t+1}>0$:}
-		The costs incurred by $\mx'$ are given by
-		\begin{alignat}{2}
-			&d\bigl(\mx'(t),\mx'(t+1),\lambda_{t+1}\bigr)&&=\beta*\max\{0,x'_{t+1}-x'_t\}+c(x'_{t+1},\lambda_{t+1})\nonumber\\
-			&\text{($\mx'$ is feasible)}	&&=\beta*\max\{0,x'_{t+1}-x'_t\}+x'_{t+1}*f(\lambda_{t+1}/x'_{t+1})\nonumber\\
-			&\text(\ref{def:xprime}) &&\le\beta*\max\{0,x'_{t+1}-x'_t\}+2*x_{t+1}*f(\lambda_{t+1}/x'_{t+1})\nonumber\\
-			&\text{(f monotonically increasing)} &&\le\beta*\max\{0,x'_{t+1}-x'_t\}+2*x_{t+1}*f(\lambda_{t+1}/x_{t+1})\label{eq:estxprime}
-		\end{alignat}
-		and the costs of $\mx$ by
-		\begin{alignat}{2}
-			&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)&&=\beta*\max\{0,x_{t+1}-x_t\}+c(x_{t+1},\lambda_{t+1})\nonumber\\
-			&\text{($\mx$ is feasible)}&&=\beta*\max\{0,x_{t+1}-x_t\}+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\label{eq:optcosts}
-		\end{alignat}
-		Therefore, we can estimate the difference:
-		\begin{alignat}{3}
-			&&&&&d(\mx'(t),\mx'(t+1),\lambda_{t+1})-d(\mx(t),\mx(t+1),\lambda_{t+1})\nonumber\\
-			&\text{(\ref{eq:estxprime}),(\ref{eq:optcosts})}\quad&&\le\quad&&\beta*\max\{0,x'_{t+1}-x'_t\}-\beta*\max\{0,x_{t+1}-x_t\}+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\nonumber\\
-			&&&=&&\beta*\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\label{eq:difxprime}
-		\end{alignat}
-		At this point, we need another case distinction.
-		\begin{enumerate}[(i)]
-			\item \underline{$x_{t+1}\le x_{t}$:}
-				From (\ref{def:xprime}) it follows that $x'_{t+1}\le x'_{t}$. We continue to simplify~(\ref{eq:difxprime}):
-			\begin{alignat*}{3}
-				&&&&&\beta*\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
-				&&&=\quad&&\beta*(0-0)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
-				&&&=&&x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
-				&&&=&&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)
-			\end{alignat*}
-			$\Rightarrow costs(\mx')=2*costs(\mx)$
-			\item \underline{$x_{t+1} > x_{t}$:}
-			We simplify~(\ref{eq:difxprime}) and obtain
-			\begin{alignat*}{3}
-				&&&&&\beta*\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
-				&&&=\quad&&\beta*(x'_{t+1}-x'_t-x_{t+1}+x_t)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
-				&\text{(\ref{def:xprime})}\quad&&\le&&\beta*(2*x_{t+1}-x_t-x_{t+1}+x_t)+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
-				&&&=&&\beta*x_{t+1}+x_{t+1}*f(\lambda_{t+1}/x_{t+1})\\
-				&&&=&&d\bigl(0,\mx(t+1),\lambda_{t+1}\bigr)\\
-				&&&\ne&&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)
-			\end{alignat*}
-			Here we fail.
-			%$\Rightarrow costs(\mx')=2*costs(\mx)$
-		\end{enumerate}
-		\item \underline{$x_{t+1}=0$:} Then by ($\ref{def:xprime}$) we conclude that $x_{t+1}=x'_{t+1}=0$ and therefore:
-		\begin{alignat*}{2}
-			&&&d(\mx'(t),\mx'(t+1),\lambda_{t+1})-d(\mx(t),\mx(t+1),\lambda_{t+1})\\
-			&=\quad&&\beta*\max\{0,0-x'_t\}+c(0,\lambda_{t+1})-\beta*\max\{0,0-x_t\}-c(0,\lambda_{t+1})\\
-			&=&&0
+	The costs incurred by $\mx'$ are given by
+	\begin{alignat}{2}
+		&d\bigl(\mx'(t),\mx'(t+1),\lambda_{t+1}\bigr)&&=\beta\max\{0,x'_{t+1}-x'_t\}+c(x'_{t+1},\lambda_{t+1})\nonumber\\
+		&\text{($\mx'$ is feasible)}	&&=\beta\max\{0,x'_{t+1}-x'_t\}+x'_{t+1}f(\lambda_{t+1}/x'_{t+1})\nonumber\\
+		&\text(\ref{def:xprime}) &&\le\beta\max\{0,x'_{t+1}-x'_t\}+2x_{t+1}f(\lambda_{t+1}/x'_{t+1})\nonumber\\
+		&\text{(f monotonically increasing)} &&\le\beta\max\{0,x'_{t+1}-x'_t\}+2x_{t+1}f(\lambda_{t+1}/x_{t+1})\label{eq:estxprime}
+	\end{alignat}
+	and the costs of $\mx$ by
+	\begin{alignat}{2}
+		&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)&&=\beta\max\{0,x_{t+1}-x_t\}+c(x_{t+1},\lambda_{t+1})\nonumber\\
+		&\text{($\mx$ is feasible)}&&=\beta\max\{0,x_{t+1}-x_t\}+x_{t+1}f(\lambda_{t+1}/x_{t+1})\label{eq:optcosts}
+	\end{alignat}
+	Therefore, we can estimate the difference:
+	\begin{alignat}{3}
+		&&&&&d(\mx'(t),\mx'(t+1),\lambda_{t+1})-d(\mx(t),\mx(t+1),\lambda_{t+1})\nonumber\\
+		&\text{(\ref{eq:estxprime}),(\ref{eq:optcosts})}\quad&&\le\quad&&\beta\max\{0,x'_{t+1}-x'_t\}-\beta\max\{0,x_{t+1}-x_t\}+x_{t+1}f(\lambda_{t+1}/x_{t+1})\nonumber\\
+		&&&=&&\beta\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\label{eq:difxprime}
+	\end{alignat}
+	\begin{enumerate}[(i)]
+		\item \underline{$x_{t+1}\le x_{t}$:}
+			From (\ref{def:xprime}) it follows that $x'_{t+1}\le x'_{t}$. We continue to simplify~(\ref{eq:difxprime}):
+		\begin{alignat*}{3}
+			&&&&&\beta\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			&&&=\quad&&\beta(0-0)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			&&&=&&x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			&&&=&&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)
 		\end{alignat*}
-		$\Rightarrow costs(\mx')=costs(\mx)$
+		$\Rightarrow costs(\mx')=2costs(\mx)$
+		\item \underline{$x_{t+1} > x_{t}$:}
+		We simplify~(\ref{eq:difxprime}) and obtain
+		\begin{alignat*}{3}
+			&&&&&\beta\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			&&&=\quad&&\beta(x'_{t+1}-x'_t-x_{t+1}+x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			&\text{(\ref{def:xprime})}\quad&&\le&&\beta(2x_{t+1}-x_t-x_{t+1}+x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			&&&=&&\beta x_{t+1}+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			&&&=&&d\bigl(0,\mx(t+1),\lambda_{t+1}\bigr)\\
+			&&&\ne&&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)
+		\end{alignat*}
+		Here we fail.
+		%$\Rightarrow costs(\mx')=2costs(\mx)$
 	\end{enumerate}
 	%As the costs of $\mx'$ are at most twice the costs of $\mx$ at every time step, $\mx'$ corresponds to a $2$-optimal schedule.
 	\item From (\ref{prop:2opt}) we obtain that we can construct a $2$-optimal path $P'$ from any optimal schedule. Now, let $P$ be a shortest path. We have $costs(P)\le costs(P')$ and as every feasible path in $P$ corresponds to an feasible schedule $\mx$ with $costs(P)=costs(\mx)$, $P$ must also be at least $2$-optimal.
