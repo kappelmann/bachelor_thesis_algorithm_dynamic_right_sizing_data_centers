@@ -283,12 +283,12 @@ For $T,n\rightarrow\infty$ it holds:
 As we need $\log_2(m)$ bits to encode m, the algorithm is exponential in the number of servers.
 
 \subsubsection{A memory optimized algorithm}
-TODO
+TODO: use only array with size 2m
 
-\section{A $2$-approximation algorithm for monotonically increasing convex f}
-We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $2$-approximation algorithm.
+\section{A $4$-approximation algorithm for monotonically increasing convex f}
+We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
 
-\subsection{Graph for a $2$-optimal schedule}
+\subsection{Graph for a $4$-optimal schedule}
 We modify our graph from chapter~\ref{sec:optgraph} to the reduce the number of vertices. For this, we stop adding m vertices for each timestep but using vertices that approximate the number of active servers. First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$. All edges and weights are added analogous to chapter~\ref{sec:optgraph}.
 \begin{figure}[H]
 \begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
@@ -356,67 +356,70 @@ We modify our graph from chapter~\ref{sec:optgraph} to the reduce the number of 
 \begin{prop}
 $ $
 \begin{enumerate}
-	\item\label{prop:2opt} Any given optimal schedule $\mx$ can be transformed to a $2$-optimal schedule $\mx'$ which corresponds to a path $P$ from $(0,0)$ to $(T,0)$ with $costs(\mx')=costs(P)$.
-	\item Any shortest path $P$ from $(0,0)$ to $(T,0)$ corresponds to a $2$-optimal schedule $\mx'$ with $costs(P)=costs(\mx')$.
+	\item\label{prop:2opt} Any given optimal schedule $\mx$ can be transformed to a $4$-optimal schedule $\mx'$ which corresponds to a path $P$ from $(0,0)$ to $(T,0)$ with $costs(\mx')=costs(P)$.
+	\item Any shortest path $P$ from $(0,0)$ to $(T,0)$ corresponds to a $4$-optimal schedule $\mx'$ with $costs(P)=costs(\mx')$.
 \end{enumerate}
 \end{prop}
 \begin{proof}
 $ $
 \begin{enumerate}
-	\item Assume we have an optimal schedule identified by $\mx=(x_0,\ldots,x_T)$. For $0\le t\le T$ we set:
-	\begin{equation}
-		x'_t\coloneqq 
-		\begin{cases}
-		  min\bigl\{2^{\lfloor \log_2(2x_t)\rfloor},2^b\bigr\}, & \text{if $x_t>0$}\\
-		  0, & \text{otherwise}
-		\end{cases} \label{def:xprime}
-	\end{equation}
-		Now let $\mx'\coloneqq(x'_0,\ldots,x'_T)$ be the modified sequence of active servers. Notice that \makebox{$x_t\le x'_t\le 2x_t$} holds as $x'_t$ is at most the smallest power of two larger than $x_t$ and therefore $\mx'$ is feasible. We can construct a feasible path in our graph from $\mathcal{X'}$ as follows:\\
-	$\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mx'(t-1)\bigr),\bigl(t,\mx'(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$. By the definition of the edges' weights it follows $costs(\mx')=costs(P)$.\\
-		Next, lets consider the difference of costs between $\mx'$ and $\mx$ at every time step $t$ to $t+1$ for $0\le t\le T-1$:
-	The costs incurred by $\mx'$ are given by
-	\begin{alignat}{2}
-		&d\bigl(\mx'(t),\mx'(t+1),\lambda_{t+1}\bigr)&&=\beta\max\{0,x'_{t+1}-x'_t\}+c(x'_{t+1},\lambda_{t+1})\nonumber\\
-		&\text{($\mx'$ is feasible)}	&&=\beta\max\{0,x'_{t+1}-x'_t\}+x'_{t+1}f(\lambda_{t+1}/x'_{t+1})\nonumber\\
-		&\text(\ref{def:xprime}) &&\le\beta\max\{0,x'_{t+1}-x'_t\}+2x_{t+1}f(\lambda_{t+1}/x'_{t+1})\nonumber\\
-		&\text{(f monotonically increasing)} &&\le\beta\max\{0,x'_{t+1}-x'_t\}+2x_{t+1}f(\lambda_{t+1}/x_{t+1})\label{eq:estxprime}
-	\end{alignat}
-	and the costs of $\mx$ by
-	\begin{alignat}{2}
-		&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)&&=\beta\max\{0,x_{t+1}-x_t\}+c(x_{t+1},\lambda_{t+1})\nonumber\\
-		&\text{($\mx$ is feasible)}&&=\beta\max\{0,x_{t+1}-x_t\}+x_{t+1}f(\lambda_{t+1}/x_{t+1})\label{eq:optcosts}
-	\end{alignat}
-	Therefore, we can estimate the difference:
-	\begin{alignat}{3}
-		&&&&&d(\mx'(t),\mx'(t+1),\lambda_{t+1})-d(\mx(t),\mx(t+1),\lambda_{t+1})\nonumber\\
-		&\text{(\ref{eq:estxprime}),(\ref{eq:optcosts})}\quad&&\le\quad&&\beta\max\{0,x'_{t+1}-x'_t\}-\beta\max\{0,x_{t+1}-x_t\}+x_{t+1}f(\lambda_{t+1}/x_{t+1})\nonumber\\
-		&&&=&&\beta\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\label{eq:difxprime}
-	\end{alignat}
-	\begin{enumerate}[(i)]
-		\item \underline{$x_{t+1}\le x_{t}$:}
-			From (\ref{def:xprime}) it follows that $x'_{t+1}\le x'_{t}$. We continue to simplify~(\ref{eq:difxprime}):
-		\begin{alignat*}{3}
-			&&&&&\beta\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
-			&&&=\quad&&\beta(0-0)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
-			&&&=&&x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
-			&&&=&&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)
-		\end{alignat*}
-		$\Rightarrow costs(\mx')=2costs(\mx)$
-		\item \underline{$x_{t+1} > x_{t}$:}
-		We simplify~(\ref{eq:difxprime}) and obtain
-		\begin{alignat*}{3}
-			&&&&&\beta\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
-			&&&=\quad&&\beta(x'_{t+1}-x'_t-x_{t+1}+x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
-			&\text{(\ref{def:xprime})}\quad&&\le&&\beta(2x_{t+1}-x_t-x_{t+1}+x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
-			&&&=&&\beta x_{t+1}+x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
-			&&&=&&d\bigl(0,\mx(t+1),\lambda_{t+1}\bigr)\\
-			&&&\ne&&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)
-		\end{alignat*}
-		Here we fail.
-		%$\Rightarrow costs(\mx')=2costs(\mx)$
-	\end{enumerate}
-	%As the costs of $\mx'$ are at most twice the costs of $\mx$ at every time step, $\mx'$ corresponds to a $2$-optimal schedule.
-	\item From (\ref{prop:2opt}) we obtain that we can construct a $2$-optimal path $P'$ from any optimal schedule. Now, let $P$ be a shortest path. We have $costs(P)\le costs(P')$ and as every feasible path in $P$ corresponds to an feasible schedule $\mx$ with $costs(P)=costs(\mx)$, $P$ must also be at least $2$-optimal.
+	\item Assume we have an optimal schedule identified by $\mx=(x_0,\ldots,x_T)$. Let $(0=t_0,t_1,\ldots,t_n=0)$ be the sequence of times with $t_i<t_{i+i},\forall 0\le i< n$ where $x_{t_i}=2^{k_i},k_i\in\mathbb{N_0}\forall 0<i<n$For $0<t<T$ we inductively set:
+	%\begin{equation}
+		%%x'_0=0,\qquad x'_{t+1}=2^{\lfloor\log_2(x'_t+2(x_{t+1}-x_t))\rfloor} \label{def:xprime}
+		%x'_0\coloneqq 0,\qquad
+		%x'_{t+1}\coloneqq 
+		%\begin{cases}
+			%\min\bigl\{2^{\lfloor \log_2(2x_{t+1})\rfloor},2^b\bigr\}, & \text{if $0<x_t\le x_{t+1}$}\\
+			%x'_t, & \text{if $0<x_{t+1}<x_t$ and $x'_{t}\le 4x_{t+1}$}\\
+			 %2^{\lceil \log_2(2x_{t+1})\rceil}, & \text{if $0<x_{t+1}<x_t$ and $x'_{t}>4x_{t+1}$}\\
+%\			   0, & \text{otherwise}
+		%\end{cases} \label{def:xprime}
+	%\end{equation}
+		%Then let $\mx'\coloneqq(x'_0,\ldots,x'_T)$ be the modified sequence of active servers. Notice that \makebox{$x_t\le x'_t\le 4x_t$} holds as $x'_t$ is at most the smallest power of two larger than $2x_t$ and therefore $\mx'$ is feasible. We can construct a feasible path in our graph from $\mathcal{X'}$ as follows:\\
+	%$\forall t\in[T]$ set $e_t\coloneqq\Bigl(\bigl(t-1,\mx'(t-1)\bigr),\bigl(t,\mx'(t)\bigr)\Bigr)$. Then set $P\coloneqq(e_1,\ldots,e_{T})$. By the definition of the edges' weights it follows $costs(\mx')=costs(P)$.\\
+		%Next, lets consider the fraction of costs between $\mx'$ and $\mx$ at every time step $t$ to $t+1$ for $0\le t\le T-1$:
+	%The costs incurred by $\mx'$ are given by
+	%\begin{alignat}{2}
+		%&d\bigl(\mx'(t),\mx'(t+1),\lambda_{t+1}\bigr)&&=\beta\max\{0,x'_{t+1}-x'_t\}+c(x'_{t+1},\lambda_{t+1})\nonumber\\
+		%&\text{($\mx'$ is feasible)}	&&=\beta\max\{0,x'_{t+1}-x'_t\}+x'_{t+1}f(\lambda_{t+1}/x'_{t+1})\nonumber\\
+		%&\text(\ref{def:xprime}) &&\le\beta\max\{0,x'_{t+1}-x'_t\}+4x_{t+1}f(\lambda_{t+1}/x'_{t+1})\nonumber\\
+		%&\text{(f monotonically increasing)} &&\le\beta\max\{0,x'_{t+1}-x'_t\}+4x_{t+1}f(\lambda_{t+1}/x_{t+1})\label{eq:estxprime}
+	%\end{alignat}
+	%and the costs of $\mx$ by
+	%\begin{alignat}{2}
+		%&d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)&&=\beta\max\{0,x_{t+1}-x_t\}+c(x_{t+1},\lambda_{t+1})\nonumber\\
+		%&\text{($\mx$ is feasible)}&&=\beta\max\{0,x_{t+1}-x_t\}+x_{t+1}f(\lambda_{t+1}/x_{t+1})\label{eq:optcosts}
+	%\end{alignat}
+	%\begin{enumerate}[(i)]
+		%\item \underline{$x_{t+1}\le x_{t}$:}
+			%From (\ref{def:xprime}) it follows that $x'_{t+1}\le x'_{t}$. We continue to simplify:%~(\ref{eq:difxprime}):
+		%\begin{alignat*}{3}
+			%&&&&&\frac{d\bigl(\mx'(t),\mx'(t+1),\lambda_{t+1}\bigr)}{d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)}\\
+			%&&\text{(\ref{eq:estxprime}),(\ref{eq:optcosts})}\quad&\le\quad&&\frac{\beta\max\{0,x'_{t+1}-x'_t\}+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta\max\{0,x_{t+1}-x_t\}+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			%&&&=&&\frac{4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			%&&&=&&4
+			%%&&&&&\beta\bigl(\max\{0,x'_{t+1}-x'_t\}-\max\{0,x_{t+1}-x_t\}\bigr)+3x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			%%&&&=\quad&&\beta(0-0)+3x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			%%&&&=&&3x_{t+1}f(\lambda_{t+1}/x_{t+1})\\
+			%%&&&=&&3*d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)
+		%\end{alignat*}
+		%$\Rightarrow costs(\mx')\le4costs(\mx)$
+		%\item \underline{$x_{t}<x_{t+1}$:}
+		%We simplify~(\ref{eq:difxprime}) and obtain
+		%\begin{alignat*}{3}
+			%&&&&&\frac{d\bigl(\mx'(t),\mx'(t+1),\lambda_{t+1}\bigr)}{d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)}\\
+			%&&&\le\quad&&\frac{\beta\max\{0,x'_{t+1}-x'_t\}+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta\max\{0,x_{t+1}-x_t\}+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			%&&&=&&\frac{\beta(x'_{t+1}-x'_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			%&&\text{(\ref{def:xprime})}\quad&=&&\frac{\beta(\min\bigl\{2^{\lfloor \log_2(2x_{t+1})\rfloor},2^b\bigr\}-x'_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			%&&&\le&&\frac{\beta(2^{\lfloor \log_2(2x_{t+1})\rfloor}-x'_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			%&&&\le&&\frac{\beta(2x_{t+1}-x_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			%&&&\le&&4\frac{\beta(x_{t+1}/2-x_t/4)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			%&&&\ge&&4
+		%\end{alignat*}
+		%Here we fail.
+		%%$\Rightarrow costs(\mx')=4costs(\mx)$
+	%\end{enumerate}
+	\item From (\ref{prop:2opt}) we obtain that we can construct a $4$-optimal path $P'$ from any optimal schedule. Now, let $P$ be a shortest path. We have $costs(P)\le costs(P')$ and since every feasible path in $P$ corresponds to an feasible schedule $\mx$ with $costs(P)=costs(\mx)$, $P$ must also be at least $4$-optimal.
 \end{enumerate}
 \end{proof}
 
