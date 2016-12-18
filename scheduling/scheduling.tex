@@ -248,17 +248,22 @@ We call a feasible schedule \textbf{optimal} if its incurred costs are minimal u
 \end{lem}
 \begin{proof}
 $\forall x\in\mathbb{N},\mu_i\in[0,1]:\sum\limits_{i=1}^{x}{\mu_i}=1:$
-\begin{alignat*}{4}
-	&f\Bigl(\frac{\lambda}{x}\Bigr)&&=f\Bigl(\sum\limits_{i=1}^x{\frac{\mu_i\lambda}{x}}\Bigr)&&\stackrel{\text{Jensen's inequality}}{\le}&&\sum\limits_{i=1}^x\frac{1}{x}f(\mu_i\lambda) \\
-	&&&\Leftrightarrow xf\Bigl(\frac{\lambda}{x}\Bigr)&&\qquad\quad\le&&\sum\limits_{i=1}^xf(\mu_i\lambda)
-\end{alignat*}
+\begin{align*}
+	&&f\Bigl(\frac{\lambda}{x}\Bigr)&=f\Bigl(\sum\limits_{i=1}^x{\frac{\mu_i\lambda}{x}}\Bigr)\\
+	\implies&&f\Bigl(\frac{\lambda}{x}\Bigr)&\le\sum\limits_{i=1}^x\frac{1}{x}f(\mu_i\lambda)&&\text{by Jensen's inequality}\\
+	\iff&& xf\Bigl(\frac{\lambda}{x}\Bigr)&\le\sum\limits_{i=1}^xf(\mu_i\lambda)
+\end{align*}
 \end{proof}
 Lemma~\ref{lem:share} allows us to uniquely identify an optimal schedule by its sequence of numbers of active servers $\mx$. 
 \begin{defn}
-The minimum costs of a feasible sequence $\mx$ at time $0<t\le T$ are given by
+Define the minimum costs function of a feasible sequence $\mx$ between time steps $t$ and $t'$ with $0\le t<t'\le T$ as
 \begin{equation}
-	costs(\mx,t)\coloneqq\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/x_t)\label{eq:costs_t_chi_prime}
+	costs(\mx,t,t')\coloneqq\beta\max\{0,x_{t'}-x_t\}+x_{t'}f(\lambda_{t'}/x_{t'})\label{eq:costs_chi_t_t_prime}
 \end{equation}
+Then the minimum costs of a feasible sequence $\mx$ at time $0<t\le T$ are given by
+\begin{equation*}
+	costs(\mx,t-1,t)\coloneqq costs(\mx,t)=\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/x_t)
+\end{equation*}
 and the total costs by
 \begin{equation*}
 	costs(\mx)\coloneqq\sum\limits_{t=1}^{T}{\beta\max\{0,x_{t}-x_{t-1}\}+x_tf(\lambda_t/x_t)}
@@ -270,7 +275,7 @@ TODO: introduction text
 
 \subsection{Graph for an optimal schedule}\label{sec:optgraph}
 We construct a directed acyclic graph as follows:\\
-$\forall t\in[T-1]$ and $i,j\in\fromto{0}{m}$ we add vertices $(t,i)$ modelling the number of active servers at time t. Furthermore, we add vertices $(0,0)$ and $(T,0)$ for our initial and final state respectively.\\
+$\forall t\in[T-1]$ and $i,j\in\fromto{0}{m}$ we add vertices $(t,i)$ modelling the number of active servers at time t. Moreover, we add vertices $(0,0)$ and $(T,0)$ for our initial and final state respectively.\\
 In order to warrant that there are at least $\lceil\lambda_t\rceil$ active servers $\forall t\in[T-1]$, we define an auxiliary function which calculates the costs for handling an arrival rate $\lambda$ with $x$ active servers:
 \begin{equation}
 	c(x,\lambda)\coloneqq\begin{cases}
@@ -279,7 +284,7 @@ In order to warrant that there are at least $\lceil\lambda_t\rceil$ active serve
 	  \infty, & \text{otherwise}
 	  \end{cases} \label{fct:c}
 \end{equation}
-Then, $\forall t\in[T-2]$ and $i,j\in\fromto{0}{m}$ we add edges from $(t,i)$ to $(t+1,j)$ with weight
+Then, $\forall t\in[T-2]$ and $i,j\in\fromto{0}{m}$, we add edges from $(t,i)$ to $(t+1,j)$ with weight
 \begin{equation}
 	d(i,j,\lambda_{t+1})\coloneqq\beta\max\{0,j-i\}+c(j,\lambda_{t+1})
 \end{equation}
@@ -358,14 +363,14 @@ Finally, for $0\le i\le m$ we add edges from $(0,0)$ to $(1,i)$ with weight $d(0
 $ $
 \begin{itemize}
 	\item[``$\Rightarrow$'':] We construct a feasible path in our graph from $\mx$ as follows:
-\begin{alignat*}{2}
-	&\text{First set}\qquad&e_t&\coloneqq\Bigl(\bigl(t,\mx(t)\bigr),\bigl(t+1,\mx(t+1)\bigr)\Bigr),\forall t\in\fromto{0}{T-1}\\
-	&\text{then set}\qquad&P&\coloneqq(e_0,\ldots,e_{T-1})
-\end{alignat*}
-As each edge $e_t$ in our graph has weight $d\bigl(\mx(t-1),\mx(t),\lambda_{t}\bigr)$ and hence corresponds to the costs of switching from $\mx(t-1)$ to $\mx(t)$ servers and processing $\lambda_{t}$ with $\mx(t)$ active servers, it directly follows that $P$ is a shortest path of the graph with $costs(P)=costs(\mx)$.
+\begin{align*}
+	\text{First set}&&e_t&\coloneqq\Bigl(\bigl(t,\mx(t)\bigr),\bigl(t+1,\mx(t+1)\bigr)\Bigr),&\forall t\in\fromto{0}{T-1}\\
+	\text{then set}&&P&\coloneqq(e_0,\ldots,e_{T-1})
+\end{align*}
+As each edge $e_t$ in our graph has weight $d\bigl(\mx(t-1),\mx(t),\lambda_{t}\bigr)$, it corresponds to the costs of switching from $\mx(t-1)$ to $\mx(t)$ servers and processing $\lambda_{t}$ with $\mx(t)$ active servers. Hence, it directly follows that $P$ is a shortest path of the graph with $costs(P)=costs(\mx)$.
 	\item[``$\Leftarrow$'':] Let $P=\bigl((0,0)=v_0,\ldots,v_T=(T,0)\bigr)$ with $v_t\in\bigl\{(t,i)\mid 0\le i\le m\bigr\}$ be a shortest path of the graph.\\ 
 	We can construct an optimal schedule from $P$ by setting $\mx\coloneqq\bigl(v_0(1),\ldots,v_T(1)\bigr)$\\
-	By definition~(\ref{fct:c}) it is guaranteed that $P$ only traverses edges such that there are enough active servers $\forall t\in[T]$. Therefore, the created schedule is feasible. Its optimality directly follows from the definition of the edges' weights and so does the equality $costs(\mx)=costs(P)$.
+	By definition~\eqref{fct:c} it is guaranteed that $P$ only traverses edges such that there are enough active servers $\forall t\in[T]$. Therefore, the created schedule is feasible. Its optimality directly follows from the definition of the edges' weights and so does the equality $costs(\mx)=costs(P)$.
 \end{itemize}
 \end{proof}
 
@@ -429,7 +434,7 @@ TODO: use only array with size 2m
 We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
 
 \subsection{Graph for a $4$-optimal schedule}
-We modify our graph from chapter~\ref{sec:optgraph} to the reduce the number of vertices. For this, we stop adding m vertices for each timestep but using vertices that approximate the number of active servers. First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$. All edges and weights are added analogous to chapter~\ref{sec:optgraph}.
+We modify our graph from chapter~\ref{sec:optgraph} to the reduce the number of vertices. For this, we stop adding m vertices for each timestep, but use vertices that approximate the number of active servers instead. First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$. All edges and weights are added analogous to chapter~\ref{sec:optgraph}.
 \begin{figure}[H]
 \begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
 
@@ -508,7 +513,7 @@ and that $\mx$ changes its \textbf{2-state} at time t if
 $ $
 \begin{enumerate}
 	\item\label{prop:2opt} Any given optimal schedule $\mx$ can be transformed to a $4$-optimal schedule $\mx'$ which corresponds to a path $P$ from $(0,0)$ to $(T,0)$ with $costs(\mx')=costs(P)$.
-	\item Any shortest path $P$ from $(0,0)$ to $(T,0)$ corresponds to a $4$-optimal schedule $\mx'$ with $costs(P)=costs(\mx')$.
+	\item Any shortest path $P$ from $(0,0)$ to $(T,0)$ corresponds to a $4$-optimal schedule $\mx$ with $costs(P)=costs(\mx)$.
 \end{enumerate}
 \end{prop}
 \begin{proof}
@@ -527,10 +532,10 @@ $ $
 \end{equation}
 Then let $\mx'\coloneqq(x'_0,\ldots,x'_T)$ be the modified sequence of active servers. Notice that \makebox{$x_t\le x'_t\le 4x_t$} holds as $x'_t$ is at most the smallest power of two larger than $2x_t$ which implies that $\mx'$ is feasible.\\
 We can now construct a feasible path in our graph from $\mathcal{X'}$ as follows:
-\begin{alignat*}{2}
-	&\text{First set}\qquad&e_t&\coloneqq\Bigl(\bigl(t,\mx'(t)\bigr),\bigl(t+1,\mx'(t+1)\bigr)\Bigr),\forall t\in\fromto{0}{T-1}\\
-	&\text{then set}\qquad&P&\coloneqq(e_0,\ldots,e_{T-1})
-\end{alignat*}
+\begin{align*}
+	\text{First set}&&e_t&\coloneqq\Bigl(\bigl(t,\mx'(t)\bigr),\bigl(t+1,\mx'(t+1)\bigr)\Bigr),&\forall t\in\fromto{0}{T-1}\\
+	\text{then set}&&P&\coloneqq(e_0,\ldots,e_{T-1})
+\end{align*}
 By the definition of the edges' weights it follows that $costs(\mx')=costs(P)$.\\
 Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal schedule $\mx$ changes its 2-state. Notice that the modified schedule $\mx'$ changes its state only at times $t_i$ and that $2x_{t_i}\le x'_{t_i}$ holds (TODO: only if not discrete but continous time steps). This can be seen exemplarily in figure~\ref{fig:adaption-schedule} by obvserving that $\mx'$ changes its state only if $\mx$ crosses or touches a bordering power of two.
 \begin{figure}[H]
@@ -589,54 +594,49 @@ Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal 
  	\caption{Adaption of an optimal schedule}
 	\label{fig:adaption-schedule}
 \end{figure}
-	For this reason, we now only have to consider the fraction of costs between $\mx'$ and $\mx$ between every time step $t_{i-1}$ and $t_i$. For this set
-	\begin{equation*}
-		costs(\mx,t,t')\coloneqq\beta\max\{0,x_{t'}-x_t\}+x_{t'}f(\lambda_{t'}/x_{t'})\label{eq:costs_t_chi_prime}
-	\end{equation*}
-	and then consider the fraction of costs
+	For this reason, we now only have to consider the fraction of costs of $\mx'$ and $\mx$ between time steps $t_{i-1}$ and $t_i$
 	\begin{equation}
 		\frac{costs(\mx',t_{i-1},t_i)}{costs(\mx,t_{i-1},t_i)}\label{eq:frac_chi_prime}
 	\end{equation}
-	For $x_{t_i}=0$ it follows that $costs(\mx',t_{i-1},t_i)=costs(\mx,t_{i-1},t_i)=0$. Hence, we can restrict ourselves to $0<t_i<T$ with $x_{t_i}\neq 0$.
+	For $x_{t_i}=0$ it follows from \eqref{eq:costs_chi_t_t_prime} that $costs(\mx',t_{i-1},t_i)=costs(\mx,t_{i-1},t_i)=0$. Hence, we can restrict ourselves to $0<t_i<T$ with $x_{t_i}\neq 0$.
 	The costs incurred by $\mx'$ are given by
-	\begin{alignat}{3}
-		&&&&&costs(\mx',t_{i-1},t_i)\nonumber\\
-		&&&=\quad&&\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+x'_{t_i}f(\lambda_{t_i}/x'_{t_i})\nonumber\\
-		&&\text(\ref{def:chi_prime})\quad&\le&&\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+4x_{t_i}f(\lambda_{t_i}/x'_{t_i})\nonumber\\
-		&&\text{(f monotonically increasing)}\quad&\le&&\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})\label{eq:est_chi_prime}
-	\end{alignat}
+	\begin{align}
+		&&costs(\mx',t_{i-1},t_i)&=\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+x'_{t_i}f(\lambda_{t_i}/x'_{t_i})&\text{by \eqref{eq:costs_chi_t_t_prime}}\nonumber\\
+		&&&\le\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+4x_{t_i}f(\lambda_{t_i}/x'_{t_i})&\text{by \eqref{def:chi_prime}}\nonumber\\
+		&&&\le\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})&\text{f monotonically increasing}\nonumber\\
+		\implies&&costs(\mx',t_{i-1},t_i)&\le\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})\label{eq:est_chi_prime}
+	\end{align}
 	and the costs of $\mx$ by
 	\begin{equation}
 		costs(\mx,t_{i-1},t_i)=\beta\max\{0,x_{t_i}-x_{t_{i-1}}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})\label{eq:optcosts}
 	\end{equation}
 	W.l.o.g.\ we may assume $x_{t_i}f(\lambda_{t_i}/x_{t_i})>0$, otherwise the claim follows trivially. (TODO: is it really trivial?)
 	\begin{enumerate}[(i)]
-		\item \underline{$x_{t_i}\le x_{t_{i-1}}$:}
-			From (\ref{def:chi_prime}) it follows that $x'_{t_i}\le x'_{t_{i-1}}$. Thus we can simplify~(\ref{eq:frac_chi_prime}):
-		\begin{alignat*}{3}
-			&&&&&\frac{costs(\mx',t_{i-1},t_i)}{costs(\mx,t_{i-1},t_i)}\\
-			&&\text{(\ref{eq:est_chi_prime}),(\ref{eq:optcosts})}\quad&\le\quad&&\frac{\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta\max\{0,x_{t_i}-x_{t_{i-1}}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
-			&&\text{($x_{t_i}\le x_{t_{i-1}}$ and $x'_{t_i}\le x'_{t_{i-1}}$)}\quad&=&&\frac{4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
-			&&&=&&4
-		\end{alignat*}
-		\item \underline{$x_{t_i}>x_{t_{i-1}}$:}
-		From (\ref{def:chi_prime}) it follows that $x'_{t_i}\ge x'_{t_{i-1}}$. Thus we can simplify~(\ref{eq:frac_chi_prime}):
-		\begin{alignat*}{3}
-			&&&&&\frac{costs(\mx',t_{i-1},t_i)}{costs(\mx,t_{i-1},t_i)}\\
-			&&\text{(\ref{eq:est_chi_prime}),(\ref{eq:optcosts})}\quad&\le\quad&&\frac{\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta\max\{0,x_{t_i}-x_{t_{i-1}}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
-			&&\text{($x_{t_i}>x_{t_{i-1}}$ and $x'_{t_i}\ge x'_{t_{i-1}}$)}\quad&=&&\frac{\beta(x'_{t_i}-x'_{t_{i-1}})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
-			&&\text{(\ref{def:chi_prime})}\quad&=&&\frac{\beta(\min\bigl\{2^{\lfloor \log_2(2x_{t_i})\rfloor},2^b\bigr\}-x'_{t_{i-1}})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
-			&&&\le&&\frac{\beta(2^{\lfloor \log_2(2x_{t_i})\rfloor}-x'_{t_{i-1}})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
-			&&\text{($2x_{t_{i-1}}\le x'_{t_{i-1}}$)}\quad&\le&&\frac{\beta(2x_{t_i}-2x_{t_{i-1}})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
-			&&&\le&&4\ \frac{\beta(x_{t_i}-x_{t_{i-1}})/2+x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
-			&&&\le&&4
-		\end{alignat*}
+		\item\label{pr:4appr_1} \underline{$x_{t_i}\le x_{t_{i-1}}$:}
+			From~\eqref{def:chi_prime} it follows that $x'_{t_i}\le x'_{t_{i-1}}$. Thus, we can simplify~\eqref{eq:frac_chi_prime}:
+		\begin{align*}
+			\frac{costs(\mx',t_{i-1},t_i)}{costs(\mx,t_{i-1},t_i)}&\le\frac{\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta\max\{0,x_{t_i}-x_{t_{i-1}}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})}&\text{by \eqref{eq:est_chi_prime},\eqref{eq:optcosts}}\\
+			&=\frac{4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{x_{t_i}f(\lambda_{t_i}/x_{t_i})}&\text{($x_{t_i}\le x_{t_{i-1}}$ and $x'_{t_i}\le x'_{t_{i-1}}$)}\\
+			&=4
+		\end{align*}
+		\item\label{pr:4appr_2} \underline{$x_{t_i}>x_{t_{i-1}}$:}
+		From (\ref{def:chi_prime}) it follows that $x'_{t_i}\ge x'_{t_{i-1}}$. Thus, we can simplify~(\ref{eq:frac_chi_prime}):
+		\begin{align*}
+			\frac{costs(\mx',t_{i-1},t_i)}{costs(\mx,t_{i-1},t_i)}&\le\frac{\beta\max\{0,x'_{t_i}-x'_{t_{i-1}}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta\max\{0,x_{t_i}-x_{t_{i-1}}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})}&\text{by \eqref{eq:est_chi_prime},\eqref{eq:optcosts}}\\
+			&=\frac{\beta(x'_{t_i}-x'_{t_{i-1}})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}&\text{($x_{t_i}>x_{t_{i-1}}$ and $x'_{t_i}\ge x'_{t_{i-1}}$)}\\
+			&=\frac{\beta(\min\bigl\{2^{\lfloor \log_2(2x_{t_i})\rfloor},2^b\bigr\}-x'_{t_{i-1}})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}&\text{by \eqref{def:chi_prime}}\\
+			&\le\frac{\beta(2^{\lfloor \log_2(2x_{t_i})\rfloor}-x'_{t_{i-1}})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
+			&\le\frac{\beta(2x_{t_i}-x'_{t_{i-1}})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
+			&\le\frac{\beta(2x_{t_i}-2x_{t_{i-1}})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}&\text{by ($2x_{t_{i-1}}\le x'_{t_{i-1}}$)}\\
+			&\le4\ \frac{\frac{1}{2}\beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\ \ \beta(x_{t_i}-x_{t_{i-1}})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
+			&\le4
+		\end{align*}
 	\end{enumerate}
-	From (i) and (ii) it follows:
+	From~(\hyperref[pr:4appr_1]{i}) and~(\hyperref[pr:4appr_2]{ii}) it follows:
 	\begin{equation*}
 		costs(\mx')\le4costs(\mx)
 	\end{equation*}
-	\item From (\ref{prop:2opt}) we obtain that we can construct a $4$-optimal path $P'$ from any optimal schedule. Now, let $P$ be a shortest path. We have $costs(P)\le costs(P')$ and since every feasible path in $P$ corresponds to an feasible schedule $\mx$ with $costs(P)=costs(\mx)$, $P$ must also be at least $4$-optimal.
+	\item From~\ref{prop:2opt} we obtain that we can construct a $4$-optimal path $P'$ from any optimal schedule. Now, let $P$ be a shortest path. We have $costs(P)\le costs(P')<\infty$, and since every path $P$ with $costs(P)<\infty$ corresponds to a feasible schedule $\mx$ with $costs(P)=costs(\mx)$, $\mx$ must also be at least $4$-optimal.
 \end{enumerate}
 \end{proof}
 
