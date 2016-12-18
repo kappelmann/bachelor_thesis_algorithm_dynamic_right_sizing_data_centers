@@ -237,6 +237,12 @@ Requirements:
 \end{itemize}
 
 \subsection{Preliminaries}
+\begin{defn} Let $\mx=(x_0,\ldots,x_T)$ be the sequence of active servers of a schedule. We call a schedule and its sequence \textbf{feasible} if 
+\begin{equation*}
+	\forall t\in\fromto{0}{T}: x_t\ge\lambda_t
+\end{equation*}
+We call a feasible schedule \textbf{optimal} if its incurred costs are minimal under all feasible schedules.
+\end{defn}
 \begin{lem}\label{lem:share}
 	Given a convex cost function $f$, $x$ active servers and an arrival rate $\lambda$, the optimal strategy is to assign each server a load of $\lambda/x$.
 \end{lem}
@@ -247,19 +253,13 @@ $\forall x\in\mathbb{N},\mu_i\in[0,1]:\sum\limits_{i=1}^{x}{\mu_i}=1:$
 	&&&\Leftrightarrow xf\Bigl(\frac{\lambda}{x}\Bigr)&&\qquad\quad\le&&\sum\limits_{i=1}^xf(\mu_i\lambda)
 \end{alignat*}
 \end{proof}
-\begin{defn} Let $\mx=(x_0,\ldots,x_T)$ be the sequence of active servers of a schedule. We call a schedule and its sequence \textbf{feasible} if 
-\begin{equation*}
-	\forall t\in\fromto{0}{T}: x_t\ge\lambda_t
-\end{equation*}
-We call a feasible schedule \textbf{optimal} if its incurred costs are minimal under all feasible schedules.
-\end{defn}
-Lemma~\ref{lem:share} allows us to uniquely identify an optimal schedule by the sequence of numbers of active servers $\mx$. 
+Lemma~\ref{lem:share} allows us to uniquely identify an optimal schedule by its sequence of numbers of active servers $\mx$. 
 \begin{defn}
-The costs of an optimal schedule at time $0<t\le T$ are given by
-\begin{equation*}
-	costs(\mx,t)\coloneqq\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/t)
-\end{equation*}
-and the total costs of an optimal schedule by
+The mimimum costs of a feasible sequence $\mx$ at time $0<t\le T$ are given by
+\begin{equation}
+	costs(\mx,t)\coloneqq\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/t)\label{eq:costs_t_chi_prime}
+\end{equation}
+and the total costs by
 \begin{equation*}
 	costs(\mx)\coloneqq\sum\limits_{t=1}^{T}{\beta\max\{0,x_{t}-x_{t-1}\}+x_tf(\lambda_t/t)}
 \end{equation*}
@@ -523,7 +523,7 @@ $ $
 		2^{\lceil \log_2(2x_{t+1})\rceil}, & \text{if $0<x_{t+1}<x_t$ and $x'_{t}\ge4x_{t+1}$}\\
 		x'_t, & \text{if $0<x_{t+1}<x_t$ and $x'_{t}<4x_{t+1}$}\\
 		\		   0, & \text{otherwise}
-	\end{cases} \label{def:xprime}
+	\end{cases} \label{def:chi_prime}
 \end{equation}
 Then let $\mx'\coloneqq(x'_0,\ldots,x'_T)$ be the modified sequence of active servers. Notice that \makebox{$x_t\le x'_t\le 4x_t$} holds as $x'_t$ is at most the smallest power of two larger than $2x_t$ which implies that $\mx'$ is feasible.\\
 We can now construct a feasible path in our graph from $\mathcal{X'}$ as follows:
@@ -591,40 +591,40 @@ Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal 
 \end{figure}
 	For this reason, we now only have to consider the fraction of costs between $\mx'$ and $\mx$ at every time step $t_i$:
 	\begin{equation}
-		\frac{costs(\mx',t_i)}{costs(\mx,t_i)}=\frac{d\bigl(\mx'(t_i-1),\mx'(t_i),\lambda_{t_i}\bigr)}{d\bigl(\mx(t_i-1),\mx(t_i),\lambda_{t_i}\bigr)}\label{eq:fracxprime}
+		\frac{costs(\mx',t_i)}{costs(\mx,t_i)}\label{eq:frac_chi_prime}
 	\end{equation}
-	For $x_{t_i}=0$ it follows that $costs(\mx)=costs(\mx')=0$. Hence, we can restrict ourselves to $0<t_i<T$ with $x_{t_i}\neq 0$.
+	For $x_{t_i}=0$ it follows that $costs(\mx,t_i)=costs(\mx',t_i)=0$. Hence, we can restrict ourselves to $0<t_i<T$ with $x_{t_i}\neq 0$.
 	The costs incurred by $\mx'$ are given by
-	\begin{alignat}{2}
-		&d\bigl(\mx'(t_i-1),\mx'(t_i),\lambda_{t_i}\bigr)&&=\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+c(x'_{t_i},\lambda_{t_i})\nonumber\\
-		&\text{($\mx'$ is feasible)}	&&=\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+x'_{t_i}f(\lambda_{t_i}/x'_{t_i})\nonumber\\
-		&\text(\ref{def:xprime}) &&\le\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+4x_{t_i}f(\lambda_{t_i}/x'_{t_i})\nonumber\\
-		&\text{(f monotonically increasing)} &&\le\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})\label{eq:estxprime}
+	\begin{alignat}{3}
+		&&&&&costs(\mx',t_i)\nonumber\\
+		&&\text{$\bigl(\mx'$ is feasible, (\ref{eq:costs_t_chi_prime})$\bigr)$}\quad&=\quad&&\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+x'_{t_i}f(\lambda_{t_i}/x'_{t_i})\nonumber\\
+		&&\text(\ref{def:chi_prime})\quad&\le&&\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+4x_{t_i}f(\lambda_{t_i}/x'_{t_i})\nonumber\\
+		&&\text{(f monotonically increasing)}\quad&\le&&\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})\label{eq:est_chi_prime}
 	\end{alignat}
 	and the costs of $\mx$ by
-	\begin{alignat}{2}
-		&d\bigl(\mx(t_i-1),\mx(t_i),\lambda_{t_i}\bigr)&&=\beta\max\{0,x_{t_i}-x_{t_i-1}\}+c(x_{t_i},\lambda_{t_i})\nonumber\\
-		&\text{($\mx$ is feasible)}&&=\beta\max\{0,x_{t_i}-x_{t_i-1}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})\label{eq:optcosts}
+	\begin{alignat}{3}
+		&&costs(\mx,t_i)\quad&\stackrel{(\ref{eq:costs_t_chi_prime})}{=}\quad&&\beta\max\{0,x_{t_i}-x_{t_i-1}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})\label{eq:optcosts}
 	\end{alignat}
+	W.l.o.g.\ we may assume $x_{t_i}f(\lambda_{t_i}/x_{t_i})>0$, otherwise the claim follows trivially.
 	\begin{enumerate}[(i)]
 		\item \underline{$x_{t_i}\le x_{t_i-1}$:}
-			From (\ref{def:xprime}) it follows that $x'_{t_i}\le x'_{t_i-1}$. Thus we can simplify~(\ref{eq:fracxprime}):
+			From (\ref{def:chi_prime}) it follows that $x'_{t_i}\le x'_{t_i-1}$. Thus we can simplify~(\ref{eq:frac_chi_prime}):
 		\begin{alignat*}{3}
-			&&&&&\frac{d\bigl(\mx'(t_i-1),\mx'(t_i),\lambda_{t_i}\bigr)}{d\bigl(\mx(t_i-1),\mx(t_i),\lambda_{t_i}\bigr)}\\
-			&&\text{(\ref{eq:estxprime}),(\ref{eq:optcosts})}\quad&\le\quad&&\frac{\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta\max\{0,x_{t_i}-x_{t_i-1}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
-			&&\text{($x_{t_i}\le x_{t_i-1}$ and $x'_{t_i}\le x'_{t_i-1}$)}\quad&=&&\frac{4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			&&&&&\frac{costs(\mx',t_i)}{costs(\mx,t_i)}\\
+			&&\text{(\ref{eq:est_chi_prime}),(\ref{eq:optcosts})}\quad&\le\quad&&\frac{\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta\max\{0,x_{t_i}-x_{t_i-1}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
+			&&\text{($x_{t_i}\le x_{t_i-1}$ and $x'_{t_i}\le x'_{t_i-1}$)}\quad&=&&\frac{4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
 			&&&=&&4
 		\end{alignat*}
-		\item \underline{$x_{t}<x_{t+1}$:}
-		We simplify~(\ref{eq:fracxprime}) and obtain
+		\item \underline{$x_{t_i}>x_{t_i-1}$:}
+		From (\ref{def:chi_prime}) it follows that $x'_{t_i}\ge x'_{t_i-1}$. Thus we can simplify~(\ref{eq:frac_chi_prime}):
 		\begin{alignat*}{3}
-			&&&&&\frac{d\bigl(\mx'(t),\mx'(t+1),\lambda_{t+1}\bigr)}{d\bigl(\mx(t),\mx(t+1),\lambda_{t+1}\bigr)}\\
-			&&&\le\quad&&\frac{\beta\max\{0,x'_{t+1}-x'_t\}+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta\max\{0,x_{t+1}-x_t\}+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
-			&&&=&&\frac{\beta(x'_{t+1}-x'_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
-			&&\text{(\ref{def:xprime})}\quad&=&&\frac{\beta(\min\bigl\{2^{\lfloor \log_2(2x_{t+1})\rfloor},2^b\bigr\}-x'_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
-			&&&\le&&\frac{\beta(2^{\lfloor \log_2(2x_{t+1})\rfloor}-x'_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
-			&&&\le&&\frac{\beta(2x_{t+1}-x_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
-			&&&\le&&4\frac{\beta(x_{t+1}/2-x_t/4)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t+1}-x_t)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}\\
+			&&&&&\frac{costs(\mx',t_i)}{costs(\mx,t_i)}\\
+			&&\text{(\ref{eq:est_chi_prime}),(\ref{eq:optcosts})}\quad&\le\quad&&\frac{\beta\max\{0,x'_{t_i}-x'_{t_i-1}\}+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta\max\{0,x_{t_i}-x_{t_i-1}\}+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
+			&&\text{($x_{t_i}>x_{t_i-1}$ and $x'_{t_i}\ge x'_{t_i-1}$)}\quad&=&&\frac{\beta(x'_{t_i}-x'_{t_i-1})+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_i-1})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
+			&&\text{(\ref{def:chi_prime})}\quad&=&&\frac{\beta(\min\bigl\{2^{\lfloor \log_2(2x_{t_i})\rfloor},2^b\bigr\}-x'_t)+4x_{t_i}f(\lambda_{t_i}/x_{t_i})}{\beta(x_{t_i}-x_{t_i-1})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
+			&&&\le&&\frac{\beta(2^{\lfloor \log_2(2x_{t+1})\rfloor}-x'_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t_i}-x_{t_i-1})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
+			&&&\le&&\frac{\beta(2x_{t+1}-x_t)+4x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t_i}-x_{t_i-1})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
+			&&&\le&&4\frac{\beta(x_{t+1}/2-x_t/4)+x_{t+1}f(\lambda_{t+1}/x_{t+1})}{\beta(x_{t_i}-x_{t_i-1})+x_{t_i}f(\lambda_{t_i}/x_{t_i})}\\
 			&&&\ge&&4
 		\end{alignat*}
 		Here we fail.
