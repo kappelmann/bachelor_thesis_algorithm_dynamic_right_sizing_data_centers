@@ -233,13 +233,12 @@ Requirements:
 \begin{itemize}
 	\item Convex cost function $f$
 	\item Power down costs are w.l.o.g.\ equal to 0
-	\item $\forall t\in\fromto{0}{T}:\sum\limits_{i=1}^{m}{\lambda_{i,t}=\lambda_t}$
 	\item $\lambda_0=\lambda_T=0$ and $\mx(0)=\mx(T)=0$, i.e.\ all servers are powered down at $t=0$ and $t=T$
 \end{itemize}
 
 \subsection{Preliminaries}
 \begin{lem}\label{lem:share}
-	Given a convex cost function $f$, $x$ active servers and an arrival rate $\lambda$, the best method is to assign each server a load of $\lambda/x$.
+	Given a convex cost function $f$, $x$ active servers and an arrival rate $\lambda$, the optimal strategy is to assign each server a load of $\lambda/x$.
 \end{lem}
 \begin{proof}
 $\forall x\in\mathbb{N},\mu_i\in[0,1]:\sum\limits_{i=1}^{x}{\mu_i}=1:$
@@ -248,16 +247,22 @@ $\forall x\in\mathbb{N},\mu_i\in[0,1]:\sum\limits_{i=1}^{x}{\mu_i}=1:$
 	&&&\Leftrightarrow xf\Bigl(\frac{\lambda}{x}\Bigr)&&\qquad\quad\le&&\sum\limits_{i=1}^xf(\mu_i\lambda)
 \end{alignat*}
 \end{proof}
-Lemma~\ref{lem:share} shows us, that having $x_t$ active servers, it is always the best method to equally share $\lambda_t$ on all $x_t$ active servers. This allows us to uniquely identify an optimal schedule by the sequence of numbers of active servers $\mx$. The costs of a schedule are then given by:
-\begin{equation*}
-	costs(\mx)\coloneqq\sum\limits_{t=0}^{T}{\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/t)}
-\end{equation*}
-\begin{defn}
-We call a schedule $\mx$ \textbf{feasible} if 
+\begin{defn} Let $\mx=(x_0,\ldots,x_T)$ be the sequence of active servers of a schedule. We call a schedule and its sequence \textbf{feasible} if 
 \begin{equation*}
 	\forall t\in\fromto{0}{T}: x_t\ge\lambda_t
 \end{equation*}
-In particular, every optimal schedule is feasible.
+We call a feasible schedule \textbf{optimal} if its incurred costs are minimal under all feasible schedules.
+\end{defn}
+Lemma~\ref{lem:share} allows us to uniquely identify an optimal schedule by the sequence of numbers of active servers $\mx$. 
+\begin{defn}
+The costs of an optimal schedule at time $0<t\le T$ are given by
+\begin{equation*}
+	costs(\mx,t)\coloneqq\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/t)
+\end{equation*}
+and the total costs of an optimal schedule by
+\begin{equation*}
+	costs(\mx)\coloneqq\sum\limits_{t=1}^{T}{\beta\max\{0,x_{t}-x_{t-1}\}+x_tf(\lambda_t/t)}
+\end{equation*}
 \end{defn}
 
 \section{Optimal scheduling for m homogeneous servers}\label{sec:opt}
@@ -269,7 +274,7 @@ $\forall t\in[T-1]$ and $i,j\in\fromto{0}{m}$ we add vertices $(t,i)$ modelling 
 In order to warrant that there are at least $\lceil\lambda_t\rceil$ active servers $\forall t\in[T-1]$, we define an auxiliary function which calculates the costs for handling an arrival rate $\lambda$ with $x$ active servers:
 \begin{equation}
 	c(x,\lambda)\coloneqq\begin{cases}
-          0 & \text{if $x=0$}\\
+          0, & \text{if $x=0$}\\
 	  xf(\lambda/x), & \text{if $x\ne 0\wedge\lambda\le x$}\\
 	  \infty, & \text{otherwise}
 	  \end{cases} \label{fct:c}
@@ -412,9 +417,9 @@ As each edge $e_t$ in our graph has weight $d\bigl(\mx(t-1),\mx(t),\lambda_{t}\b
 
 \subsubsection{Runtime analysis}
 The algorithm visits every vertex and every edge of the graph exactly once. As the number of vertices is bounded by $\mathcal{O}(Tm)$ and the number of edges is bounded by $\mathcal{O}(Tm^2)$ the running time is given by:
-\begin{equation}
+\begin{equation*}
 	\mathcal{O}(Tm+Tm^2)=\mathcal{O}(Tm^2)
-\end{equation}
+\end{equation*}
 As we need $\log_2(m)$ bits to encode m, the running time is polynomial in the numeric value of the input but exponential in the length of the input. Hence, the algorithm is pseudo-polynomial.
 
 \subsubsection{A memory optimized algorithm}
@@ -496,7 +501,7 @@ We say that $\mx$ changes its \textbf{state} at time t if
 \end{equation*}
 and that $\mx$ changes its \textbf{2-state} at time t if
 \begin{equation*}
-	x_t=0\text{\quad or\quad}x_t\notin(2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1})\rceil})
+	x_t=0\text{\quad or\quad}x_t\notin\bigl(2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1})\rceil}\bigr)
 \end{equation*}
 \end{defn}
 \begin{prop}
@@ -586,7 +591,7 @@ Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal 
 \end{figure}
 	For this reason, we now only have to consider the fraction of costs between $\mx'$ and $\mx$ at every time step $t_i$:
 	\begin{equation}
-		\frac{costs(\mx'(t_i))}{costs(\mx(t_i))}=\frac{d\bigl(\mx'(t_i-1),\mx'(t_i),\lambda_{t_i}\bigr)}{d\bigl(\mx(t_i-1),\mx(t_i),\lambda_{t_i}\bigr)}\label{eq:fracxprime}
+		\frac{costs(\mx',t_i)}{costs(\mx,t_i)}=\frac{d\bigl(\mx'(t_i-1),\mx'(t_i),\lambda_{t_i}\bigr)}{d\bigl(\mx(t_i-1),\mx(t_i),\lambda_{t_i}\bigr)}\label{eq:fracxprime}
 	\end{equation}
 	For $x_{t_i}=0$ it follows that $costs(\mx)=costs(\mx')=0$. Hence, we can restrict ourselves to $0<t_i<T$ with $x_{t_i}\neq 0$.
 	The costs incurred by $\mx'$ are given by
