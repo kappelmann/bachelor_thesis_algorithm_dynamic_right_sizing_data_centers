@@ -420,7 +420,7 @@ As we need $\log_2(m)$ bits to encode m, the running time is polynomial in the n
 \subsubsection{A memory optimized algorithm}
 TODO: use only array with size 2m
 
-\section{A $4$-approximation algorithm for monotonically increasing convex f}
+\section{A polynomial $4$-approximation algorithm for monotonically increasing convex f}
 We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
 
 \subsection{Graph for a $4$-optimal schedule}
@@ -485,7 +485,7 @@ We modify our graph from chapter~\ref{sec:optgraph} to the reduce the number of 
    \path[every node/.style={font=\sffamily\small}] [->,draw,thick] ($(2)!.8!(11)$) -- node[above] {0} ++ (11);
 
 \end{tikzpicture}
-\caption{Graph for $2$-approximation algorithm}
+\caption{Graph for a $4$-approximation algorithm}
 \end{figure}
 
 \begin{defn}
@@ -496,7 +496,7 @@ We say that $\mx$ changes its \textbf{state} at time t if
 \end{equation*}
 and that $\mx$ changes its \textbf{2-state} at time t if
 \begin{equation*}
-	x_t=0\text{\quad or\quad}x_t\notin[2^{\lfloor \log_2(x_{t-1})\rceil},2^{\lfloor \log_2(x_{t-1})\rceil}]
+	x_t=0\text{\quad or\quad}x_t\notin(2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1})\rceil})
 \end{equation*}
 \end{defn}
 \begin{prop}
@@ -509,10 +509,10 @@ $ $
 \begin{proof}
 $ $
 \begin{enumerate}
-	\item Assume we have an optimal schedule identified by $\mx=(x_0,\ldots,x_T)$. For $0<i<T$ we inductively set:
+	\item Assume we have an optimal schedule identified by $\mx=(x_0,\ldots,x_T)$. For $0\le t<T$ we inductively set:
 \begin{equation}
 	x'_0\coloneqq 0,\qquad
-	x'_{i+1}\coloneqq 
+	x'_{t+1}\coloneqq 
 	\begin{cases}
 		\min\bigl\{2^{\lfloor \log_2(2x_{t+1})\rfloor},2^b\bigr\}, & \text{if $0<x_t\le x_{t+1}$}\\
 		2^{\lceil \log_2(2x_{t+1})\rceil}, & \text{if $0<x_{t+1}<x_t$ and $x'_{t}\ge4x_{t+1}$}\\
@@ -527,7 +527,7 @@ We can now construct a feasible path in our graph from $\mathcal{X'}$ as follows
 	&\text{then set}\qquad&P&\coloneqq(e_0,\ldots,e_{T-1})
 \end{alignat*}
 By the definition of the edges' weights it follows that $costs(\mx')=costs(P)$.\\
-Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal schedule changes its 2-state. Notice that if the new schedule $\mx'$ changes its state, then we must be in one of the states $x_{t_i}$.  
+Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal schedule $\mx$ changes its 2-state. Notice that the modified schedule $\mx'$ changes its state only at times $t_i$. This can be seen exemplarily in figure~\ref{fig:adaption-schedule} by obvserving that $\mx'$ changes its state only if $\mx$ crosses or touches a bordering power of two.
 \begin{figure}[H]
 \centering
 \scalebox{0.7}{
@@ -581,11 +581,10 @@ Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal 
 	\addlegendentry{$x'_t$}
 	\end{axis}
 \end{tikzpicture}}}
-
- \caption{Adaption of an optimal schedule}
+ 	\caption{Adaption of an optimal schedule}
+	\label{fig:adaption-schedule}
 \end{figure}
-	For this reason, we now only have to consider the fraction of costs between $\mx'$ and $\mx$ for every time step $t_i$:\\
-	The costs incurred by $\mx'$ are given by
+	For this reason, we now only have to consider the fraction of costs between $\mx'$ and $\mx$ at every time step $t_i$. The costs incurred by $\mx'$ are given by
 	\begin{alignat}{2}
 		&d\bigl(\mx'(t),\mx'(t+1),\lambda_{t+1}\bigr)&&=\beta\max\{0,x'_{t+1}-x'_t\}+c(x'_{t+1},\lambda_{t+1})\nonumber\\
 		&\text{($\mx'$ is feasible)}	&&=\beta\max\{0,x'_{t+1}-x'_t\}+x'_{t+1}f(\lambda_{t+1}/x'_{t+1})\nonumber\\
