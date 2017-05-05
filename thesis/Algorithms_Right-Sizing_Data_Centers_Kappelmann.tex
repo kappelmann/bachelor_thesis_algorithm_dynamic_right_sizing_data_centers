@@ -212,18 +212,20 @@
 
 \pagenumbering{arabic}
 
-\begin{sloppypar}
 \section{Introduction}\label{sec_introduction}
 TODO: Hardware price vs.\ energy costs in data centres. 
 
-We want to address the issue of this ever-growing energy consumption by examing a scheduling problem commonly arising in data centres. More specifically, we consider a model consisting of a fixed amount of time slots denoted by $T\in\mathbb{N}$ and a fixed amount of homogeneous servers denoted by $m\in\mathbb{N}$. In turn, each server possesses two power states, i.e.\ each server is either powered on or off.
+We want to address the issue of this ever-growing energy consumption by examing a scheduling problem commonly arising in data centres. More specifically, we consider a model consisting of a fixed amount of time slots denoted by $T\in\mathbb{N}$ and a fixed amount of homogeneous servers denoted by $m\in\mathbb{N}$. In turn, each server possesses two power states, i.e.\ each server is either powered on (\textit{active state}) or powered off (\textit{sleep state}).
 	
-For any time slot $t\in[T]$ we have a mean arrival rate denoted by $\lambda_t$. We expect the arrival rates to be normalised such that each server $i\in[m]$ is able to handle a load between zero and one in any time step. We denote the assigned load for server $i$ in time slot $t$ by $\lambda_{i,t}\in[0,1]$. Consequently, for any time slot $t$ we expect an arrival rate between $0$ and $m$, i.e.\ $\lambda_t\in[0,m]$; otherwise, we would not be able to process the given load in time.
+For any time slot $t\in[T]$ we have a \textit{mean arrival rate} denoted by $\lambda_t$, i.e.\ the amount of expected load to process in time slot $t$. We expect the arrival rates to be normalised such that each server $i\in[m]$ can handle a load between zero and one in any time step. We denote the assigned load for server $i$ in time slot $t$ by $\lambda_{i,t}\in[0,1]$. Consequently, for any time slot $t$ we expect an arrival rate between $0$ and $m$, i.e.\ $\lambda_t\in[0,m]$; otherwise, we would not be able to process the given load in time.
 
-Commonly, energy costs can be described by power up costs specified by $\beta$ as well as processing costs given by $f$. Processing costs do not simply.
+The incurred energy costs of a single machine can be described by the sum of the machine's \textit{(power state) switching costs} specified by $\beta\in\mathbb{R}_{\ge 0}$ as well as its \textit{operating costs} specified by \makebox{$f:[0,1]\rightarrow \mathbb{R}$}. Further, we assume convexity for $f$; this may seem like a notable restriction at first, but indeed captures the behaviour of most modern server models. We want to stress that $f$ may not only pose as a depiction of energy costs. For example, $f$ may also allow for costs caused by delays, like lost revenue as users need to wait for their responses. Similarly, $\beta$ may also allow for delay costs, wear and tear costs or the like.\cite{dyn_right_size}. As we are dealing with homogeneous servers, $\beta$ and $f$ are the same for all machines.
+
+For convenience, we assume all machines sleeping at time $t=0$ and force all machines to sleep after the scheduling process, i.e.\ at times $t>T$. This justifies the consolidation of power up and power down costs into $\beta$ because it allows us to model both costs as being incurred when powering up a server; that is a model with power up costs $\beta_\uparrow$ and power down costs $\beta_\downarrow$ can simply be transfered to our model by setting $\beta\coloneqq \beta_\uparrow+\beta_\downarrow$.
 
 
 \section{Preliminaries}
+\subsection{Feasible schedules}
 \subsection{Input}
 Let $\mathcal{I}\coloneqq(m,\beta,T,\Lambda)$ be the input of a problem instance as described in section~\ref{sec_introduction} specified by:
 \begin{itemize}
@@ -653,5 +655,7 @@ Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal 
 \end{enumerate}
 \end{proof}
 
-\end{sloppypar}
+\newpage
+\bibliographystyle{plain}
+\bibliography{sources.bib}
 \end{document}
