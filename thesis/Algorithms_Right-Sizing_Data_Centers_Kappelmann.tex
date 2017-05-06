@@ -184,10 +184,16 @@
     ,every axis y label/.style={at={(current axis.above origin)},anchor=north east}
     }
 
+% Notes
+\usepackage{xargs} % Use more than one optional parameter in a new commands
+\usepackage{xcolor}  % Coloured text etc.
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
 % Custom commands
 \newcommand{\mx}{\mathcal{X}}
 \newcommand{\fromto}[2]{\{#1,\ldots,#2\}}
 \DeclareMathOperator*{\argmin}{arg\,min}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
 
 \pagestyle{plain}
 %Title page settings
@@ -218,7 +224,7 @@
 TODO: Hardware prices vs.\ energy costs in data centres and purpose of this paper (offline algorithm, approximation algorithm,\ldots).
 
 \subsection{Model description}\label{sec_model_descr}
-We want to address the issue of the above-mentioned ever-growing energy consumption by examing a scheduling problem commonly arising in data centres. More specifically, we consider a model consisting of a fixed amount of homogeneous servers denoted by $m\in\mathbb{N}$ and a fixed amount of time slots denoted by $T\in\mathbb{N}$. In turn, each server possesses two power states, i.e.\ each server is either powered on (\textit{active state}) or powered off (\textit{sleep state}).
+We want to address the issue of the above-mentioned ever-growing energy consumption by examing a scheduling problem commonly arising in data centres. More specifically, we consider a model consisting of a fixed amount of homogeneous servers denoted by $m\in\mathbb{N}$ and a fixed amount of time slots denoted by $T\in\mathbb{N}$. In turn, each server possesses two power states, i.e.\ each server is either powered on (\textit{active state}) or powered off (\textit{sleep state}).\unsure{Better name than sleep state?}
 	
 For any time slot $t\in[T]$ we have a \textit{mean arrival rate} denoted by $\lambda_t$, i.e.\ the amount of expected load to process in time slot $t$. We expect the arrival rates to be normalised such that each server $i\in[m]$ can handle a load between zero and one in any time step. We denote the assigned load for server $i$ in time slot $t$ by $\lambda_{i,t}\in[0,1]$. Consequently, for any time slot $t$ we expect an arrival rate between $0$ and $m$, i.e.\ $\lambda_t\in[0,m]$; otherwise, we would not be able to process the given load in time.
 
@@ -228,42 +234,25 @@ For convenience, we assume all machines sleeping at time $t=0$ and force all mac
 We can now proceed to define our problem statement.
 
 \subsection{Problem statement}
-Using above definitions, we can define the input of our model by $\mathcal{I}\coloneqq(m,T,\Lambda,\beta,f)$ where $\Lambda=(\lambda_1,\ldots,\lambda_T)$ is the sequence of arrival rates. Naturally, given an input $\mathcal{I}$, we want to schedule our servers in such a way that we minimise the sum of incurred costs while warranting that we are processing the given loads in time. For this, consider the two sequences 
+Using above definitions, we can define the input of our model by $\mathcal{I}\coloneqq(m,T,\Lambda,\beta,f)$ where $\Lambda=(\lambda_1,\ldots,\lambda_T)$ is the sequence of arrival rates. Naturally, given an input $\mathcal{I}$, we want to schedule our servers in such a way that we minimise the sum of incurred costs while warranting that we are processing the given loads in time. 
+
+For this, consider the two sequences 
 \begin{align*}
-	\mx&\coloneqq(x_1,\ldots,x_T)\in\fromto{0}{m}^T\\
+	\mathcal{S}&\coloneqq(s_{1,1},s_{2,1},\ldots,s_{m,1},s_{1,2},\ldots,s_{m,T})\in\{0,1\}^{m*T}\\
 	\mathcal{L}&\coloneqq(\lambda_{1,1},\lambda_{2,1},\ldots,\lambda_{m,1},\lambda_{1,2},\ldots,\lambda_{m,T})\in[0,1]^{m*T}
 \end{align*}
-where $x_t$ denotes the number of active servers at time $t$ and $\lambda_{i,t}$ the load assigned to server $i$ at time $t$ (as described in section~\ref{sec_model_descr}).
-\begin{align*}
-	\mathcal{S}^*&=(s_{1,1},s_{2,1},\ldots,s_{m,1},s_{1,2},\ldots,s_{m,T})\in\{0,1\}^{m*T}\\ 
-	\mathcal{L}^*&=(\lambda_{1,1},\lambda_{2,1},\ldots,\lambda_{m,1},\lambda_{1,2},\ldots,\lambda_{m,T})\in[0,1]^{m*T}
-\end{align*}
-where $\mathcal{S}$ is the series of power states and $\mathcal{L}$ is the series of assigned loads for our servers subject to
-\begin{align*}
-	(\mathcal{S}^*,\mathcal{L}^*)=\argmin\limits_{(\mathcal{S},\mathcal{L})}
-	\{\mid\sum\limits_{t=1}^{T}\lambda_t=\sum\limits_{i=1}^{m}\sum\limits_{t=1}^{T}\lambda_{i,t}*s_{i,t}\}
-\end{align*}
+where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0) or active (1).\unsure{Retell what $\lambda_{i,t}$ means?} Next, let $\mx$ denote the sequence of the sum of active servers at each time slot $t$, that is:
+\begin{equation*}
+	\mx\coloneqq(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T})\in\fromto{0}{m}^T
+\end{equation*}
+Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ we set $x_t=0$.  
 
-\subsection{Overview}
-Below, we give an overview of just given definitions and conventions:
-\scriptsize
-\begin{multicols}{2}
-\begin{itemize}
-	\item $m\in\mathbb{N}$\ldots number of homogeneous servers
-	\item $T\in\mathbb{N}$\ldots number of time slots
-	\item $\lambda_1,\ldots,\lambda_{T}\in[0,m]$\ldots arrival rates
-	\item $\Lambda\coloneqq(\lambda_1,\ldots,\lambda_T)$\ldots sequence of arrival rates
-	\item $\lambda_{i,t}$\ldots assigned arrival rate for server $i$ at time $t$
-	\item $\beta\in\mathbb{R}_{\ge 0}$\ldots switching costs of a server
-	\item $f:[0,1]\rightarrow\mathbb{R}$\ldots convex operating costs function of a server
-	\item $x_t$\ldots number of active servers at time t
-	\item $\mx\coloneqq(x_1,\ldots,x_T)$\ldots sequence of active servers
-	\item $\mathcal{I}\coloneqq(m,T,\Lambda,\beta,f)$\ldots input of problem instance
-	\item $\lambda_{t}=0$ for all $t\notin[T]$
-	\item All servers are powered down at time $t=0$
-\end{itemize}
-\end{multicols}
-\normalsize
+Our goal is to find $\mathcal{S}$ and $\mathcal{L}$ that satisfy the following optimisation:
+\begin{align*}
+	\text{minimise}\quad&\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}f(\lambda_{i,t})*s_{i,t}}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\min\{0,x_t-x_{t-1}\}}_{\text{power up costs}}
+\\ 
+	\text{subject to}\quad&\sum\limits_{i=1}^{m}\lambda_{i,t}*s_{i,t}=\lambda_t,\forall t\in[T]
+\end{align*}
 
 \section{Preliminaries}
 \subsection{Feasible schedules}
@@ -684,4 +673,30 @@ Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal 
 \newpage
 \bibliographystyle{plain}
 \bibliography{sources.bib}
+\newpage
+
+\section*{Appendix}
+Below, we give an overview of just given definitions and conventions commonly referred to in our paper:
+%\scriptsize
+%\begin{multicols}{2}
+\begin{itemize}
+	\item $m\in\mathbb{N}$\ldots number of homogeneous servers
+	\item $T\in\mathbb{N}$\ldots number of time slots
+	\item $\lambda_1,\ldots,\lambda_{T}\in[0,m]$\ldots arrival rates
+	\item $\Lambda\coloneqq(\lambda_1,\ldots,\lambda_T)$\ldots sequence of arrival rates
+	\item $\beta\in\mathbb{R}_{\ge 0}$\ldots switching costs of a server
+	\item $f:[0,1]\rightarrow\mathbb{R}$\ldots convex operating costs function of a server
+	\item $\mathcal{I}\coloneqq(m,T,\Lambda,\beta,f)$\ldots input of problem instance
+	\item $\lambda_{i,t}\in[0,1]$\ldots assigned load for server $i$ at time $t$
+	\item $\mathcal{L}\coloneqq(\lambda_{0,1},\lambda_{2,1},\ldots,\lambda_{m,1},\lambda_{1,2},\ldots,\lambda_{m,T})$\ldots sequence of assigned loads
+	\item $s_{i,t}$\ldots state of server $i$ at time $t$, i.e.\ sleeping (0) or active(1)
+	\item $\mathcal{S}\coloneqq(s_{1,1},s_{2,1},\ldots,s_{m,1},s_{1,2},\ldots,s_{m,T})\in\{0,1\}^{m*T}$\ldots sequence of states 
+	\item $x_t$\ldots number of active servers at time t
+	\item $\mx\coloneqq(x_1,\ldots,x_T)$\ldots sequence of number of active servers
+	\item $\lambda_{t}=0$ for all $t\notin[T]$
+	\item All servers are powered down at time $t=0$
+\end{itemize}
+%\end{multicols}
+\normalsize
+
 \end{document}
