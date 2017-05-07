@@ -155,26 +155,12 @@
 \def\thm@space@setup{%
   \thm@preskip=\parskip \thm@postskip=0pt
 }
-\renewenvironment{proof}[1][\proofname]{\par
-  \vspace{-\parskip}% remove the space after the theorem
-  \pushQED{\qed}%
-  \normalfont
-  \topsep0pt \partopsep0pt % no space before
-  \trivlist
-  \item[\hskip\labelsep
-        \itshape
-    #1\@addpunct{.}]\ignorespaces
-}{%
-  \popQED\endtrivlist\@endpefalse
-  \addvspace{6pt plus 6pt} % some space after
-}
-\makeatother
-
 \makeatother
 \theoremstyle{plain}
 \newtheorem{thm}{Theorem}[section]
 \newtheorem{lem}[thm]{Lemma}
 \newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
 \theoremstyle{definition}
 \newtheorem{defn}[thm]{Definition}
 \newtheorem{exmpl}[thm]{Example}
@@ -260,29 +246,71 @@ We can now proceed to define our problem statement.
 \subsection{Problem statement}
 Using above definitions, we can define the input of our model by $\inp\coloneqq(m,T,\Lambda,\beta,f)$ where $\Lambda=(\lambda_1,\ldots,\lambda_T)$ is the sequence of arrival rates. Naturally, given an input $\inp$, we want to schedule our servers in such a way that we minimise the sum of incurred costs while warranting that we are processing the given loads in time. 
 
-For this, consider the two sequences 
+For this, we consider for each server $i\in[m]$ the sequence of its states $S_i$ and the sequence of its assigned loads $L_i$, that is
 \begin{align*}
-	\mathcal{S}&\coloneqq(s_{1,1},s_{2,1},\ldots,s_{m,1},s_{1,2},\ldots,s_{m,T})\in\{0,1\}^{m*T}\\
-	\mathcal{L}&\coloneqq(\lambda_{1,1},\lambda_{2,1},\ldots,\lambda_{m,1},\lambda_{1,2},\ldots,\lambda_{m,T})\in[0,1]^{m*T}
+	S_i&\coloneqq(s_{i,1},\ldots,s_{i,T})\in\{0,1\}^T\\
+	L_i&\coloneqq(\lambda_{i,1},\ldots,\lambda_{i,T})\in[0,1]^T
 \end{align*}
-where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0) or active (1).\unsure{Retell what $\lambda_{i,t}$ means?}. Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ and $i\in[m]$ we set $s_{i,t}=0$.
+where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0) or active (1). Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ and $i\in[m]$ we have $s_{i,t}=0$.
 
-We will subsequently call a pair $(\mathcal{S},\mathcal{L})\eqqcolon\Sigma$ a \textit{schedule}. Our goal is to find for an input $\inp$ a schedule $\Sigma$ that satisfies the following optimisation:
+Using these sequences $S_i$ and $L_i$, we can now define the sequence of all state changes and the sequence of all assigned loads:\unsure{good sentence?\\$\in(\{0,1\}^m)^T$} 
+
 \begin{align*}
-	\text{minimise}\quad&\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})*s_{i,t}\bigr)}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\min\{0,s_{i,t}-s_{i,t-1}\}}_{\text{switching costs}}
-\\ 
-	\text{subject to}\quad&\sum\limits_{i=1}^{m}(\lambda_{i,t}*s_{i,t})=\lambda_t,\forall t\in[T]
+	\mathcal{S}&\coloneqq(S_1,\ldots,S_m)\\
+	\mathcal{L}&\coloneqq(L_1,\ldots,L_m)
 \end{align*}
-We call a schedule $\Sigma$ satisfying these constraints an \textit{optimal schedule}.
+
+We will subsequently call a pair $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$ a \textit{schedule}. Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies the following optimisation:\unsure{Definition of $costs(\Sigma)$ too hidden?}
+
+\begin{align}
+	\text{minimise}\quad&costs(\Sigma)\coloneqq\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})*s_{i,t}\bigr)}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\min\{0,s_{i,t}-s_{i,t-1}\}}_{\text{switching costs}}\label{eq_schedule_costs}\\ 
+	\text{subject to}\quad&\sum\limits_{i=1}^{m}(\lambda_{i,t}*s_{i,t})=\lambda_t,\forall t\in[T]\label{eq_feasible_constraint}
+\end{align}
+
+We call a schedule \textit{feasible} if it satisfies \eqref{eq_feasible_constraint} and \textit{optimal} if it satisifes \eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}.
 \section{Preliminaries}
 In this section, we conduct the prepratory work needed for our algorithms and proofs.\unsure{This sounds strange\ldots What should stand here?}
-\begin{prop}
-Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ such that for every time slot $t$ either $\Sigma$ strictly powers on servers, leaves all server states unchanged or strictly powers off servers.
-$\sum\limits_{i=1}^{m}|s_{i,t}-s_{i,t-1}|=\sum\limits_{i=1}^{m}s_{i,t}-s_{i,t-1}$
+
+\begin{prop}\label{prop_strict_switching}
+Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
+\begin{enumerate}[(i)]
+		\item $costs(\Sigma')\le costs(\Sigma)$ and 
+		\item $\Sigma'$ never powers on and shuts down servers at the same time slot, i.e.\ $\Sigma'$ satisfies the following formula:
+\begin{equation}
+	\forall t\in[T]\Bigl[\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\ge0)\bigr)\lor\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\le 0)\bigr)\Bigr]\label{eq_strict_switching}
+\end{equation}
+\end{enumerate}
 \end{prop}
+
 \begin{proof}
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$ that does not satisfy \eqref{eq_strict_switching}. We show how to repeatedly modify $\Sigma$ such that it satisfies \eqref{eq_strict_switching} and reduces or retains its costs. 
+	
+Let $t\in[T]$ be the first time slot falsifying \eqref{eq_strict_switching} and $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}. First, as all servers are sleeping at time $t=0$, we have
+\begin{equation*}
+	s_{k,1}-s_{k,0}=s_{k,1}-0=s_{k,1}\ge 0, \forall k\in[m]
+\end{equation*}
+Thus, we may assume $t>1$. Now, consider the state sequences $S_i$ and $S_j$:
+\begin{align*}
+	S_i&=(s_{i,1},\ldots,s_{i,t-1}=0,s_{i,t}=1,\ldots,s_{i,T})\\
+	S_j&=(s_{j,1},\ldots,s_{j,t-1}=1,s_{j,t}=0,\ldots,s_{j,T})
+\end{align*}
+We modify $S_i$ and $S_j$ by swapping their states for time slots $\ge t$, that is we set
+\begin{align*}
+	S_i'&\coloneqq(s_{i,1},\ldots,s_{i,t-1}=0,s_{j,t}=0,\ldots,s_{j,T})\\
+	S_j'&\coloneqq(s_{j,1},\ldots,s_{j,t-1}=1,s_{i,t}=1,\ldots,s_{i,T})
+\end{align*}
+
+By repeating the described process, we obtain a schedule satisfying our conditions.
 \end{proof}
- Next, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, that is:
+
+\begin{cor}
+Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ satisfying~\eqref{eq_strict_switching}
+\end{cor}
+\begin{proof}
+	This is a direct consequence of proposition~\ref{prop_strict_switching}.
+\end{proof}
+
+ Next, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, that is
 \begin{equation*}
 	\mx\coloneqq(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T})\in\fromto{0}{m}^T
 \end{equation*}
@@ -295,13 +323,6 @@ Recall that we assume all machines sleeping at times $t\notin[T]$; consequently,
 %\end{equation*}
 %We call a feasible schedule \textbf{optimal} if its incurred costs are minimal under all feasible schedules.
 %\end{defn}
-
-\begin{align*}
-	\text{minimise}\quad&\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}f(\lambda_{i,t})*s_{i,t}}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\min\{0,x_t-x_{t-1}\}}_{\text{switching costs}}
-\\ 
-	\text{subject to}\quad&\sum\limits_{i=1}^{m}\lambda_{i,t}*s_{i,t}=\lambda_t,\forall t\in[T]
-\end{align*}
-
 
 \begin{lem}[Equal load sharing]\label{lem:share}
 Given $x\in\mathbb{N}$ active servers, an arrival rate $\lambda\in[0,m]$, and a convex cost function $f$, the most cost-efficient scheduling strategy is to assign each active server a load of $\lambda/x$.
@@ -707,9 +728,11 @@ Next, let $(t_0=0,t_1,\ldots,t_n=0)$ be the sequence of times where the optimal 
 \newpage
 
 \section*{Appendix}
-Below, we give an overview of just given definitions and conventions commonly referred to in our paper:
+Below, we give an overview of just given definitions and conventions commonly referred to in our paper:\unsure{Good idea to have an appendix?}
 %\scriptsize
 %\begin{multicols}{2}
+\begin{itemize}
+\item Input:
 \begin{itemize}
 	\item $m\in\mathbb{N}$\ldots number of homogeneous servers
 	\item $T\in\mathbb{N}$\ldots number of time slots
@@ -718,15 +741,30 @@ Below, we give an overview of just given definitions and conventions commonly re
 	\item $\beta\in\mathbb{R}_{\ge 0}$\ldots switching costs of a server
 	\item $f:[0,1]\rightarrow\mathbb{R}$\ldots convex operating costs function of a server
 	\item $\inp\coloneqq(m,T,\Lambda,\beta,f)$\ldots input of a problem instance
-	\item $\lambda_{i,t}\in[0,1]$\ldots assigned load for server $i$ at time $t$
-	\item $\mathcal{L}\coloneqq(\lambda_{0,1},\lambda_{2,1},\ldots,\lambda_{m,1},\lambda_{1,2},\ldots,\lambda_{m,T})$\ldots sequence of assigned loads
+\end{itemize}
+
+\item Problem statement:
+\begin{itemize}
 	\item $s_{i,t}$\ldots state of server $i$ at time $t$, i.e.\ sleeping (0) or active(1)
-	\item $\mathcal{S}\coloneqq(s_{1,1},s_{2,1},\ldots,s_{m,1},s_{1,2},\ldots,s_{m,T})\in\{0,1\}^{m*T}$\ldots sequence of states 
-	\item $\Sigma=(\mathcal{S},\mathcal{L})$\ldots a schedule for a problem instance $\inp$
+	\item $S_i\coloneqq(s_{i,1},\ldots,s_{i,T})\in\{0,1\}^T$\ldots sequence of states for server $i$
+	\item $\lambda_{i,t}\in[0,1]$\ldots assigned load for server $i$ at time $t$
+	\item $L_i\coloneqq(\lambda_{i,1},\ldots,\lambda_{i,T})\in[0,1]^T$\ldots sequence of assigned loads for server $i$
+	\item $\mathcal{S}\coloneqq(S_1,\ldots,S_m)$\ldots sequence of all state changes
+	\item $\mathcal{L}\coloneqq(L_1,\ldots,L_m)$\ldots sequence of all assigned loads
+	\item $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$\ldots schedule for a problem instance $\inp$
+\end{itemize}
+
+\item Miscellaneous:
+\begin{itemize}
 	\item $x_t$\ldots number of active servers at time t
 	\item $\mx\coloneqq(x_1,\ldots,x_T)$\ldots sequence of number of active servers
-	\item $\lambda_{t}=0$ for all $t\notin[T]$
-	\item All servers are powered down at time $t=0$
+\end{itemize}
+
+\item Conventions:
+\begin{itemize}
+	\item $\lambda_{t}=0$ for all $t\notin[T]$, i.e.\ there is no load before and after the scheduling process
+	\item $s_{i,t}=0$ for all $t\notin[T]$, i.e.\ all servers are powered down before and after the scheduling process
+\end{itemize}
 \end{itemize}
 %\end{multicols}
 \normalsize
