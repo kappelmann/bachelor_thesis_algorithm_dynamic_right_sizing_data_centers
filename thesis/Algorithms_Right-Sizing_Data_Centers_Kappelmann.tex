@@ -260,11 +260,11 @@ Using these sequences $S_i$ and $L_i$, we can now define the sequence of all sta
 	\mathcal{L}&\coloneqq(L_1,\ldots,L_m)
 \end{align*}
 
-We will subsequently call a pair $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$ a \textit{schedule}. Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies the following optimisation:\unsure{Definition of $costs(\Sigma)$ too hidden?}
+We will subsequently call a pair $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$ a \textit{schedule}. Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies the following optimisation:\unsure{Definition of $c(\Sigma)$ too hidden?}
 
 \begin{align}
-	\text{minimise}\quad&costs(\Sigma)\coloneqq\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})*s_{i,t}\bigr)}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\min\{0,s_{i,t}-s_{i,t-1}\}}_{\text{switching costs}}\label{eq_schedule_costs}\\ 
-	\text{subject to}\quad&\sum\limits_{i=1}^{m}(\lambda_{i,t}*s_{i,t})=\lambda_t,\forall t\in[T]\label{eq_feasible_constraint}
+	&\text{minimise}&&c(\Sigma)\coloneqq\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})*s_{i,t}\bigr)}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\min\{0,s_{i,t}-s_{i,t-1}\}}_{\text{switching costs}}\label{eq_schedule_costs}\\ 
+	&\text{subject to}&&\sum\limits_{i=1}^{m}(\lambda_{i,t}*s_{i,t})=\lambda_t,\quad \forall t\in[T]\label{eq_feasible_constraint}
 \end{align}
 
 We call a schedule \textit{feasible} if it satisfies~\eqref{eq_feasible_constraint} and \textit{optimal} if it satisifes~\eqref{eq_schedule_costs} and~\eqref{eq_feasible_constraint}.
@@ -274,7 +274,7 @@ In this section, we conduct the prepratory work needed for our algorithms and pr
 \begin{prop}\label{prop_strict_switching}
 Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
 \begin{enumerate}[(i)]
-		\item $costs(\Sigma')\le costs(\Sigma)$ and 
+		\item $c(\Sigma')\le c(\Sigma)$ and 
 		\item $\Sigma'$ never powers on and shuts down servers at the same time slot, i.e.\ $\Sigma'$ satisfies the following formula:
 \begin{equation}
 	\forall t\in[T]\Bigl[\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\ge0)\bigr)\lor\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\le 0)\bigr)\Bigr]\label{eq_strict_switching}
@@ -289,7 +289,7 @@ Let $t\in[T]$ be the first time slot falsifying~\eqref{eq_strict_switching}. If 
 	
 First, since all servers are sleeping at time $t=0$, we have
 \begin{equation*}
-	s_{k,1}-s_{k,0}=s_{k,1}-0=s_{k,1}\ge 0, \forall k\in[m]
+	s_{k,1}-s_{k,0}=s_{k,1}-0=s_{k,1}\ge 0,\quad\forall k\in[m]
 \end{equation*}
 Thus, we may assume $t>1$. Now consider the state sequences $S_i$ and $S_j$:
 \begin{align*}
@@ -313,59 +313,89 @@ Finally, we construct a new schedule $\Sigma'\coloneqq(\mathcal{S}',\mathcal{L}'
 \end{align*}
 We now want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq_feasible_constraint}. For time slots $<t$ the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$ we only changed the order of summation~\eqref{eq_feasible_constraint}. Thus, $\Sigma'$ is feasible.
 
-Further, $\Sigma'$ and $\Sigma$ coincide in their operating costs; however, their switching costs differ in that there are no switching costs at time slot $t$ for server $i$ using $\Sigma'$. As we assume $\beta\ge0$, we conclude $costs(\Sigma')\le costs(\Sigma)$
+Further, $\Sigma'$ and $\Sigma$ coincide in their operating costs; however, their switching costs differ in that there are no switching costs at time slot $t$ for server $i$ using $\Sigma'$. As we assume $\beta\ge0$, we conclude $c(\Sigma')\le c(\Sigma)$
 
 Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time slot $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
 \begin{cor}
-Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ satisfying~\eqref{eq_strict_switching}
+Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ satisfying~\eqref{eq_strict_switching}.
 \end{cor}
+
 \begin{proof}
 	Let $\Sigma$ be an optimal schedule for $\inp$. Applying proposition~\ref{prop_strict_switching} to $\Sigma$ yields the result.
 \end{proof}
 
- Next, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, that is
+Next, we want to consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, i.e.\
 \begin{equation*}
 	\mx\coloneqq(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T})\in\fromto{0}{m}^T
 \end{equation*}
-Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ we set $x_t=0$.
 
+Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ we have $x_t=0$. 
 
-%\begin{defn} Let $\mx=(x_0,\ldots,x_T)$ be the sequence of active servers of a schedule. We call a schedule and its sequence \textbf{feasible} if 
-%\begin{equation*}
-	%\forall t\in\fromto{0}{T}: x_t\ge\lambda_t
-%\end{equation*}
-%We call a feasible schedule \textbf{optimal} if its incurred costs are minimal under all feasible schedules.
-%\end{defn}
+\begin{prop}[Equal load sharing]\label{prop_equ_load_sharing}
+Given a schedule $\Sigma$ with $x_t\in\mathbb{N}$ active servers at a fixed time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.
+\end{prop}
 
-\begin{lem}[Equal load sharing]\label{lem:share}
-Given $x\in\mathbb{N}$ active servers, an arrival rate $\lambda\in[0,m]$, and a convex cost function $f$, the most cost-efficient scheduling strategy is to assign each active server a load of $\lambda/x$.
-\end{lem}
 \begin{proof}
+Let $A$ be the set of active servers at time slot $t$, that is $A\coloneqq\{i\in[m]\mid s_{i,t}=1\}$ (note that $|A|=x_t$).
+Consider the schedule's operating costs at time slot $t$ given by
+\begin{equation*}
+	\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})*s_{i,t}\bigr)=\sum\limits_{i\in A}f(\lambda_{i,t})
+\end{equation*}
 
-$\mu_i\in[0,1]:\sum\limits_{i=1}^{x}{\mu_i}=1:$
+Since we are only interested in feasible schedules (see constraint~\eqref{eq_feasible_constraint}), we have 
+\begin{equation*}
+	\sum\limits_{i\in A}\lambda_{i,t}=\lambda_t
+\end{equation*}
+
+Thus, we can obtain weights $\mu_1,\ldots,\mu_{x_t}\in[0,1]$ such that
 \begin{align*}
-	&&f\Bigl(\frac{\lambda}{x}\Bigr)&=f\Bigl(\sum\limits_{i=1}^x{\frac{\mu_i\lambda}{x}}\Bigr)\\
-	\implies&&f\Bigl(\frac{\lambda}{x}\Bigr)&\le\sum\limits_{i=1}^x\frac{1}{x}f(\mu_i\lambda)&&\text{by Jensen's inequality}\\
-	\iff&& xf\Bigl(\frac{\lambda}{x}\Bigr)&\le\sum\limits_{i=1}^xf(\mu_i\lambda)
+	&&&\sum\limits_{i=1}^{x_t}\mu_i=1&&&\\
+	\text{and}&&&\sum\limits_{i\in A}f(\lambda_{i,t})=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)&&&
 \end{align*}
+
+Using these weights, we now consider the operating costs of a schedule that equally distributes $\lambda_t$ on its $x_t$ active servers:
+\begin{align*}
+	&&\sum\limits_{i=1}^{x_t}f\Bigl(\frac{\lambda_t}{x_t}\Bigr)&=\sum\limits_{i=1}^{x_t}f\Bigl(\sum\limits_{i=1}^{x_t}{\frac{\mu_i\lambda_t}{x_t}}\Bigr)\\
+	\implies&&\sum\limits_{i=1}^{x_t}f\Bigl(\frac{\lambda_t}{x_t}\Bigr)&\le\sum\limits_{i=1}^{x_t}\sum\limits_{i=1}^{x_t}\frac{1}{x_t}f(\mu_i\lambda_t)&&\text{(by Jensen's inequality)}\\
+	\iff&&x_t*f\Bigl(\frac{\lambda_t}{x_t}\Bigr)&\le\sum\limits_{i=1}^{x_t}\frac{1}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\\
+	\iff&&x_t*f\Bigl(\frac{\lambda_t}{x_t}\Bigr)&\le\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)
+\end{align*}
+
+Hence, equally distributing our load gives us a lower bound for our costs, and the claim follows.
 \end{proof}
-Lemma~\ref{lem:share} allows us to uniquely identify an optimal schedule by its sequence of numbers of active servers $\mx$. 
-\begin{defn}
-Define the minimum costs function of a feasible sequence $\mx$ between time steps $t$ and $t'$ with $0\le t<t'\le T$ as
-\begin{equation}
-	costs(\mx,t,t')\coloneqq\beta\max\{0,x_{t'}-x_t\}+x_{t'}f(\lambda_{t'}/x_{t'})\label{eq:costs_chi_t_t_prime}
-\end{equation}
-Then the minimum costs of a feasible sequence $\mx$ at time $0<t\le T$ are given by
+
+Proposition~\ref{prop_equ_load_sharing} tells us that there always exists an optimal schedule that equally shares its arrival rate to its active servers at any time slot. As a result, we can restrict ourselves in finding such an optimal schedule. This allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. Further, we are able to simplify our optimisation conditions~\eqref{eq_schedule_costs},\eqref{eq_feasible_constraint}. 
+
+For this, we first define the operating costs function of a problem instance:
 \begin{equation*}
-	costs(\mx,t-1,t)\coloneqq costs(\mx,t)=\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/x_t)
+	oc:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R},\quad(x,\lambda)\mapsto\begin{cases}
+          0, & \text{if $x=0$}\\
+	  x*f(\lambda/x), & \text{if $x\ne 0\land\lambda\le x$}\\
+	  \infty, & \text{otherwise}
+	  \end{cases} \label{fct:c}
 \end{equation*}
-and the total costs by
-\begin{equation*}
-	costs(\mx)\coloneqq\sum\limits_{t=1}^{T}{\beta\max\{0,x_{t}-x_{t-1}\}+x_tf(\lambda_t/x_t)}
-\end{equation*}
-\end{defn}
+
+Our optimisation conditions now simplify into one single minimalisation:
+\begin{align*}
+	\text{minimise}\quad\underbrace{\sum\limits_{t=1}^{T}oc(x_t,\lambda_t)}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\min\{0,x_t-x_{t-1}\}}_{\text{switching costs}}
+\end{align*}
+
+%\begin{defn}
+%Define the minimum costs function of a feasible sequence $\mx$ between time steps $t$ and $t'$ with $0\le t<t'\le T$ as
+%\begin{equation}
+	%costs(\mx,t,t')\coloneqq\beta\max\{0,x_{t'}-x_t\}+x_{t'}f(\lambda_{t'}/x_{t'})\label{eq:costs_chi_t_t_prime}
+%\end{equation}
+%Then the minimum costs of a feasible sequence $\mx$ at time $0<t\le T$ are given by
+%\begin{equation*}
+	%costs(\mx,t-1,t)\coloneqq costs(\mx,t)=\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/x_t)
+%\end{equation*}
+%and the total costs by
+%\begin{equation*}
+	%costs(\mx)\coloneqq\sum\limits_{t=1}^{T}{\beta\max\{0,x_{t}-x_{t-1}\}+x_tf(\lambda_t/x_t)}
+%\end{equation*}
+%\end{defn}
 
 \section{Optimal scheduling for m homogeneous servers}\label{sec:opt}
 TODO: introduction text
