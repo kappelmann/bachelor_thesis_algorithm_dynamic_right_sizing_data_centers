@@ -318,12 +318,12 @@ Further, $\Sigma'$ and $\Sigma$ coincide in their operating costs; however, thei
 Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time slot $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
-\begin{cor}
+\begin{cor}\label{cor_strict_opt_schedule}
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ satisfying~\eqref{eq_strict_switching}.
 \end{cor}
 
 \begin{proof}
-	Let $\Sigma$ be an optimal schedule for $\inp$. Applying proposition~\ref{prop_strict_switching} to $\Sigma$ yields the result.
+Let $\Sigma$ be an optimal schedule for $\inp$. Applying proposition~\ref{prop_strict_switching} to $\Sigma$ yields the result.
 \end{proof}
 
 Next, we want to consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, i.e.\
@@ -334,7 +334,7 @@ Next, we want to consider the sequence of active servers. For this, let $\mx$ de
 Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ we have $x_t=0$. 
 
 \begin{prop}[Equal load sharing]\label{prop_equ_load_sharing}
-Given a schedule $\Sigma$ with $x_t\in\mathbb{N}$ active servers at a fixed time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.
+Given a schedule $\Sigma$ with $x_t\in\mathbb{N}$ active servers at time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.\unsure{This is sounds awkwardly formulated, doesn't it?}
 \end{prop}
 
 \begin{proof}
@@ -366,20 +366,19 @@ Using these weights, we now consider the operating costs of a schedule that equa
 Hence, equally distributing our load gives us a lower bound for our costs, and the claim follows.
 \end{proof}
 
-Proposition~\ref{prop_equ_load_sharing} tells us that there always exists an optimal schedule that equally shares its arrival rate to its active servers at any time slot. As a result, we can restrict ourselves in finding such an optimal schedule. This allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. Further, we are able to simplify our optimisation conditions~\eqref{eq_schedule_costs},\eqref{eq_feasible_constraint}. 
+Proposition~\ref{prop_equ_load_sharing} tells us that there always exists an optimal schedule that equally shares its arrival rate to its active servers at any time slot. As a result, we can restrict ourselves in finding such an optimal schedule. Together with corollary~\ref{cor_strict_opt_schedule}, this allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. Moreover, we are now able to simplify our optimisation conditions~\eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}. 
 
-For this, we first define the operating costs function of a problem instance:
+For this, we first define the operating costs function $c_{op}(\cdot,\cdot)$ of a problem instance that gives us the costs of scheduling a load $\lambda$ equally on $x$ active servers using $f$:
 \begin{equation*}
-	oc:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R},\quad(x,\lambda)\mapsto\begin{cases}
+	c_{op}:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R},\quad(x,\lambda)\mapsto\begin{cases}
           0, & \text{if $x=0$}\\
 	  x*f(\lambda/x), & \text{if $x\ne 0\land\lambda\le x$}\\
 	  \infty, & \text{otherwise}
 	  \end{cases} \label{fct:c}
 \end{equation*}
-
 Our optimisation conditions now simplify into one single minimalisation:
 \begin{align*}
-	\text{minimise}\quad\underbrace{\sum\limits_{t=1}^{T}oc(x_t,\lambda_t)}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\min\{0,x_t-x_{t-1}\}}_{\text{switching costs}}
+	\text{minimise}\quad\underbrace{\sum\limits_{t=1}^{T}c_{op}(x_t,\lambda_t)}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\min\{0,x_t-x_{t-1}\}}_{\text{switching costs}}
 \end{align*}
 
 %\begin{defn}
