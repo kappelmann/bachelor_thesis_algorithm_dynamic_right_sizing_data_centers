@@ -396,8 +396,8 @@ Our optimisation conditions now simplify into one single minimalisation:
 %\end{equation*}
 %\end{defn}
 
-\section{Optimal scheduling for m homogeneous servers}\label{sec:opt}
-TODO: introduction text
+\section{Optimal offline scheduling}\label{sec:opt}
+In this section, we derive an optimal offline algorithm based on our preliminary work. We reduce our scheduling problem instance $\inp$ to a shortest path problem of a level structured graph $G$. We can then use a dynamic programming approach to find a shortest path of $G$ and subsequently an optimal schedule for $\inp$ in pseudo-polynomial time.
 
 \subsection{Graph for an optimal schedule}\label{sec:optgraph}
 We construct a directed acyclic graph as follows:\\
