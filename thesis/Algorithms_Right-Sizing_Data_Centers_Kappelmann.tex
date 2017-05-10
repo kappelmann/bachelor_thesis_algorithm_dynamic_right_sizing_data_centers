@@ -260,21 +260,17 @@ where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0)
 
 Using these sequences $S_i$ and $L_i$, we can now define the sequence of all state changes and the sequence of all assigned loads:
 \unsure{good sentence?\\$\in(\{0,1\}^m)^T$} 
-
 \begin{align*}
 	\mathcal{S}&\coloneqq(S_1,\ldots,S_m)\\
 	\mathcal{L}&\coloneqq(L_1,\ldots,L_m)
 \end{align*}
-
 We will subsequently call a pair $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$ a \textit{schedule}. Finally, we are ready to define our problem statement.
 
 Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies the following optimisation:\unsure{Definition of $\costs(\Sigma)$ too hidden?}
-
 \begin{align}
 	&\text{minimise}&&\costs(\Sigma)\coloneqq\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})*s_{i,t}\bigr)}_{\text{operating costs}}+\underbrace{\beta*\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\min\{0,s_{i,t}-s_{i,t-1}\}}_{\text{switching costs}}\label{eq_schedule_costs}\\ 
 	&\text{subject to}&&\sum\limits_{i=1}^{m}(\lambda_{i,t}*s_{i,t})=\lambda_t,\quad \forall t\in[T]\label{eq_feasible_constraint}
 \end{align}
-
 We call a schedule \textit{feasible} if it satisfies~\eqref{eq_feasible_constraint} and \textit{optimal} if it satisifes~\eqref{eq_schedule_costs} and~\eqref{eq_feasible_constraint}.
 \section{Preliminaries}
 In this section, we conduct the prepratory work needed for our algorithms and proofs.\unsure{This sounds strange\ldots What should be written here?}
@@ -289,7 +285,6 @@ Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a
 \end{equation}
 \end{enumerate}
 \end{prop}
-
 \begin{proof}
 Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies~\eqref{eq_strict_switching} and reduces or retains its costs. 
 	
@@ -319,9 +314,9 @@ Finally, we construct a new schedule $\Sigma'\coloneqq(\mathcal{S}',\mathcal{L}'
 	\mathcal{S}'&\coloneqq(S_1,\ldots,S_i',\ldots,S_j',\ldots,S_T)\\
 	\mathcal{L}'&\coloneqq(L_1,\ldots,L_i',\ldots,L_j',\ldots,L_T)
 \end{align*}
-We now want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq_feasible_constraint}. For time slots $<t$ the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$ we only changed the order of summation~\eqref{eq_feasible_constraint}. Thus, $\Sigma'$ is feasible.
+We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq_feasible_constraint}. For time slots $<t$ the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$ we only changed the order of summation~\eqref{eq_feasible_constraint}. Thus, $\Sigma'$ is feasible.
 
-Further, $\Sigma'$ and $\Sigma$ coincide in their operating costs; however, their switching costs differ in that there are no switching costs at time slot $t$ for server $i$ using $\Sigma'$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$
+$\Sigma'$ and $\Sigma$ coincide in their operating costs; however, their switching costs differ in that there are no switching costs $\beta$ at time slot $t$ for server $i$ using $\Sigma'$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$
 
 Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time slot $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
@@ -329,7 +324,6 @@ Moreover, we decreased the amount of bad spots\unsure{bad spots? better descript
 \begin{cor}\label{cor_strict_opt_schedule}
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ satisfying~\eqref{eq_strict_switching}.
 \end{cor}
-
 \begin{proof}
 Let $\Sigma$ be an optimal schedule for $\inp$. Applying proposition~\ref{prop_strict_switching} to $\Sigma$ yields the result.
 \end{proof}
@@ -338,14 +332,12 @@ Next, we want to consider the sequence of active servers. For this, let $\mx$ de
 \begin{equation*}
 	\mx\coloneqq\bigl(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T}\bigr)\in\fromto{0}{m}^T
 \end{equation*}
-
 Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ we have $x_t=0$.
 
 The next proposition poses the cornerstone of our subsequent works.
 \begin{prop}[Equal load sharing]\label{prop_equ_load_sharing}
 Given $x_t\in\mathbb{N}$ active servers at time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.\unsure{This is sounds awkwardly formulated, doesn't it?}
 \end{prop}
-
 \begin{proof}
 Let $\Sigma$ be an arbitrary, feasible schedule using $x_t$ servers at time slot $t$, and let $A$ be its set of active servers at time slot $t$, that is $A\coloneqq\{i\in[m]\mid s_{i,t}=1\}$.
 Consider the operating costs of $\Sigma$ given by
@@ -356,8 +348,7 @@ Since $\Sigma$ is feasible (see constraint~\eqref{eq_feasible_constraint}), we h
 \begin{equation*}
 	\sum\limits_{i\in A}\lambda_{i,t}=\lambda_t
 \end{equation*}
-
-Thus, we can obtain weights $\mu_1,\ldots,\mu_{x_t}\in[0,1]$ that relate $\lambda_{i,t}$ and $\lambda_t$ for $i\in A$ such that
+Hence, we can obtain weights $\mu_1,\ldots,\mu_{x_t}\in[0,1]$ that relate $\lambda_{i,t}$ and $\lambda_t$ for $i\in A$ such that
 \begin{align*}
 	\sum\limits_{i=1}^{x_t}\mu_i=1\quad\text{and}\quad \sum\limits_{i\in A}f(\lambda_{i,t})=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)
 \end{align*}
@@ -372,71 +363,48 @@ Using Jensen's inequality\unsure{style (footnote) okay?}\footnote{For convex $f:
 \begin{align*}
 	x_t*f\Bigl(\frac{\lambda_t}{x_t}\Bigr)\le x_t\sum\limits_{i=1}^{x_t}\frac{1}{x_t}f(\mu_i\lambda_t)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i\in A}f(\lambda_{i,t})
 \end{align*}
-
-Hence, the operating costs of $\Sigma^*$ give a lower bound for the operatings costs of $\Sigma$, and the claim follows.
+Thus, the operating costs of $\Sigma^*$ give a lower bound for the operatings costs of $\Sigma$, and the claim follows.
 \end{proof}
 
-Proposition~\ref{prop_equ_load_sharing} tells us that there always exists an optimal schedule that equally distributes its arrival rate to its active servers at any time slot. As a result, we can restrict ourselves in finding such an optimal schedule. Together with corollary~\ref{cor_strict_opt_schedule}, this allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. Moreover, we are now able to simplify our optimisation conditions~\eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}. 
+Proposition~\ref{prop_equ_load_sharing} tells us that there always exists an optimal schedule that equally distributes its arrival rate to its active servers at any time slot. As a result, we can restrict ourselves in finding such an optimal schedule. Together with corollary~\ref{cor_strict_opt_schedule}, this allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. Moreover, we are able to simplify our optimisation conditions~\eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}. 
 
 For this, given a problem instance $\inp$, we define the operating costs function $\opcosts(x,\lambda)$ that describes the costs incurred by equally distributing $\lambda$ on $x$ active servers using $f$:
 \begin{equation*}
-	\opcosts:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R},\quad \opcosts(x,\lambda)=\begin{cases}
+	\opcosts:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R}\cup\{\infty\},\quad \opcosts(x,\lambda)=\begin{cases}
           0, & \text{if $x=0$}\\
 	  x*f(\lambda/x), & \text{if $x\ne 0\land\lambda\le x$}\\
-	  \infty, & \text{otherwise}
+	  \infty, & \text{if $x\ne 0\land\lambda>x$}
 	  \end{cases} \label{fct:c}
 \end{equation*}
-
-Further, we define the switching costs function $\swcosts(x_{t-1},x_t)$ describing the costs that incur by changing the amount of active server $x_{t-1}$ to $x_t$:
+We assign infinite costs in case $\lambda>x$ because there would be too few active servers to process the arrival rate. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$ describing the costs that incur by changing the amount of active server $x_{t-1}$ to $x_t$:
 \begin{equation*}
 	\swcosts(x_{t-1},x_t)\coloneqq\beta*\max\{0,x_t-x_{t-1}\}
 \end{equation*}
-
 Lastly, we can define the costs function $\costs(x_{t-1},x_t,\lambda_t)$ that describes the incurring costs for a single time step using an equal distribution of loads:
 \begin{equation*}
 	\costs(x_{t-1},x_{t},\lambda_t)\coloneqq\opcosts(x_t,\lambda_t)+\swcosts(x_{t-1},x_t)
 \end{equation*}
-
 The optimisation conditions for a schedule $\Sigma$ now simplify to one single minimalisation:
 \begin{align*}
 	\text{minimise}\quad \costs(\Sigma)=\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)
 \end{align*}
 
-%\begin{defn}
-%Define the minimum costs function of a feasible sequence $\mx$ between time steps $t$ and $t'$ with $0\le t<t'\le T$ as
-%\begin{equation}
-	%costs(\mx,t,t')\coloneqq\beta\max\{0,x_{t'}-x_t\}+x_{t'}f(\lambda_{t'}/x_{t'})\label{eq:costs_chi_t_t_prime}
-%\end{equation}
-%Then the minimum costs of a feasible sequence $\mx$ at time $0<t\le T$ are given by
-%\begin{equation*}
-	%costs(\mx,t-1,t)\coloneqq costs(\mx,t)=\underbrace{\beta\max\{0,x_{t}-x_{t-1}\}}_{\text{power up costs}}+x_tf(\lambda_t/x_t)
-%\end{equation*}
-%and the total costs by
-%\begin{equation*}
-	%costs(\mx)\coloneqq\sum\limits_{t=1}^{T}{\beta\max\{0,x_{t}-x_{t-1}\}+x_tf(\lambda_t/x_t)}
-%\end{equation*}
-%\end{defn}
-
 \section{Optimal offline scheduling}\label{sec:opt}
 In this section, we derive an optimal offline algorithm based on our preliminary work. We reduce our problem specified $\inp$ to a shortest path problem of a level structured graph $G$. We then use a dynamic programming approach to find a shortest path of $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time.
 
 \subsection{Graph for an optimal schedule}\label{sec:optgraph}
-Let $\inp$ be a problem instance. Thanks our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
-
-In order to warrant that there are at least $\lceil\lambda_t\rceil$ active servers $\forall t\in[T-1]$, we define an auxiliary function which calculates the costs for handling an arrival rate $\lambda$ with $x$ active servers:
-Then, $\forall t\in[T-2]$ and $i,j\in\fromto{0}{m}$, we add edges from $(t,i)$ to $(t+1,j)$ with weight.
-Finally, for $0\le i\le m$ we add edges from $(0,0)$ to $(1,i)$ with weight $d(0,i,\lambda_1)$ and from $(T-1,i)$ to $(T,0)$ with weight $d(i,0,\lambda_T)=0$.
-
+Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
 \begin{align*}
 	&V\coloneqq\bigl\{v_{i,t}\mid i\in\fromto{0}{m},t\in\fromto{0}{T+1}\bigr\}\\
-	&E\coloneqq\bigl\{\bigl(v_{i,t},v_{j,t+1}\bigr)\mid i,j\in\fromto{0}{m},t\in\fromto{0}{T},v_{i,t},v_{j,t+1}\in V\bigr\}\\
+	&E\coloneqq\bigl\{(v_{i,t},v_{j,t+1})\mid i,j\in\fromto{0}{m},t\in\fromto{0}{T},v_{i,t},v_{j,t+1}\in V\bigr\}\\
 	&c_G(v_{i,t},v_{j,t+1})\coloneqq\costs(i,j,\lambda_{t+1})\\
 	&G\coloneqq(V,E,c_G)
 \end{align*}
-For any possible amount of active servers $i$ and any time slot $t$ we add a node $v_{i,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes with their direct successors with respect to time.
-
+\unsure{Maybe something different than $c_G$?}
+For any possible amount of active servers $i$ and any time slot $t$ we add a node $v_{i,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{i,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally on $i$ servers.
 \begin{figure}[H]
 \centering
+\scalebox{0.85}{
 \begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
 
   \node[node] (1) {0,0};
@@ -496,12 +464,10 @@ For any possible amount of active servers $i$ and any time slot $t$ we add a nod
    \path[every node/.style={font=\sffamily\small}] [->,draw,thick] ($(2)!.8!(11)$) -- node[above] {0} ++ (11);
 
 \end{tikzpicture}
+}
 \caption{Level structured graph for an optimal offline algorithm.}
 \end{figure}
-\begin{remark} 
-	All edges from $(t,i)$ to $(t+1,j)$ have weight $d(i,j,\lambda_{t+1})$
-\end{remark}
-
+We now want to verify the correctness of our construction.
 \begin{prop}
 	Any given optimal schedule $\mx$ corresponds to a shortest path $P$ from $(0,0)$ to $(T,0)$ with $costs(\mx)=costs(P)$ and vice versa.
 \end{prop} 
