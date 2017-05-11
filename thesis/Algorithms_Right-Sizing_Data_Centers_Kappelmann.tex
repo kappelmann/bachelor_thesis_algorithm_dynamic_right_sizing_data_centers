@@ -234,7 +234,7 @@
 \pagenumbering{arabic}
 
 \section{Introduction}
-TODO: Hardware prices vs.\ energy costs in data centres and purpose of this paper (offline algorithm, approximation algorithm,\ldots).
+TODO: Hardware prices vs.\ energy costs in data centres, related work and purpose of this paper (offline algorithm, approximation algorithm,\ldots).
 
 \subsection{Model description}\label{sec_model_descr}
 We want to address the issue of above-mentioned ever-growing energy consumption by examing a scheduling problem that commonly arises in data centres. More specifically, we consider a model consisting of a fixed amount of homogeneous servers denoted by $m\in\mathbb{N}$ and a fixed amount of time slots denoted by $T\in\mathbb{N}$\unsure{Need to describe what a time slot means?}. In turn, each server possesses two power states, i.e.\ each server is either powered on (\textit{active state}) or powered off (\textit{sleep state}).\unsure{Better name than sleep state?}
@@ -246,7 +246,7 @@ The operating costs $f$ may not exclusively consider energy costs. For example, 
 
 We assume that a sleeping server does not cause any costs. Note that $f(0)$ describes the costs incurred by an idle server, not a sleeping one; in particular, $f(0)$ may be non-zero. Further, we assume convexity for $f$. This may seem like a notable restriction at first, but it indeed captures the behaviour of most modern server models. Since we are dealing with homogeneous servers, $f$ and $\beta$ are the same for all machines.
 
-For convenience, we assume all machines sleeping at time $t=0$ and force all machines to sleep after the scheduling process, i.e.\ at times $t>T$. Consequently, every server must power down exactly as many times as it powers on. This allows us to consolidate power up and power down costs into $\beta$ and to model both costs as being incurred when powering up a server; that is, a model with power up costs $\beta_\uparrow$ and power down costs $\beta_\downarrow$ can be simply transferred to our model by setting $\beta\coloneqq \beta_\uparrow'\coloneqq\beta_\uparrow+\beta_\downarrow$ and $\beta_\downarrow'=0$.
+For convenience, we assume all machines sleeping at time $t=0$ and force all machines to sleep after the scheduling process, i.e.\ at times $t>T$. Consequently, every server must power down exactly as many times as it powers on. This allows us to consolidate power up and power down costs into $\beta$ and to model both costs as being incurred when powering up a server; that is, a model with power up costs $\beta_\uparrow$ and power down costs $\beta_\downarrow$ can be simply transferred to our model by setting $\beta\coloneqq \beta_\uparrow'\coloneqq\beta_\uparrow+\beta_\downarrow$ and $\beta_\downarrow'=0$. Similarly, we assume that there are no loads at times $t\notin[T]$, that is $\lambda_t=\lambda_{i,t}=0$ for $t\notin[T]$.
 
 \subsection{Problem statement}
 Using above definitions, we can define the input of our model by setting $\inp\coloneqq(m,T,\Lambda,\beta,f)$ where $\Lambda=(\lambda_1,\ldots,\lambda_T)$ is the sequence of arrival rates. We will subsequently identify a problem instance by its input $\inp$. Naturally, given a problem instance $\inp$, we want to schedule our servers in such a way that we minimise the sum of incurred costs while warranting that we are processing the given loads in time.
@@ -379,7 +379,7 @@ As a special case, we can again apply our just derived proposition to optimal sc
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that equally distributes its arrival rates to its active servers in each time slot.
 \end{cor}
 \begin{proof}
-Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy $\mathcal{L}^*$ that equally distributes the arrival rates to all active servers of $\Sigma$ in each time slot. Setting $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$ we have $c(\Sigma^*)\leq c(\Sigma)$ by proposition~\ref{prop_equ_load_sharing} and the claim follows.
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy $\mathcal{L}^*$ that equally distributes the arrival rates to all active servers of $\Sigma$ in each time slot. Setting $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$ we have $\costs(\Sigma^*)\leq \costs(\Sigma)$ by proposition~\ref{prop_equ_load_sharing} and the claim follows.
 \end{proof}
 As a result of corrolary~\ref{cor_equ_load_sharing}, we can restrict ourselves in finding an optimal schedule that equally distributes its arrival rates to its active servers. Together with corollary~\ref{cor_strict_opt_schedule}, this allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. 
 
@@ -400,10 +400,11 @@ Lastly, we can define the costs function $\costs(x_{t-1},x_t,\lambda_t)$ that de
 \begin{equation*}
 	\costs(x_{t-1},x_{t},\lambda_t)\coloneqq\opcosts(x_t,\lambda_t)+\swcosts(x_{t-1},x_t)
 \end{equation*}
-The optimisation conditions for a schedule $\Sigma$ now simplify to one single minimalisation:
-\begin{align*}
-	\text{minimise}\quad \costs(\Sigma)=\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)
-\end{align*}
+The optimisation conditions for a schedule now simplify to one single minimalisation:
+\begin{align}
+	\text{minimise}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq_equ_sharing_schedule_costs}
+\end{align}
+We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq_equ_sharing_schedule_costs}.
 
 \section{Optimal offline scheduling}\label{sec:opt}
 In this section, we derive an optimal offline algorithm based on our preliminary work. We reduce our problem specified $\inp$ to a shortest path problem of a level structured graph $G$. We then use a dynamic programming approach to find a shortest path of $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time.
@@ -417,7 +418,17 @@ Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that t
 	&G\coloneqq(V,E,c_G)
 \end{align*}
 \unsure{Maybe something different than $c_G$?}
-For any possible amount of active servers $i$ and any time slot $t$ we add a node $v_{i,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{i,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally on $i$ servers.
+For any possible amount of active servers $i$ and any time slot $t$ we add a node $v_{i,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{i,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $i$ servers. For any edge connecting $v_{i,t}$ with $v_{j,t+1}$ we assign costs $\costs(i,j,\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $i$ to $j$ machines and processing the load $\lambda_{t+1}$ with $j$ machines.
+
+The costs of a path $P=(v_{i_0,t},v_{i_1,t+1},\ldots,v_{i_n,t+n})$ (where $i_k\in\fromto{0}{m}$) of length $n$ in our graph are thus given by\unsure{Is this well-written?}
+\begin{equation*}
+	\costs(P)\coloneqq\sum\limits_{k=1}^{n}\costs(i_{k-1},i_k,\lambda_{t+k})
+\end{equation*}
+In particular, for a path $P=(v_{0,0},v_{i_1,1},\ldots,v_{i_T,T},v_{0,T+1})$ from $v_{0,0}$ to $v_{0,T+1}$ we have
+\begin{equation*}
+	\costs(P)=c(0,i_1,\lambda_1)+\sum\limits_{k=2}^{T}\costs(i_{k-1},i_{k},\lambda_{k})+\underbrace{c(i_T,0,0)}_{=0}=c(0,i_1,\lambda_1)+\sum\limits_{k=2}^{T}\costs(i_{k-1},i_{k},\lambda_{k})
+\end{equation*}
+Naturally, any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is forced to minimise the costs of the corresponding schedule due to our construction. Needless to say, this demands for a proof of correctness.
 \begin{figure}[H]
 \centering
 \scalebox{0.85}{
@@ -447,13 +458,13 @@ For any possible amount of active servers $i$ and any time slot $t$ we add a nod
   \path[every node/.style={font=\sffamily\small}]
     (1) edge node[left] {$\costs(0,m,\lambda_1)$} (2)
 	edge node[above right=-0.1cm] {$\costs(0,1,\lambda_1)$} (3)
-	edge node[left] {$\costs(0,0,\lambda_1)$} (4)
+	edge node[left] {$\costs(0,0,\lambda_1)=0$} (4)
     (2) edge node[above] {$\costs(m,m,\lambda_2)$} (5)
     (3) edge (6)
 	edge (7)
     (4) edge (6)
-	edge node[below] {$\costs(0,0,\lambda_2)$} (7)
-    (8) edge node[right] {$0$} (11)
+	edge node[below] {$\costs(0,0,\lambda_2)=0$} (7)
+    (8) edge node[right] {$\costs(m,0,\lambda_{T+1})=0$} (11)
     (9) edge node[above] {$0$} (11)
     (10) edge node[above] {$0$} (11);
 
@@ -481,11 +492,10 @@ For any possible amount of active servers $i$ and any time slot $t$ we add a nod
 
 \end{tikzpicture}
 }
-\caption{Level structured graph for an optimal offline algorithm.}
+\caption{Level structured graph for an optimal offline algorithm. Remark that $\costs(i,0,\lambda_t)=0$ for all $i\in\fromto{0}{m}$ and $t\in[T+1]$ and that $\lambda_{T+1}=0$ by our conventions.}
 \end{figure}
-We now want to verify the correctness of our construction.
 \begin{prop}
-	Any given optimal schedule $\mx$ corresponds to a shortest path $P$ from $(0,0)$ to $(T,0)$ with $costs(\mx)=costs(P)$ and vice versa.
+Any given optimal schedule $\mx$ can be transformed to a shortest path $P$ from $v_{0,0}$ to $v_{0,T+1}$ with $\costs(\mx)=\costs(P)$ and vice versa.
 \end{prop} 
 \begin{proof}
 $ $
