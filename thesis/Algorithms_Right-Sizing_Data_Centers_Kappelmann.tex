@@ -239,10 +239,10 @@ TODO: Hardware prices vs.\ energy costs in data centres and purpose of this pape
 \subsection{Model description}\label{sec_model_descr}
 We want to address the issue of above-mentioned ever-growing energy consumption by examing a scheduling problem that commonly arises in data centres. More specifically, we consider a model consisting of a fixed amount of homogeneous servers denoted by $m\in\mathbb{N}$ and a fixed amount of time slots denoted by $T\in\mathbb{N}$\unsure{Need to describe what a time slot means?}. In turn, each server possesses two power states, i.e.\ each server is either powered on (\textit{active state}) or powered off (\textit{sleep state}).\unsure{Better name than sleep state?}
 	
-For any time slot $t\in[T]$, we have a \textit{mean arrival rate} denoted by $\lambda_t$, i.e.\ the amount of expected load to process in time slot $t$. We expect the arrival rates to be normalised such that each server can handle a load between zero and one in any time slot. We denote the assigned load for server $i$ in time slot $t$ by $\lambda_{i,t}\in[0,1]$. Consequently, for any time slot $t$, we expect an arrival rate between zero and $m$, that is $\lambda_t\in[0,m]$; otherwise, the servers would not be able to process the given load in time.
+For any time slot $t\in[T]$, we have a \textit{mean arrival rate} denoted by $\lambda_t$, i.e.\ the amount of expected load to process in time slot $t$. We expect the arrival rates to be normalised such that each server can handle a load between 0 and 1 in any time slot. We denote the assigned load for server $i$ in time slot $t$ by $\lambda_{i,t}\in[0,1]$. Consequently, for any time slot $t$, we expect an arrival rate between 0 and $m$, that is $\lambda_t\in[0,m]$; otherwise, the servers would not be able to process the given load in time.
 
 The costs incurred by a single machine are described by the sum of the machine's \textit{operating costs}, specified by \makebox{$f:[0,1]\rightarrow \mathbb{R}$}, as well as its \textit{(power state) switching costs}, specified by $\beta\in\mathbb{R}_{\ge 0}$. 
-The operating costs $f$ may not exclusively consider energy costs. For example, $f$ may also allow for costs incurred by delays, such as lost revenue caused by users waiting for their responses. Similarly, $\beta$ may also allow for delay costs, wear and tear costs or the like.\cite{dyn_right_size}
+The operating costs $f$ may not exclusively consider energy costs. For example, $f$ may also allow for costs incurred by delays, such as lost revenue caused by users waiting for their responses. Similarly, $\beta$ may also allow for delay costs, wear and tear costs or the like.\cite{dyn_right_size}\unsure{Citation needed/appropriate?}
 
 We assume that a sleeping server does not cause any costs. Note that $f(0)$ describes the costs incurred by an idle server, not a sleeping one; in particular, $f(0)$ may be non-zero. Further, we assume convexity for $f$. This may seem like a notable restriction at first, but it indeed captures the behaviour of most modern server models. Since we are dealing with homogeneous servers, $f$ and $\beta$ are the same for all machines.
 
@@ -256,10 +256,9 @@ For this, consider for each server $i\in[m]$ the sequence of its states $S_i$ an
 	S_i&\coloneqq(s_{i,1},\ldots,s_{i,T})\in\{0,1\}^T\\
 	L_i&\coloneqq(\lambda_{i,1},\ldots,\lambda_{i,T})\in[0,1]^T
 \end{align*}
-where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0) or active (1). Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ and $i\in[m]$, we have $s_{i,t}=0$.
+where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0) or active (1). Recall that we assume all machines sleeping at times $t\notin[T]$; thus, for $t\notin[T]$ and $i\in[m]$, we have $s_{i,t}=0$.
 
-Using these sequences $S_i$ and $L_i$, we can now define the sequence of all state changes and the sequence of all assigned loads:
-\unsure{good sentence?\\$\in(\{0,1\}^m)^T$} 
+We can now define the sequence of all state changes and the sequence of all assigned loads:
 \begin{align*}
 	\mathcal{S}&\coloneqq(S_1,\ldots,S_m)\\
 	\mathcal{L}&\coloneqq(L_1,\ldots,L_m)
@@ -273,8 +272,10 @@ Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies th
 \end{align}
 We call a schedule \textit{feasible} if it satisfies~\eqref{eq_feasible_constraint} and \textit{optimal} if it satisifes~\eqref{eq_schedule_costs} and~\eqref{eq_feasible_constraint}.
 \section{Preliminaries}
-In this section, we conduct the prepratory work needed for our algorithms and proofs.\unsure{This sounds strange\ldots What should be written here?}
+In this section, we conduct the prepratory work that will lay the foundations for our algorithms. For this, we analyse the structure of feasible schedules concering their cost efficiency in order to find characteristics of optimal schedules; these characteristics will then allow us to greatly simplify our optimisation conditions.
 
+We begin by examing the state sequences of feasible schedules. As we are considering homogeneous servers, we do not care which exact servers process the given work loads. Rather we only care about the amount of active servers and the distribution of loads between them. It is in particular unreasonable to power down a machine and to power on a different machine in return. We could just keep the first machine powered on, saving switching costs.
+This investigation is captured by our first proposition.
 \begin{prop}\label{prop_strict_switching}
 Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
 \begin{enumerate}[(i)]
@@ -288,13 +289,16 @@ Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a
 \begin{proof}
 Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies~\eqref{eq_strict_switching} and reduces or retains its costs. 
 	
-Let $t\in[T]$ be the first time slot falsifying~\eqref{eq_strict_switching}. If there does not exist such a $t$, we are done. Otherwise, we can obtain $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}. WLOG we may assume $i<j$. 
+Let $t\in[T]$ be the first time slot falsifying~\eqref{eq_strict_switching}. If there does not exist such a time slot, we are done. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, i.e.\ server $i$ powers on at time $t$ and server $j$ powers off. Without loss of generality, we may assume $i<j$. 
 	
 First, since all servers are sleeping at time $t=0$, we have
 \begin{equation*}
 	s_{k,1}-s_{k,0}=s_{k,1}-0=s_{k,1}\ge 0,\quad\forall k\in[m]
 \end{equation*}
-Thus, we may assume $t>1$. Now consider the state sequences $S_i$ and $S_j$:
+which satisfies formula~\eqref{eq_strict_switching} for $t=1$.
+Thus, we may assume $t>1$. 
+	
+Now consider the state sequences of server $i$ and $j$:
 \begin{align*}
 	S_i&=(s_{i,1},\ldots,s_{i,t-1}=0,s_{i,t}=1,\ldots,s_{i,T})\\
 	S_j&=(s_{j,1},\ldots,s_{j,t-1}=1,s_{j,t}=0,\ldots,s_{j,T})
@@ -304,23 +308,22 @@ We modify $S_i$ and $S_j$ by swapping their states for time slots $\ge t$, that 
 	S_i'&\coloneqq(s_{i,1},\ldots,s_{i,t-1}=0,s_{j,t}=0,\ldots,s_{j,T})\\
 	S_j'&\coloneqq(s_{j,1},\ldots,s_{j,t-1}=1,s_{i,t}=1,\ldots,s_{i,T})
 \end{align*}
-Similarly, we need to swap the assigned loads:
+Similarly, we need to swap the assigned loads for server $i$ and $j$:
 \begin{align*}
 	L_i'&\coloneqq(\lambda_{i,1},\ldots,\lambda_{i,t-1},\lambda_{j,t},\ldots,\lambda_{j,T})\\
 	L_j'&\coloneqq(\lambda_{j,1},\ldots,\lambda_{j,t-1},\lambda_{i,t},\ldots,\lambda_{i,T})
 \end{align*}
 Finally, we construct a new schedule $\Sigma'\coloneqq(\mathcal{S}',\mathcal{L}')$ given by 
 \begin{align*}
-	\mathcal{S}'&\coloneqq(S_1,\ldots,S_i',\ldots,S_j',\ldots,S_T)\\
-	\mathcal{L}'&\coloneqq(L_1,\ldots,L_i',\ldots,L_j',\ldots,L_T)
+	\mathcal{S}'&\coloneqq(S_1,\ldots,S_{i-1},S_i',S_{i+1},\ldots,S_{j-1},S_j',S_{j+1},\ldots,S_T)\\
+	\mathcal{L}'&\coloneqq(L_1,\ldots,L_{i-1},L_i',L_{i+1},\ldots,L_{j-1},L_j',L_{j+1},\ldots,L_T)
 \end{align*}
-We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq_feasible_constraint}. For time slots $<t$ the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$ we only changed the order of summation~\eqref{eq_feasible_constraint}. Thus, $\Sigma'$ is feasible.
+We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq_feasible_constraint}. For time slots $<t$ the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$ we only changed the order of summation in~\eqref{eq_feasible_constraint}. Thus, $\Sigma'$ is feasible.
 
-$\Sigma'$ and $\Sigma$ coincide in their operating costs; however, their switching costs differ in that there are no switching costs $\beta$ at time slot $t$ for server $i$ using $\Sigma'$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$
+$\Sigma$ and $\Sigma'$ coincide in their operating costs; however, their switching costs differ in that there are no switching costs $\beta$ at time slot $t$ for server $i$ using $\Sigma'$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$
 
 Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time slot $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
-
 \begin{cor}\label{cor_strict_opt_schedule}
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ satisfying~\eqref{eq_strict_switching}.
 \end{cor}
@@ -330,7 +333,7 @@ Let $\Sigma$ be an optimal schedule for $\inp$. Applying proposition~\ref{prop_s
 
 Next, we want to consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, i.e.\
 \begin{equation*}
-	\mx\coloneqq\bigl(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T}\bigr)\in\fromto{0}{m}^T
+	mx\coloneqq\bigl(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T}\bigr)\in\fromto{0}{m}^T
 \end{equation*}
 Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ we have $x_t=0$.
 
