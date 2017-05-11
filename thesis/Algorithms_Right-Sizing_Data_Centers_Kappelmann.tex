@@ -534,60 +534,75 @@ and the claim follows.
 \end{proof}
 
 \subsection{A pseudo-polynomial minimum cost algorithm}
+In the following, we give an algorithm based on our results from the preceding section. We use a dynamic programming approach similar to the well-known Bellman-Ford algorithm.
 \begin{algorithm}[H]
-    \caption{Calculate costs for $m$ homogeneous servers}
+    \caption{Costs and parents for optimal offline scheduling}
     \begin{algorithmic}[1]
-        \Require{Convex cost function $f$, $\lambda_0=\lambda_T=0$, $\forall t\in[T-1]:\lambda_t\in[0,m]$}
-   \Function{schedule}{$m,T,\beta,\lambda_1,\ldots,\lambda_{T-1}$}
-	\If{$T<2$} \Return
-	\EndIf
-	\Blet{$p[2\ldots T-1,m]$ and $M[1\ldots T-1,m]$}{new arrays}
-	\For{$j \gets 0 \textrm{ to } m$}
-		\Let{$M[1,j]$}{$d(0,j,\lambda_1)$}
+    \Function{optimal\_offline}{$m,T,\Lambda,\beta,f$}
+	\Blet{$C[T+1,m]$ and $p[T+1,m]$}{new arrays}\Comment{Costs and parents}
+	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialisation}
+		\Let{$C[1,x]$}{$c(0,x,\lambda_1)$}
+		\Let{$p[1,x]$}{$0$}
 	\EndFor
-	\For{$t \gets 1 \textrm{ to } T-2$}
-		\For{$j \gets 0 \textrm{ to } m$}
+	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and parents}
+		\For{$x' \gets 0 \textrm{ to } m$}
 			\Let{$opt$}{$\infty$}
-			\For{$i \gets 0 \textrm{ to } m$}
-				\Let{$M[t+1,j]$}{$M[t,i]+d(i,j,\lambda_{t+1})$}
-				\If{$M[t+1,j]<opt$}
-					\Let{$opt$}{$M[t+1,j]$}
-					\Let{$p[t+1,j]$}{$i$}
+			\For{$x \gets 0 \textrm{ to } m$}
+				\Let{$C[t,x']$}{$C[t-1,x]+c(x,x',\lambda_t)$}
+				\If{$C[t,x']<opt$}
+					\Let{$opt$}{$C[t,x']$}
+					\Let{$p[t,x']$}{$x$}
 				\EndIf
 			\EndFor
-			\Let{$M[t+1,j]$}{$opt$}
+			\Let{$C[t,x']$}{$opt$}
 		\EndFor
 	\EndFor
-	\State \Return{$p$ and $M$}
+	\State \Return{$C$ and $p$}
+  \EndFunction
+  \end{algorithmic}
+  \label{alg_opt_offline}
+\end{algorithm}
+\unsure{Which version is better?\\names okay? style?}
+\begin{algorithm}[H]
+    \caption{Costs and parents for optimal offline scheduling}
+    \begin{algorithmic}[1]
+    \Function{optimal\_offline}{$m,T,\Lambda,\beta,f$}
+	\Blet{$C[T+1,m]$ and $p[T+1,m]$}{new arrays}\Comment{Costs and parents}
+	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialisation}
+		\Let{$C[1,x]$}{$c(0,x,\lambda_1)$}
+		\Let{$p[1,x]$}{$0$}
+	\EndFor
+	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and parents}
+		\For{$x' \gets 0 \textrm{ to } m$}
+			\Let{$C[t,x']$}{$\min\bigl\{C[t-1,x]+c(x,x',\lambda_t)\mid x\in\fromto{0}{m}\bigr\}$}
+			\Let{$p[t,x']$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[t-1,x]+c(x,x',\lambda_t)\bigr\}$}
+		\EndFor
+	\EndFor
+	\State \Return{$C$ and $p$}
   \EndFunction
   \end{algorithmic}
 \end{algorithm}
 \begin{algorithm}[H]
-    \caption{Extract schedule for $m$ homogeneous servers}
+    \caption{Extract schedule from result of algorithm~\ref{alg_opt_offline}}
     \begin{algorithmic}[1]
-   \Function{Extract}{$m,p,M,T$}
-	\Blet{$x[0\ldots T]$}{a new array}
-	\Let{$x[0]$}{$x[T]\leftarrow 0$}
-	\If{$T<2$} \Return $x$ \Comment{Trivial solution}
-	\EndIf
-	\Let{$x[T-1]$}{$\underset{0\le i\le m}{arg\ min}\{M[T-1,i]\}$}
-	\For{$t \gets T-2 \textrm{ to } 1$}
-		\Let{$x[t]$}{$p[t+1,x[t+1]]$}
+   \Function{Extract\_optimal\_offline}{$m,M,p,T$}
+	\Blet{$\mx[T]$}{a new array}
+	    \Let{$x[T]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{M[T,x]\bigr\}$}\Comment{Initialisation; find minimum at last time slot}
+	    \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from parents array}
+		\Let{$x[t]$}{$p\bigl[t+1,x[t+1]\bigr]$}
 	\EndFor
 	\State \Return{$x$}
   \EndFunction
   \end{algorithmic}
+  \label{alg_extr_opt_offline}
 \end{algorithm}
 
 \subsubsection{Runtime analysis}
-The algorithm visits every vertex and every edge of the graph exactly once. As the number of vertices is bounded by $\mathcal{O}(Tm)$ and the number of edges is bounded by $\mathcal{O}(Tm^2)$ the running time is given by:
+Algorithm~\ref{alg_opt_offline} needs $\mathcal{O}(m)$ iterations for its initialisation and $\mathcal{O}(Tm^2)$ steps for the iterative calculation. Algorithm~\ref{alg_extr_opt_offline} needs $\mathcal{O}(T)$ steps for its initialisation and for its iterative calculation, respectively. Thus, we receive a run time of 
 \begin{equation*}
-	\mathcal{O}(Tm+Tm^2)=\mathcal{O}(Tm^2)
+	\mathcal{O}(Tm+Tm^2+2T)=\mathcal{O}(Tm^2)
 \end{equation*}
 As we need $\log_2(m)$ bits to encode m, the running time is polynomial in the numeric value of the input but exponential in the length of the input. Hence, the algorithm is pseudo-polynomial.
-
-\subsubsection{A memory optimized algorithm}
-TODO: use only array with size 2m
 
 \section{A polynomial $4$-approximation algorithm for monotonically increasing convex f}
 We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
