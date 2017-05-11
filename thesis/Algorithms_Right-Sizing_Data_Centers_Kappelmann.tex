@@ -325,12 +325,12 @@ $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, their switchi
 Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time slot $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
-As a special case, proposition~\ref{prop_strict_switching} also unfolds its power on optimal schedules, yielding the next corrolary.
+As a special case, proposition~\ref{prop_strict_switching} unfolds its power on optimal schedules, yielding the next corrolary.
 \begin{cor}\label{cor_strict_opt_schedule}
-Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ satisfying~\eqref{eq_strict_switching}.
+Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ satisfying~\eqref{eq_strict_switching}.
 \end{cor}
 \begin{proof}
-Let $\Sigma$ be an optimal schedule for $\inp$. Applying proposition~\ref{prop_strict_switching} to $\Sigma$ yields the result.
+Let $\Sigma$ be an optimal schedule for $\inp$. Applying proposition~\ref{prop_strict_switching} to $\Sigma$ yields $\Sigma^*$ and the claim follows.
 \end{proof}
 
 Next, we want to consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, that is
@@ -374,9 +374,16 @@ With the use of Jensen's inequality\unsure{style (footnote) okay?}\footnote{For 
 \end{align*}
 Thus, the operating costs of $\Sigma^*$ give a lower bound for the operatings costs of $\Sigma$, and the claim follows.
 \end{proof}
+As a special case, we can again apply our just derived proposition to optimal schedules.
+\begin{cor}\label{cor_equ_load_sharing}
+Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that equally distributes its arrival rates to its active servers in each time slot.
+\end{cor}
+\begin{proof}
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy $\mathcal{L}^*$ that equally distributes the arrival rates to all active servers of $\Sigma$ in each time slot. Setting $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$ we have $c(\Sigma^*)\leq c(\Sigma)$ by proposition~\ref{prop_equ_load_sharing} and the claim follows.
+\end{proof}
+As a result of corrolary~\ref{cor_equ_load_sharing}, we can restrict ourselves in finding an optimal schedule that equally distributes its arrival rates to its active servers. Together with corollary~\ref{cor_strict_opt_schedule}, this allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. 
 
-Proposition~\ref{prop_equ_load_sharing} tells us that there always exists an optimal schedule that equally distributes its arrival rate to its active servers at any time slot. As a result, we can restrict ourselves in finding such an optimal schedule. Together with corollary~\ref{cor_strict_opt_schedule}, this allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. Moreover, we are able to simplify our optimisation conditions~\eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}. 
-
+We are now able to simplify our optimisation conditions~\eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}. 
 For this, given a problem instance $\inp$, we define the operating costs function $\opcosts(x,\lambda)$ that describes the costs incurred by equally distributing $\lambda$ on $x$ active servers using $f$:
 \begin{equation*}
 	\opcosts:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R}\cup\{\infty\},\quad \opcosts(x,\lambda)=\begin{cases}
@@ -385,7 +392,7 @@ For this, given a problem instance $\inp$, we define the operating costs functio
 	  \infty, & \text{if $x\ne 0\land\lambda>x$}
 	  \end{cases} \label{fct:c}
 \end{equation*}
-We assign infinite costs in case $\lambda>x$ because there would be too few active servers to process the arrival rate. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$ describing the costs that incur by changing the amount of active server $x_{t-1}$ to $x_t$:
+We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$ that describes the incurred costs when changing the amount of active server from $x_{t-1}$ to $x_t$:
 \begin{equation*}
 	\swcosts(x_{t-1},x_t)\coloneqq\beta*\max\{0,x_t-x_{t-1}\}
 \end{equation*}
