@@ -274,7 +274,7 @@ We call a schedule \textit{feasible} if it satisfies~\eqref{eq_feasible_constrai
 \section{Preliminaries}
 In this section, we conduct the prepratory work that will lay the foundations for our algorithms. For this, we analyse the structure of feasible schedules concering their cost efficiency in order to find characteristics of optimal schedules; these characteristics will then allow us to greatly simplify our optimisation conditions.
 
-We begin by examing the state sequences of feasible schedules. As we are considering homogeneous servers, we do not care which exact servers process the given work loads. Rather we only care about the amount of active servers and the distribution of loads between them. It is in particular unreasonable to power down a machine and to power on a different machine in return. We could just keep the first machine powered on, saving switching costs.
+We begin by examing the state sequences of feasible schedules. As we are considering homogeneous servers, we do not care which exact servers process the given work loads. Rather we only care about the amount of active servers and the distribution of loads between them. It is in particular unreasonable to power down a machine and to power on a different machine in return; we could just keep the first machine powered on, saving switching costs.
 This investigation is captured by our first proposition.
 \begin{prop}\label{prop_strict_switching}
 Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
@@ -324,6 +324,8 @@ $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, their switchi
 
 Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time slot $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
+
+As a special case, proposition~\ref{prop_strict_switching} also unfolds its power on optimal schedules, yielding the next corrolary.
 \begin{cor}\label{cor_strict_opt_schedule}
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ satisfying~\eqref{eq_strict_switching}.
 \end{cor}
@@ -331,40 +333,44 @@ Given a problem instance $\inp$, there exists an optimal schedule $\Sigma$ satis
 Let $\Sigma$ be an optimal schedule for $\inp$. Applying proposition~\ref{prop_strict_switching} to $\Sigma$ yields the result.
 \end{proof}
 
-Next, we want to consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, i.e.\
+Next, we want to consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, that is
 \begin{equation*}
-	mx\coloneqq\bigl(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T}\bigr)\in\fromto{0}{m}^T
+	\mx\coloneqq\bigl(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T}\bigr)\in\fromto{0}{m}^T
 \end{equation*}
-Recall that we assume all machines sleeping at times $t\notin[T]$; consequently, for $t\notin[T]$ we have $x_t=0$.
+As we assume all machines sleeping at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$.
 
-The next proposition poses the cornerstone of our subsequent works.
+The next proposition poses the cornerstone of our subsequent works. We want to establish an optimal scheduling strategy given a fixed amount of active servers. It turns out that equal load-sharing seems a very desirable strategy.
 \begin{prop}[Equal load sharing]\label{prop_equ_load_sharing}
 Given $x_t\in\mathbb{N}$ active servers at time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.\unsure{This is sounds awkwardly formulated, doesn't it?}
 \end{prop}
 \begin{proof}
 Let $\Sigma$ be an arbitrary, feasible schedule using $x_t$ servers at time slot $t$, and let $A$ be its set of active servers at time slot $t$, that is $A\coloneqq\{i\in[m]\mid s_{i,t}=1\}$.
-Consider the operating costs of $\Sigma$ given by
+Consider the operating costs of $\Sigma$ at time $t$ given by
 \begin{equation*}
-	\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})*s_{i,t}\bigr)=\sum\limits_{i\in A}f(\lambda_{i,t})
+	\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})*s_{i,t}\bigr)=\sum\limits_{i\in A}\bigl(f(\lambda_{i,t})*1\bigr)+\sum\limits_{i\in [m]\setminus A}\bigl(f(\lambda_{i,t})*0\bigr)=\sum\limits_{i\in A}f(\lambda_{i,t})
 \end{equation*}
 Since $\Sigma$ is feasible (see constraint~\eqref{eq_feasible_constraint}), we have 
 \begin{equation*}
 	\sum\limits_{i\in A}\lambda_{i,t}=\lambda_t
 \end{equation*}
 Hence, we can obtain weights $\mu_1,\ldots,\mu_{x_t}\in[0,1]$ that relate $\lambda_{i,t}$ and $\lambda_t$ for $i\in A$ such that
+\begin{align}
+	\sum\limits_{i=1}^{x_t}\mu_i=1\quad\text{and}\quad \sum\limits_{i\in A}f(\lambda_{i,t})=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\label{eq_mu_lambda_costs}
+\end{align}
+In particular, we have 
+\begin{equation}
+	\sum_{i=1}^{x_t}\mu_i\lambda_t=\lambda_t\label{eq_mu_convex_comb}
+\end{equation}
+Using these weights, we now consider the operating costs of a schedule $\Sigma^*$ that equally distributes $\lambda_t$ to its $x_t$ active servers:
 \begin{align*}
-	\sum\limits_{i=1}^{x_t}\mu_i=1\quad\text{and}\quad \sum\limits_{i\in A}f(\lambda_{i,t})=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)
+	\sum\limits_{i=1}^{x_t}f\Bigl(\frac{\lambda_t}{x_t}\Bigr)=x_t*f\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\eqref{eq_mu_convex_comb}}{=}x_t*f\Bigl(\sum\limits_{i=1}^{x_t}{\frac{\mu_i\lambda_t}{x_t}}\Bigr)
 \end{align*}
-In particular, we have $\sum_{i=1}^{x_t}\mu_i\lambda_t=\lambda_t$. Using these weights, we now consider the operating costs of a schedule $\Sigma^*$ that equally distributes $\lambda_t$ to its $x_t$ active servers:
-\begin{align*}
-	\sum\limits_{i=1}^{x_t}f\Bigl(\frac{\lambda_t}{x_t}\Bigr)=x_t*f\Bigl(\frac{\lambda_t}{x_t}\Bigr)=x_t*f\Bigl(\sum\limits_{i=1}^{x_t}{\frac{\mu_i\lambda_t}{x_t}}\Bigr)
-\end{align*}
-Using Jensen's inequality\unsure{style (footnote) okay?}\footnote{For convex $f:\mathbb{R}\rightarrow\mathbb{R}$, arbitrary $\lambda_1,\ldots,\lambda_n\in\mathbb{R}$, and $x_1,\ldots,x_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}x_i=1$ we have: 
+With the use of Jensen's inequality\unsure{style (footnote) okay?}\footnote{For convex $f:\mathbb{R}\rightarrow\mathbb{R}$, arbitrary $\lambda_1,\ldots,\lambda_n\in\mathbb{R}$, and $x_1,\ldots,x_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}x_i=1$ we have: 
 \begin{equation*}
 	f\Bigl(\sum_{i=1}^n x_i \lambda_i\Bigr) \leq \sum_{i=1}^n x_i f(\lambda_i)
 \end{equation*}} and the fact that $\sum_{i=1}^{x_t}(1/x_t)=1$, we can give an upper bound for the costs :
 \begin{align*}
-	x_t*f\Bigl(\frac{\lambda_t}{x_t}\Bigr)\le x_t\sum\limits_{i=1}^{x_t}\frac{1}{x_t}f(\mu_i\lambda_t)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i\in A}f(\lambda_{i,t})
+	x_t*f\Bigl(\frac{\lambda_t}{x_t}\Bigr)\le x_t\sum\limits_{i=1}^{x_t}\frac{1}{x_t}f(\mu_i\lambda_t)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\stackrel{\eqref{eq_mu_lambda_costs}}{=}\sum\limits_{i\in A}f(\lambda_{i,t})
 \end{align*}
 Thus, the operating costs of $\Sigma^*$ give a lower bound for the operatings costs of $\Sigma$, and the claim follows.
 \end{proof}
