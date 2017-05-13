@@ -197,13 +197,14 @@
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 
 % Custom commands
+\DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\mx}{\mathcal{X}}
 \newcommand{\inp}{\mathcal{I}}
 \newcommand{\costs}{c}
 \newcommand{\opcosts}{c_{op}}
 \newcommand{\swcosts}{c_{sw}}
 \newcommand{\fromto}[2]{\{#1,\ldots,#2\}}
-\DeclareMathOperator*{\argmin}{arg\,min}
+\newcommand{\dotcup}{\mathbin{\mathaccent\cdot\cup}}
 \newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
 %\newcommandx{\unsure}[2][1=]{}
 
@@ -414,7 +415,7 @@ After that, we refine our initial approach to derive an improved algorithm with 
 \subsection{A pseudo-polynomial algorithm}\label{sec_opt_offline_pseudo_poly}
 Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
 \begin{align*}
-	&V\coloneqq\bigl\{v_{x,t}\mid x\in\fromto{0}{m},t\in\fromto{0}{T+1}\bigr\}\\
+	&V\coloneqq\bigl\{v_{x,t}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
 	&E\coloneqq\bigl\{(v_{x,t},v_{x',t+1})\mid x,x'\in\fromto{0}{m},t\in\fromto{0}{T},v_{x,t},v_{x',t+1}\in V\bigr\}\\
 	&c_G(v_{x,t},v_{x',t+1})\coloneqq\costs(x,x',\lambda_{t+1})\\
 	&G\coloneqq(V,E,c_G)
@@ -618,43 +619,54 @@ The runtime is polynomial in the numeric value of the input; however, as we just
 Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\mathcal{O}(Tm)$, we receive a memory complexity of $\mathcal{O}(Tm)$
 
 \subsection{A pseudo-linear algorithm}
-TODO: Text
+%TODO: Text
 \begin{align*}
-	&V\coloneqq\bigl\{v_{x,t}\mid x\in\fromto{0}{m},t\in\fromto{0}{T+1}\bigr\}\\
-	&E\coloneqq\bigl\{(v_{x,t},v_{x',t+1})\mid x,x'\in\fromto{0}{m},t\in\fromto{0}{T},v_{x,t},v_{x',t+1}\in V\bigr\}\\
-	&c_G(v_{x,t},v_{x',t+1})\coloneqq\costs(x,x',\lambda_{t+1})\\
+	&V\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
+	&E_s\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in\fromto{0}{m}\bigr\}\\
+	&E_e\coloneqq\bigl\{(v_{x,T\uparrow},v_{0,T+1})\mid x\in\fromto{0}{m}\bigr\}\\
+	&E_\downarrow\coloneqq\bigl\{(v_{x,t\downarrow},v_{x-1,t\downarrow})\mid x\in[m],t\in[T]\bigr\}\\
+	&E_\uparrow\coloneqq\bigl\{(v_{x-1,t\uparrow},v_{x,t\uparrow})\mid x\in[m],t\in[T]\bigr\}\\
+	&E_{\downarrow\uparrow}\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t+1\uparrow})\mid x\in\fromto{0}{m},t\in[T]\bigr\}\\
+	&E_{\uparrow\downarrow}\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in\fromto{0}{m},t\in[T]\bigr\}\\
+	&E\coloneqq E_s\dotcup E_e\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
+	&c_G(e)\coloneqq
+	\begin{cases}
+		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1})\in E_s$}\\
+		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow}\dotcup E_e)$}\\
+		\opcosts(x,\lambda_t), & \text{if $e=(v_{x,t},v_{x,t+1})\in E_{\uparrow\downarrow}$}\\
+	\end{cases}\\
 	&G\coloneqq(V,E,c_G)
 \end{align*}
-\unsure{Maybe something different than $c_G$?}
-For any possible amount of active servers $x$ and any time slot $t$ we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$ we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
-
-The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by\unsure{Is this well-written?}
+%\unsure{Maybe something different than $c_G$?}
+%For any possible amount of active servers $x$ and any time slot $t$ we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$ we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
+%
+%The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by\unsure{Is this well-written?}
 
 \begin{figure}[H]
 \centering
 \scalebox{0.535}{
 \begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.5cm,circle,draw}]
   \node[node] (1) {0,0};
-  \node[node] (4) [below right=4cm of 1] {0,1,u};
-  \node[node] (3) [above =0.5cm of 4] {1,1,u};
-  \node[node] (2) [above right=4cm of 1] {m,1,u};
-  \node[node] (5) [below =0.5cm of 2] {m-1,1,u};
-  \node[node] (7) [right =of 3] {1,1};
-  \node[node] (6) [right =of 2] {m,1};
-  \node[node] (8) [right =of 4] {0,1};
-  \node[node] (9) [right =of 5] {m-1,1};
-  \node[node] (11) [right =of 7] {1,2,u};
-  \node[node] (10) [right =of 6] {m,2,u};
-  \node[node] (12) [right =of 8] {0,2,u};
-  \node[node] (13) [right =of 9] {m-1,2,u};
-  \node[node] (15) [right =of 11] {1,2};
-  \node[node] (14) [right =of 10] {m,2};
-  \node[node] (16) [right =of 12] {0,2};
-  \node[node] (17) [right =of 13] {m-1,2};
-  \node[node] (19) [right =4cm of 15] {1,T};
-  \node[node] (18) [right =4cm of 14] {m,T};
-  \node[node] (20) [right =4cm of 16] {0,T};
-  \node[node] (21) [right =4cm of 17] {m-1,T};
+  \node[node] (4) [below right=4cm of 1] {0,1$\downarrow$};
+  \node[node] (3) [above =0.5cm of 4] {1,1$\downarrow$};
+  \node[node] (2) [above right=4cm of 1] {m,1$\downarrow$};
+  \node[node] (5) [below =0.5cm of 2] {m-1,1$\downarrow$};
+  \node[node] (7) [right =of 3] {1,1$\uparrow$};
+  \node[node] (6) [right =of 2] {m,1$\uparrow$};
+  \node[node] (8) [right =of 4] {0,1$\uparrow$};
+  \node[node] (9) [right =of 5] {m-1,1$\uparrow$};
+  \node[node] (11) [right =of 7] {1,2$\downarrow$};
+  \node[node] (10) [right =of 6] {m,2$\downarrow$};
+  \node[node] (12) [right =of 8] {0,2$\downarrow$};
+  \node[node] (13) [right =of 9] {m-1,2$\downarrow$};
+  \node[node] (15) [right =of 11] {1,2$\uparrow$};
+  \node[node] (14) [right =of 10] {m,2$\uparrow$};
+  \node[node] (16) [right =of 12] {0,2$\uparrow$};
+  \node[node] (17) [right =of 13] {m-1,2$\uparrow$};
+  \node[node] (19) [right =4cm of 15] {1,T$\uparrow$};
+  \node[node] (18) [right =4cm of 14] {m,T$\uparrow$};
+  \node[node] (20) [right =4cm of 16] {0,T$\uparrow$};
+  \node[node] (21) [right =4cm of 17] {m-1,T$\uparrow$};
   \node[node] (22) [above right =4cm of 20] {0,T+1};
 
   \node at ($(14)!.5!(18)$) {\ldots};
