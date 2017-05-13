@@ -459,12 +459,12 @@ Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the c
   \path[every node/.style={font=\sffamily\small}]
     (1) edge node[left] {$\costs(0,m,\lambda_1)$} (2)
 	edge node[above right=-0.1cm] {$\costs(0,1,\lambda_1)$} (3)
-	edge node[left] {$\costs(0,0,\lambda_1)=0$} (4)
+	edge node[left] {$\costs(0,0,\lambda_1)$} (4)
     (2) edge node[above] {$\costs(m,m,\lambda_2)$} (5)
     (3) edge (6)
 	edge (7)
     (4) edge (6)
-	edge node[below] {$\costs(0,0,\lambda_2)=0$} (7)
+	edge node[below] {$\costs(0,0,\lambda_2)$} (7)
     (8) edge node[right] {$\costs(m,0,\lambda_{T+1})=0$} (11)
     (9) edge node[above] {$0$} (11)
     (10) edge node[above] {$0$} (11);
@@ -493,7 +493,7 @@ Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the c
 
 \end{tikzpicture}
 }
-\caption{Level structured graph for an optimal offline algorithm. Note that $\costs(i,0,\lambda_t)=0$ for all $i\in\fromto{0}{m}$ and $t\in[T+1]$ and that $\lambda_{T+1}=0$ by our conventions.}
+\caption{Level structured graph for an optimal offline algorithm. Note that $\costs(i,0,\lambda_{T+1})=0$ for all $i\in\fromto{0}{m}$ because $\lambda_{T+1}=0$ by our conventions.}
 \end{figure}
 \begin{lem}\label{lem_opt_sched}
 Any given schedule $\mx$ for $\inp$ corresponds to a path $P$ from $v_{0,0}$ to $v_{0,T+1}$ with $\costs(\mx)=\costs(P)$ and vice versa.
@@ -526,7 +526,7 @@ Thus, the claim follows.
 Any given optimal schedule $\mx$ for $\inp$ corresponds to a shortest path $P$ from $v_{0,0}$ to $v_{0,T+1}$ with $\costs(\mx)=\costs(P)$ and vice versa.
 \end{thm} 
 \begin{proof}
-By lemma~\ref{lem_opt_sched} we have a one-to-one correspondence between schedules $\mx$ and paths $P$ obeying $c(\mx)=c(P)$. Thus we have 
+By lemma~\ref{lem_opt_sched} we have a one-to-one correspondence between schedules $\mx$ and paths $P$ obeying $c(\mx)=c(P)$. Thus, we have 
 \begin{equation*}
 	c(\mx)\text{ minimal}\iff c(P)\text{ minimal}
 \end{equation*}
@@ -535,6 +535,36 @@ and the claim follows.
 
 \subsection{A pseudo-polynomial minimum cost algorithm}
 In the following, we give an algorithm based on our results from the preceding section. We use a dynamic programming approach similar to the well-known Bellman-Ford algorithm.
+%\begin{algorithm}[H]
+    %\caption{Costs and parents for optimal offline scheduling}
+    %\begin{algorithmic}[1]
+    %\Function{optimal\_offline}{$m,T,\Lambda,\beta,f$}
+	%\Blet{$C[T+1,m]$ and $p[T+1,m]$}{new arrays}\Comment{Costs and parents}
+	%\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialisation}
+		%\Let{$C[1,x]$}{$c(0,x,\lambda_1)$}
+		%\Let{$p[1,x]$}{$0$}
+	%\EndFor
+	%\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and parents}
+		%\For{$x' \gets 0 \textrm{ to } m$}
+			%\Let{$opt$}{$\infty$}
+			%\For{$x \gets 0 \textrm{ to } m$}
+				%\Let{$C[t,x']$}{$C[t-1,x]+c(x,x',\lambda_t)$}
+				%\If{$C[t,x']<opt$}
+					%\Let{$opt$}{$C[t,x']$}
+					%\Let{$p[t,x']$}{$x$}
+				%\EndIf
+			%\EndFor
+			%\Let{$C[t,x']$}{$opt$}
+		%\EndFor
+	%\EndFor
+	%\Let{$C[T+1,0]$}{$\min\bigl\{C[T,x]\mid x\in\fromto{0}{m}\bigr\}$} \Comment{Find minimum at last time slot}
+	%\Let{$p[T+1,0]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[T,x]\bigr\}$}
+	%\State \Return{$C$ and $p$}
+  %\EndFunction
+  %\end{algorithmic}
+  %\label{alg_opt_offline}
+%\end{algorithm}
+%\unsure{Which version is better?\\names okay? style?}
 \begin{algorithm}[H]
     \caption{Costs and parents for optimal offline scheduling}
     \begin{algorithmic}[1]
@@ -546,63 +576,36 @@ In the following, we give an algorithm based on our results from the preceding s
 	\EndFor
 	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and parents}
 		\For{$x' \gets 0 \textrm{ to } m$}
-			\Let{$opt$}{$\infty$}
-			\For{$x \gets 0 \textrm{ to } m$}
-				\Let{$C[t,x']$}{$C[t-1,x]+c(x,x',\lambda_t)$}
-				\If{$C[t,x']<opt$}
-					\Let{$opt$}{$C[t,x']$}
-					\Let{$p[t,x']$}{$x$}
-				\EndIf
-			\EndFor
-			\Let{$C[t,x']$}{$opt$}
+			\Let{$p[t,x']$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[t-1,x]+c(x,x',\lambda_t)\bigr\}$}\Comment{Find best preceding choice}
+			\Let{$C[t,x']$}{$C\bigl[t-1,p[t,x']\bigr]+c\bigl(p[t,x'],x',\lambda_t\bigr)$}
 		\EndFor
 	\EndFor
+	\Let{$p[T+1,0]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[T,x]\bigr\}$}\Comment{Find best choice at last time slot}
+	\Let{$C[T+1,0]$}{$C\bigl[T,p[T+1,0]\bigr]$}
 	\State \Return{$C$ and $p$}
   \EndFunction
   \end{algorithmic}
-  \label{alg_opt_offline}
-\end{algorithm}
-\unsure{Which version is better?\\names okay? style?}
-\begin{algorithm}[H]
-    \caption{Costs and parents for optimal offline scheduling}
-    \begin{algorithmic}[1]
-    \Function{optimal\_offline}{$m,T,\Lambda,\beta,f$}
-	\Blet{$C[T+1,m]$ and $p[T+1,m]$}{new arrays}\Comment{Costs and parents}
-	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialisation}
-		\Let{$C[1,x]$}{$c(0,x,\lambda_1)$}
-		\Let{$p[1,x]$}{$0$}
-	\EndFor
-	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and parents}
-		\For{$x' \gets 0 \textrm{ to } m$}
-			\Let{$C[t,x']$}{$\min\bigl\{C[t-1,x]+c(x,x',\lambda_t)\mid x\in\fromto{0}{m}\bigr\}$}
-			\Let{$p[t,x']$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[t-1,x]+c(x,x',\lambda_t)\bigr\}$}
-		\EndFor
-	\EndFor
-	\State \Return{$C$ and $p$}
-  \EndFunction
-  \end{algorithmic}
+\label{alg_opt_offline}
 \end{algorithm}
 \begin{algorithm}[H]
     \caption{Extract schedule from result of algorithm~\ref{alg_opt_offline}}
     \begin{algorithmic}[1]
-   \Function{Extract\_optimal\_offline}{$m,M,p,T$}
+   \Function{Extract\_optimal\_offline}{$C,p,m,T$}
 	\Blet{$\mx[T]$}{a new array}
-	    \Let{$x[T]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{M[T,x]\bigr\}$}\Comment{Initialisation; find minimum at last time slot}
-	    \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from parents array}
-		\Let{$x[t]$}{$p\bigl[t+1,x[t+1]\bigr]$}
+    	\Let{$\mx[T]$}{$p[T+1,0]$}\Comment{Get minimum at last time slot}
+        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from parents array}
+		\Let{$\mx[t]$}{$p\bigl[t+1,\mx[t+1]\bigr]$}
 	\EndFor
-	\State \Return{$x$}
+	\State \Return{$\mx$}
   \EndFunction
   \end{algorithmic}
   \label{alg_extr_opt_offline}
 \end{algorithm}
-
-\subsubsection{Runtime analysis}
-Algorithm~\ref{alg_opt_offline} needs $\mathcal{O}(m)$ iterations for its initialisation and $\mathcal{O}(Tm^2)$ steps for the iterative calculation. Algorithm~\ref{alg_extr_opt_offline} needs $\mathcal{O}(T)$ steps for its initialisation and for its iterative calculation, respectively. Thus, we receive a run time of 
+Algorithm~\ref{alg_opt_offline} needs $\mathcal{O}(m)$ iterations for its initialisation, $\mathcal{O}(Tm^2)$ steps for the iterative calculation, and $\mathcal{O}(m)$ steps for its final minimisation search. Algorithm~\ref{alg_extr_opt_offline} needs $\mathcal{O}(T)$ iterations for its schedule calculation. Thus, we receive a run time of 
 \begin{equation*}
-	\mathcal{O}(Tm+Tm^2+2T)=\mathcal{O}(Tm^2)
+	\mathcal{O}(m+Tm^2+m+T)=\mathcal{O}(Tm^2)
 \end{equation*}
-As we need $\log_2(m)$ bits to encode m, the running time is polynomial in the numeric value of the input but exponential in the length of the input. Hence, the algorithm is pseudo-polynomial.
+The running time is polynomial in the numeric value of the input; however, as we just need $\log_2(m)$ bits to encode $m$, it is exponential in the length of the input. Hence, the algorithm is pseudo-polynomial.
 
 \section{A polynomial $4$-approximation algorithm for monotonically increasing convex f}
 We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
