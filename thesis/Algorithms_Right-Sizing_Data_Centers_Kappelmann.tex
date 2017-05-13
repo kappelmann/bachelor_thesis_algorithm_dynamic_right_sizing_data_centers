@@ -406,10 +406,12 @@ The optimisation conditions for a schedule now simplify to one single minimalisa
 \end{align}
 We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq_equ_sharing_schedule_costs}.
 
-\section{Optimal offline scheduling}\label{sec:opt}
-In this section, we derive an optimal offline algorithm based on our preliminary work. We reduce our problem specified $\inp$ to a shortest path problem of a level structured graph $G$. We then use a dynamic programming approach to find a shortest path of $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time.
+\section{Optimal offline scheduling}
+In this section, we derive two optimal offline algorithms based on our preliminary work.
+First, we reduce our problem specified by $\inp$ to a shortest path problem of a level structured graph $G$. We then use a dynamic programming approach to find a shortest path in $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time $\mathcal{O}(Tm^2)$.
+After that, we refine our initial approach to derive an improved algorithm with pseudo-linear complexity $\mathcal{O}(Tm)$.\unsure{Sounds strange\ldots}
 
-\subsection{Graph for an optimal schedule}\label{sec:optgraph}
+\subsection{A pseudo-polynomial algorithm}\label{sec_opt_offline_pseudo_poly}
 Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
 \begin{align*}
 	&V\coloneqq\bigl\{v_{x,t}\mid x\in\fromto{0}{m},t\in\fromto{0}{T+1}\bigr\}\\
@@ -458,42 +460,41 @@ Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the c
 
   \path[every node/.style={font=\sffamily\small}]
     (1) edge node[left] {$\costs(0,m,\lambda_1)$} (2)
-	edge node[above right=-0.1cm] {$\costs(0,1,\lambda_1)$} (3)
+	edge node[above right=-0.15cm] {$\costs(0,1,\lambda_1)$} (3)
 	edge node[left] {$\costs(0,0,\lambda_1)$} (4)
     (2) edge node[above] {$\costs(m,m,\lambda_2)$} (5)
     (3) edge (6)
 	edge (7)
     (4) edge (6)
 	edge node[below] {$\costs(0,0,\lambda_2)$} (7)
-    (8) edge node[right] {$\costs(m,0,\lambda_{T+1})=0$} (11)
+    (8) edge node[above right=-0.15cm] {$0=\costs(m,0,\overbrace{\lambda_{T+1}}^{0})$} (11)
     (9) edge node[above] {$0$} (11)
-    (10) edge node[above] {$0$} (11);
+    (10) edge node[above] {$0$} (11)
 
-   \path [->,draw,thick] (1) to ($(1)!.2!(8)$);
-   \path [->,draw,thick] (2) to ($(2)!.4!(6)$);
-   \path [->,draw,thick] (4) to ($(4)!.4!(5)$);
-   \path [->,draw,thick] (3) to ($(3)!.4!(5)$);
+    (1) edge ($(1)!.2!(8)$)
+    (2) edge ($(2)!.4!(6)$)
+    (4) edge ($(4)!.4!(5)$)
+    (3) edge ($(3)!.4!(5)$)
+    ($(3)!.6!(5)$) edge (5)
+    ($(2)!.6!(6)$) edge (6)
+    ($(2)!.6!(7)$) edge (7)
 
-   \path [->,draw,thick] ($(3)!.6!(5)$) to (5);
-   \path [->,draw,thick] ($(2)!.6!(6)$) to (6);
-   \path [->,draw,thick] ($(2)!.6!(7)$) to (7);
+    ($(6)!.6!(8)$) edge (8)
+    ($(5)!.6!(8)$) edge (8)
 
-   \path [->,draw,thick] ($(6)!.6!(8)$) to (8);
-   \path [->,draw,thick] ($(5)!.6!(8)$) to (8);
+    ($(5)!.6!(9)$) edge (9)
+    ($(6)!.6!(9)$) edge (9)
+    ($(7)!.6!(9)$) edge (9)
 
-   \path [->,draw,thick] ($(5)!.6!(9)$) to (9);
-   \path [->,draw,thick] ($(6)!.6!(9)$) to (9);
-   \path [->,draw,thick] ($(7)!.6!(9)$) to (9);
+    ($(5)!.6!(10)$) edge (10)
+    ($(6)!.6!(10)$) edge (10)
+    ($(7)!.6!(10)$) edge (10)
 
-   \path [->,draw,thick] ($(5)!.6!(10)$) to (10);
-   \path [->,draw,thick] ($(6)!.6!(10)$) to (10);
-   \path [->,draw,thick] ($(7)!.6!(10)$) to (10);
-
-   \path[every node/.style={font=\sffamily\small}] [->,draw,thick] ($(2)!.8!(11)$) -- node[above] {0} ++ (11);
+    ($(2)!.8!(11)$) edge node[above] {$0$} (11);
 
 \end{tikzpicture}
 }
-\caption{Level structured graph for an optimal offline algorithm. Note that $\costs(i,0,\lambda_{T+1})=0$ for all $i\in\fromto{0}{m}$ because $\lambda_{T+1}=0$ by our conventions.}
+\caption{Level structured graph for a pseudo-polynomial, optimal offline algorithm}
 \end{figure}
 \begin{lem}\label{lem_opt_sched}
 Any given schedule $\mx$ for $\inp$ corresponds to a path $P$ from $v_{0,0}$ to $v_{0,T+1}$ with $\costs(\mx)=\costs(P)$ and vice versa.
@@ -526,15 +527,18 @@ Thus, the claim follows.
 Any given optimal schedule $\mx$ for $\inp$ corresponds to a shortest path $P$ from $v_{0,0}$ to $v_{0,T+1}$ with $\costs(\mx)=\costs(P)$ and vice versa.
 \end{thm} 
 \begin{proof}
-By lemma~\ref{lem_opt_sched} we have a one-to-one correspondence between schedules $\mx$ and paths $P$ obeying $c(\mx)=c(P)$. Thus, we have 
+By lemma~\ref{lem_opt_sched} we have a one-to-one correspondence between schedules $\mx$ and paths $P$ obeying $\costs(\mx)=\costs(P)$. Thus, we have 
 \begin{equation*}
-	c(\mx)\text{ minimal}\iff c(P)\text{ minimal}
+	\costs(\mx)\text{ minimal}\iff \costs(P)\text{ minimal}
 \end{equation*}
 and the claim follows.
 \end{proof}
+In the following, we give an algorithm based on our just verified construction. 
+We split our procedure into two subroutines. 
 
-\subsection{A pseudo-polynomial minimum cost algorithm}
-In the following, we give an algorithm based on our results from the preceding section. We use a dynamic programming approach similar to the well-known Bellman-Ford algorithm.
+\textproc{shortest\_paths} uses a dynamic programming approach similar to the well-known Bellman-Ford algorithm. It returns the shortest path to every vertex as well as the predecessor of every vertex in respect to its shortest path.
+
+\textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path and thereby a schedule for our problem instance.
 %\begin{algorithm}[H]
     %\caption{Costs and parents for optimal offline scheduling}
     %\begin{algorithmic}[1]
@@ -566,52 +570,192 @@ In the following, we give an algorithm based on our results from the preceding s
 %\end{algorithm}
 %\unsure{Which version is better?\\names okay? style?}
 \begin{algorithm}[H]
-    \caption{Costs and parents for optimal offline scheduling}
-    \begin{algorithmic}[1]
-    \Function{optimal\_offline}{$m,T,\Lambda,\beta,f$}
-	\Blet{$C[T+1,m]$ and $p[T+1,m]$}{new arrays}\Comment{Costs and parents}
+  \caption{Pseudo-polynomial optimal offline scheduling}
+  \begin{algorithmic}[1]
+  \Function{optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
+	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
+	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T$}}
+	  \State \Return{$\mx$}
+  \EndFunction
+  \Statex
+  \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
+	\Blet{$C[T+1,m]$ and $P[T+1,m]$}{new arrays}\Comment{Costs and predecessors of nodes}
 	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialisation}
-		\Let{$C[1,x]$}{$c(0,x,\lambda_1)$}
-		\Let{$p[1,x]$}{$0$}
+		\Let{$C[1,x]$}{$\costs(0,x,\lambda_1)$}
+		\Let{$P[1,x]$}{$0$}
 	\EndFor
-	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and parents}
+	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and predecessors}
 		\For{$x' \gets 0 \textrm{ to } m$}
-			\Let{$p[t,x']$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[t-1,x]+c(x,x',\lambda_t)\bigr\}$}\Comment{Find best preceding choice}
-			\Let{$C[t,x']$}{$C\bigl[t-1,p[t,x']\bigr]+c\bigl(p[t,x'],x',\lambda_t\bigr)$}
+			\Let{$P[t,x']$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[t-1,x]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Find best preceding choice}
+			\Let{$C[t,x']$}{$C\bigl[t-1,P[t,x']\bigr]+c\bigl(P[t,x'],x',\lambda_t\bigr)$}
 		\EndFor
 	\EndFor
-	\Let{$p[T+1,0]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[T,x]\bigr\}$}\Comment{Find best choice at last time slot}
-	\Let{$C[T+1,0]$}{$C\bigl[T,p[T+1,0]\bigr]$}
-	\State \Return{$C$ and $p$}
+	\Let{$P[T+1,0]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[T,x]\bigr\}$}\Comment{Find best choice for last time slot}
+	\Let{$C[T+1,0]$}{$C\bigl[T,P[T+1,0]\bigr]$}
+	\State \Return{$(C,P)$}
   \EndFunction
-  \end{algorithmic}
-\label{alg_opt_offline}
-\end{algorithm}
-\begin{algorithm}[H]
-    \caption{Extract schedule from result of algorithm~\ref{alg_opt_offline}}
-    \begin{algorithmic}[1]
-   \Function{Extract\_optimal\_offline}{$C,p,m,T$}
+  \Statex
+  \Function{extract\_schedule}{$P,T$}
 	\Blet{$\mx[T]$}{a new array}
-    	\Let{$\mx[T]$}{$p[T+1,0]$}\Comment{Get minimum at last time slot}
-        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from parents array}
-		\Let{$\mx[t]$}{$p\bigl[t+1,\mx[t+1]\bigr]$}
+    	\Let{$\mx[T]$}{$P[T+1,0]$}\Comment{Get best choice for last time slot}
+        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
+		\Let{$\mx[t]$}{$P\bigl[t+1,\mx[t+1]\bigr]$}
 	\EndFor
 	\State \Return{$\mx$}
   \EndFunction
+
   \end{algorithmic}
-  \label{alg_extr_opt_offline}
+\label{alg_opt_offline}
 \end{algorithm}
-Algorithm~\ref{alg_opt_offline} needs $\mathcal{O}(m)$ iterations for its initialisation, $\mathcal{O}(Tm^2)$ steps for the iterative calculation, and $\mathcal{O}(m)$ steps for its final minimisation search. Algorithm~\ref{alg_extr_opt_offline} needs $\mathcal{O}(T)$ iterations for its schedule calculation. Thus, we receive a run time of 
+Naturally, we are interested in our algorithm's time and memory complexity. Subroutine
+\textproc{shortest\_paths} needs $\mathcal{O}(m)$ iterations for its initialisation, $\mathcal{O}(Tm^2)$ steps for the iterative calculation process, and $\mathcal{O}(m)$ steps for its final minimisation search. In addition, \textproc{extract\_schedule} needs $\mathcal{O}(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
 \begin{equation*}
 	\mathcal{O}(m+Tm^2+m+T)=\mathcal{O}(Tm^2)
 \end{equation*}
-The running time is polynomial in the numeric value of the input; however, as we just need $\log_2(m)$ bits to encode $m$, it is exponential in the length of the input. Hence, the algorithm is pseudo-polynomial.
+The runtime is polynomial in the numeric value of the input; however, as we just need $\log_2(m)$ bits to encode $m$, it is exponential in the length of the input. Hence, the algorithm is pseudo-polynomial.
+
+Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\mathcal{O}(Tm)$, we receive a memory complexity of $\mathcal{O}(Tm)$
+
+\subsection{A pseudo-linear algorithm}
+
+Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
+\begin{align*}
+	&V\coloneqq\bigl\{v_{x,t}\mid x\in\fromto{0}{m},t\in\fromto{0}{T+1}\bigr\}\\
+	&E\coloneqq\bigl\{(v_{x,t},v_{x',t+1})\mid x,x'\in\fromto{0}{m},t\in\fromto{0}{T},v_{x,t},v_{x',t+1}\in V\bigr\}\\
+	&c_G(v_{x,t},v_{x',t+1})\coloneqq\costs(x,x',\lambda_{t+1})\\
+	&G\coloneqq(V,E,c_G)
+\end{align*}
+\unsure{Maybe something different than $c_G$?}
+For any possible amount of active servers $x$ and any time slot $t$ we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$ we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
+
+The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by\unsure{Is this well-written?}
+
+\begin{figure}[H]
+\centering
+\scalebox{0.535}{
+\begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.5cm,circle,draw}]
+  \node[node] (1) {0,0};
+  \node[node] (4) [below right=4cm of 1] {0,1,u};
+  \node[node] (3) [above =0.5cm of 4] {1,1,u};
+  \node[node] (2) [above right=4cm of 1] {m,1,u};
+  \node[node] (5) [below =0.5cm of 2] {m-1,1,u};
+  \node[node] (7) [right =of 3] {1,1};
+  \node[node] (6) [right =of 2] {m,1};
+  \node[node] (8) [right =of 4] {0,1};
+  \node[node] (9) [right =of 5] {m-1,1};
+  \node[node] (11) [right =of 7] {1,2,u};
+  \node[node] (10) [right =of 6] {m,2,u};
+  \node[node] (12) [right =of 8] {0,2,u};
+  \node[node] (13) [right =of 9] {m-1,2,u};
+  \node[node] (15) [right =of 11] {1,2};
+  \node[node] (14) [right =of 10] {m,2};
+  \node[node] (16) [right =of 12] {0,2};
+  \node[node] (17) [right =of 13] {m-1,2};
+  \node[node] (19) [right =4cm of 15] {1,T};
+  \node[node] (18) [right =4cm of 14] {m,T};
+  \node[node] (20) [right =4cm of 16] {0,T};
+  \node[node] (21) [right =4cm of 17] {m-1,T};
+  \node[node] (22) [above right =4cm of 20] {0,T+1};
+
+  \node at ($(14)!.5!(18)$) {\ldots};
+  \node at ($(15)!.5!(19)$) {\ldots};
+  \node at ($(16)!.5!(20)$) {\ldots};
+  \node at ($(17)!.5!(21)$) {\ldots};
+
+  \node at ($(2)!.5!(4)$) {\vdots};
+  \node at ($(6)!.5!(8)$) {\vdots};
+  \node at ($(10)!.5!(12)$) {\vdots};
+  \node at ($(14)!.5!(16)$) {\vdots};
+  \node at ($(18)!.5!(20)$) {\vdots};
+
+  \path[every node/.style={font=\sffamily\small}]
+    (1) edge node[left] {$\costs(0,m,\lambda_1)$} (2)
+	edge node[label={[xshift=0.9cm, yshift=-0.8cm]$\costs(0,m-1,\lambda_1)$}] {} (5)
+	edge node[above right=-0.15cm] {$\costs(0,1,\lambda_1)$} (3)
+	edge node[left] {$\costs(0,0,\lambda_1)$} (4)
+
+    (2) edge node[above] {$0$} (6)
+    (3) edge node[above] {$0$} (7)
+    (4) edge node[above] {$0$} (8)
+    (5) edge node[above] {$0$} (9)
+
+    (2) edge node[right] {$0$} (5)
+    (3) edge node[right] {$0$} (4)
+
+    (9) edge node[right] {$\beta$} (6)
+    (8) edge node[right] {$\beta$} (7)
+
+    (6) edge node[above] {$\opcosts(m,\lambda_2)$} (10)
+    (7) edge node[above] {$\opcosts(1,\lambda_2)$} (11)
+    (8) edge node[above] {$\opcosts(0,\lambda_2)$} (12)
+    (9) edge node[above] {$\opcosts(m-1,\lambda_2)$} (13)
+
+    (10) edge node[above] {$0$} (14)
+    (11) edge node[above] {$0$} (15)
+    (12) edge node[above] {$0$} (16)
+    (13) edge node[above] {$0$} (17)
+
+    (10) edge node[right] {$0$} (13)
+    (11) edge node[right] {$0$} (12)
+
+    (17) edge node[right] {$\beta$} (14)
+    (16) edge node[right] {$\beta$} (15)
+
+    (21) edge node[right] {$\beta$} (18)
+    (20) edge node[right] {$\beta$} (19)
+
+    (18) edge node[right] {$0$} (22)
+    (19) edge node[above] {$0$} (22)
+    (20) edge node[above] {$0$} (22)
+    (21) edge node[above] {$0$} (22)
+
+    (1) edge ($(1)!.13!(22)$)
+
+    (14) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
+    (15) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(1,\lambda_3)$}] {} ($(15)!.4!(19)$)
+    (16) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
+    (17) edge node[label={[xshift=0.5cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_3)$}] {} ($(17)!.4!(21)$)
+
+    (5) edge node[right] {$0$} ($(5)!.35!(3)$)
+    ($(5)!.65!(3)$) edge node[right] {$0$} (3)
+
+    ($(7)!.65!(9)$) edge node[right] {$\beta$} (9)
+    (7) edge node[right] {$\beta$} ($(7)!.35!(9)$)
+ 
+    (13) edge node[right] {$0$} ($(13)!.35!(11)$)
+    ($(13)!.65!(11)$) edge node[right] {$0$} (11)
+
+    ($(15)!.65!(17)$) edge node[right] {$\beta$} (17)
+    (15) edge node[right] {$\beta$} ($(15)!.35!(17)$)
+
+    ($(19)!.65!(21)$) edge node[right] {$\beta$} (21)
+    (19) edge node[right] {$\beta$} ($(19)!.35!(21)$);
+
+   %\path [->,draw,thick] ($(3)!.6!(5)$) to (5);
+   %\path [->,draw,thick] ($(2)!.6!(6)$) to (6);
+   %\path [->,draw,thick] ($(2)!.6!(7)$) to (7);
+
+   %\path [->,draw,thick] ($(6)!.6!(8)$) to (8);
+   %\path [->,draw,thick] ($(5)!.6!(8)$) to (8);
+
+   %\path [->,draw,thick] ($(5)!.6!(9)$) to (9);
+   %\path [->,draw,thick] ($(6)!.6!(9)$) to (9);
+   %\path [->,draw,thick] ($(7)!.6!(9)$) to (9);
+
+   %\path [->,draw,thick] ($(5)!.6!(10)$) to (10);
+   %\path [->,draw,thick] ($(6)!.6!(10)$) to (10);
+   %\path [->,draw,thick] ($(7)!.6!(10)$) to (10);
+
+\end{tikzpicture}
+}
+\caption{Graph for a pseudo-linear, optimal offline algorithm}
+\end{figure}
 
 \section{A polynomial $4$-approximation algorithm for monotonically increasing convex f}
-We consider a modification of the problem discussed in chapter~\ref{sec:opt}. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
+We consider a modification of the problem discussed in chapter. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
 
 \subsection{Graph for a $4$-optimal schedule}
-We modify our graph from chapter~\ref{sec:optgraph} to the reduce the number of vertices. For this, we stop adding m vertices for each timestep, but use vertices that approximate the number of active servers instead. First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$. All edges and weights are added analogous to chapter~\ref{sec:optgraph}.
+We modify our graph from section~\ref{sec_opt_offline_pseudo_poly} to the reduce the number of vertices. For this, we stop adding m vertices for each timestep, but use vertices that approximate the number of active servers instead. First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$. All edges and weights are added analogous to chapter~\ref{sec_opt_offline_pseudo_poly}.
 \begin{figure}[H]
 \begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
 
