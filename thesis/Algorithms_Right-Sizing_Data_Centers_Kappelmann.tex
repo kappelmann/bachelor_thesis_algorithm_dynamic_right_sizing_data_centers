@@ -450,8 +450,9 @@ Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the c
   \node[node] (11) [above right =of 10] {0,T+1};
 
   \node at ($(5)!.4!(8)$) {\ldots};
-  \node at ($(6)!.4!(9)$) {\ldots};
+  \node (12) at ($(6)!.4!(9)$) {\ldots};
   \node at ($(7)!.4!(10)$) {\ldots};
+  \node [above=1.72cm of 12]{\ldots};
 
   \node at ($(2)!.5!(3)$) {\vdots};
   \node at ($(2)!.5!(6)$) {\vdots};
@@ -617,8 +618,7 @@ The runtime is polynomial in the numeric value of the input; however, as we just
 Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\mathcal{O}(Tm)$, we receive a memory complexity of $\mathcal{O}(Tm)$
 
 \subsection{A pseudo-linear algorithm}
-
-Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
+TODO: Text
 \begin{align*}
 	&V\coloneqq\bigl\{v_{x,t}\mid x\in\fromto{0}{m},t\in\fromto{0}{T+1}\bigr\}\\
 	&E\coloneqq\bigl\{(v_{x,t},v_{x',t+1})\mid x,x'\in\fromto{0}{m},t\in\fromto{0}{T},v_{x,t},v_{x',t+1}\in V\bigr\}\\
@@ -658,9 +658,10 @@ The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with le
   \node[node] (22) [above right =4cm of 20] {0,T+1};
 
   \node at ($(14)!.5!(18)$) {\ldots};
-  \node at ($(15)!.5!(19)$) {\ldots};
+  \node (23) at ($(15)!.5!(19)$) {\ldots};
   \node at ($(16)!.5!(20)$) {\ldots};
   \node at ($(17)!.5!(21)$) {\ldots};
+  \node [above =1.48cm of 23] {\ldots};
 
   \node at ($(2)!.5!(4)$) {\vdots};
   \node at ($(6)!.5!(8)$) {\vdots};
@@ -711,11 +712,6 @@ The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with le
 
     (1) edge ($(1)!.13!(22)$)
 
-    (14) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
-    (15) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(1,\lambda_3)$}] {} ($(15)!.4!(19)$)
-    (16) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
-    (17) edge node[label={[xshift=0.5cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_3)$}] {} ($(17)!.4!(21)$)
-
     (5) edge node[right] {$0$} ($(5)!.35!(3)$)
     ($(5)!.65!(3)$) edge node[right] {$0$} (3)
 
@@ -728,24 +724,19 @@ The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with le
     ($(15)!.65!(17)$) edge node[right] {$\beta$} (17)
     (15) edge node[right] {$\beta$} ($(15)!.35!(17)$)
 
+
+    (14) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
+    (15) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(1,\lambda_3)$}] {} ($(15)!.4!(19)$)
+    (16) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
+    (17) edge node[label={[xshift=0.5cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_3)$}] {} ($(17)!.4!(21)$)
+
+    ($(14)!.6!(18)$) edge node[above] {$0$} (18)
+    ($(15)!.6!(19)$) edge node[above] {$0$} (19)
+    ($(16)!.6!(20)$) edge node[above] {$0$} (20)
+    ($(17)!.6!(21)$) edge node[above] {$0$} (21)
+
     ($(19)!.65!(21)$) edge node[right] {$\beta$} (21)
     (19) edge node[right] {$\beta$} ($(19)!.35!(21)$);
-
-   %\path [->,draw,thick] ($(3)!.6!(5)$) to (5);
-   %\path [->,draw,thick] ($(2)!.6!(6)$) to (6);
-   %\path [->,draw,thick] ($(2)!.6!(7)$) to (7);
-
-   %\path [->,draw,thick] ($(6)!.6!(8)$) to (8);
-   %\path [->,draw,thick] ($(5)!.6!(8)$) to (8);
-
-   %\path [->,draw,thick] ($(5)!.6!(9)$) to (9);
-   %\path [->,draw,thick] ($(6)!.6!(9)$) to (9);
-   %\path [->,draw,thick] ($(7)!.6!(9)$) to (9);
-
-   %\path [->,draw,thick] ($(5)!.6!(10)$) to (10);
-   %\path [->,draw,thick] ($(6)!.6!(10)$) to (10);
-   %\path [->,draw,thick] ($(7)!.6!(10)$) to (10);
-
 \end{tikzpicture}
 }
 \caption{Graph for a pseudo-linear, optimal offline algorithm}
