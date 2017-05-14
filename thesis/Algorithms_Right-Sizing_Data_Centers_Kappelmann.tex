@@ -393,7 +393,7 @@ For this, given a problem instance $\inp$, we define the operating costs functio
 	  \infty, & \text{if $x\ne 0\land\lambda>x$}
 	  \end{cases} \label{fct:c}
 \end{equation*}
-We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$ that describes the incurred costs when changing the amount of active server from $x_{t-1}$ to $x_t$:
+We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate, i.e.\ the schedule would not be feasible. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$ that describes the incurred costs when changing the amount of active server from $x_{t-1}$ to $x_t$:
 \begin{equation*}
 	\swcosts(x_{t-1},x_t)\coloneqq\beta*\max\{0,x_t-x_{t-1}\}
 \end{equation*}
@@ -409,8 +409,8 @@ We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq
 
 \section{Optimal offline scheduling}
 In this section, we derive two optimal offline algorithms based on our preliminary work.
-First, we reduce our problem specified by $\inp$ to a shortest path problem of a level structured graph $G$. We then use a dynamic programming approach to find a shortest path in $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time $\mathcal{O}(Tm^2)$.
-After that, we refine our initial approach to derive an improved algorithm with pseudo-linear complexity $\mathcal{O}(Tm)$.\unsure{Sounds strange\ldots}
+First, we reduce our problem specified by $\inp$ to a shortest path problem of a level structured graph $G$. We then use a dynamic programming approach to find a shortest path in $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time $\Theta(Tm^2)$.
+After that, we refine our initial approach to derive an improved algorithm with pseudo-linear complexity $\Theta(Tm)$.\unsure{Sounds strange\ldots}
 
 \subsection{A pseudo-polynomial algorithm}\label{sec_opt_offline_pseudo_poly}
 Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
@@ -421,7 +421,7 @@ Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that t
 	&G\coloneqq(V,E,c_G)
 \end{align*}
 \unsure{Maybe something different than $c_G$?}
-For any possible amount of active servers $x$ and any time slot $t$ we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$ we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
+For any possible amount of active servers $x$ and any time slot $t$ we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers at time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$ we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
 
 The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by\unsure{Is this well-written?}
 \begin{equation*}
@@ -538,7 +538,7 @@ and the claim follows.
 In the following, we give an algorithm based on our just verified construction. 
 We split our procedure into two subroutines. 
 
-\textproc{shortest\_paths} uses a dynamic programming approach similar to the well-known Bellman-Ford algorithm. It returns the shortest path to every vertex as well as the predecessor of every vertex in respect to its shortest path.
+\textproc{shortest\_paths} uses a dynamic programming approach similar to the well-known Bellman-Ford algorithm. It returns the minimum costs to all vertices as well as the predecessor of any vertex in respect to its shortest path.
 
 \textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path and thereby a schedule for our problem instance.
 %\begin{algorithm}[H]
@@ -610,16 +610,71 @@ We split our procedure into two subroutines.
 \label{alg_opt_offline}
 \end{algorithm}
 Naturally, we are interested in our algorithm's time and memory complexity. Subroutine
-\textproc{shortest\_paths} needs $\mathcal{O}(m)$ iterations for its initialisation, $\mathcal{O}(Tm^2)$ steps for the iterative calculation process, and $\mathcal{O}(m)$ steps for its final minimisation search. In addition, \textproc{extract\_schedule} needs $\mathcal{O}(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
+\textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialisation, $\Theta(Tm^2)$ steps for the iterative calculation process, and $\Theta(m)$ steps for its final minimisation search. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
 \begin{equation*}
-	\mathcal{O}(m+Tm^2+m+T)=\mathcal{O}(Tm^2)
+	\Theta(m+Tm^2+m+T)=\Theta(Tm^2)
 \end{equation*}
 The runtime is polynomial in the numeric value of the input; however, as we just need $\log_2(m)$ bits to encode $m$, it is exponential in the length of the input. Hence, the algorithm is pseudo-polynomial.
 
-Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\mathcal{O}(Tm)$, we receive a memory complexity of $\mathcal{O}(Tm)$
+Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$
 
 \subsection{A pseudo-linear algorithm}
-%TODO: Text
+The algorithm developed in section~\ref{sec_opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
+
+\unsure{Is this well written?}Let us revise our initial algorithm. For any vertex $v_{i,t}$ of $G$, the algorithm calculates the minimum cost to $v_{i,t}$. This cost orresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $i$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $j\neq i$ servers at time slot $t$ and to switch to $i$ servers just at the very last moment of $t$ when calculating the cost of $v_{i,t}$. Consider the following two examples:
+\begin{figure}[H]
+\captionsetup{farskip=-1em} 
+\centering
+\subfloat[State $v_{0,1}$ could be reached with cost $3$ by moving down from node $v_{1,1}$.]{
+\scalebox{0.75}{
+  \begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1cm,circle,draw}]
+  \node[node, label={[color=red]$0$}] (1) {0,0};
+  \node[node, label={[below=1.05cm,color=red]$\infty$}] (2) [below right =of 1] {0,1};
+  \node[node, label={[color=red]$3$}] (3) [above right=of 1] {1,1};
+  \node[node, label={[below=1.05cm,color=red]$3$}] (4) [right =of 2] {0,2};
+  \node[node, label={[color=red]$4$}] (5) [right =of 3] {1,2};
+  \node[node, label={[color=red]$3$}] (6) [below right =of 5] {0,3};
+
+  \path[every node/.style={font=\sffamily\small}]
+    (1) edge node[below left] {$\infty$} (2)
+	edge node[above left] {$3$} (3)
+    (2) edge node[below] {$0$} (4)
+    (2) edge node[label={[xshift=0.88cm, yshift=0.9cm]$2$}] {} (5)
+    (3) edge node[label={[xshift=0.55cm, yshift=-1.82cm]$0$}] {} (4)
+    (3) edge node[above] {$1$} (5)
+    (4) edge node[above] {$0$} (6)
+    (5) edge node[above] {$0$} (6)
+    (3) edge[dashed] node[left] {$0$} (2);
+\end{tikzpicture}
+}}
+\qquad
+\subfloat[State $v_{1,1}$ could be reached with cost $1$ by moving up from $v_{0,1}$.]{
+\scalebox{0.75}{
+  \begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1cm,circle,draw}]
+  \node[node, label={[color=red]$0$}] (1) {0,0};
+  \node[node, label={[below=1.05cm,color=red]$0$}] (2) [below right =of 1] {0,1};
+  \node[node, label={[color=red]$3$}] (3) [above right=of 1] {1,1};
+  \node[node, label={[below=1.05cm,color=red]$\infty$}] (4) [right =of 2] {0,2};
+  \node[node, label={[color=red]$4$}] (5) [right =of 3] {1,2};
+  \node[node, label={[color=red]$4$}] (6) [below right =of 5] {0,3};
+
+  \path[every node/.style={font=\sffamily\small}]
+    (1) edge node[below left] {$0$} (2)
+	edge node[above left] {$3$} (3)
+    (2) edge node[below] {$\infty$} (4)
+    (2) edge node[label={[xshift=0.88cm, yshift=0.9cm]$4$}] {} (5)
+    (3) edge node[label={[xshift=0.55cm, yshift=-1.82cm]$\infty$}] {} (4)
+    (3) edge node[above] {$3$} (5)
+    (4) edge node[above] {$0$} (6)
+    (5) edge node[above] {$0$} (6)
+    (2) edge[dashed] node[left] {$1=\beta$} (3);
+\end{tikzpicture} }}
+\caption{Two examples depicting the shortcoming of our initial approach. The calculated vertices' costs are highlighted in red. Dashed edges are not part of the initial algorithm.}
+\end{figure}
+Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. In practice, we can reach a state $v_{i,t}$ by moving down from a state $v_{j,t}$ where $j>i$ with cost $0$ or by moving up from a state $v_{j,t}$ where $j<i$ with costs $\beta*(i-j)$.
+
+For this, we add local minimisation steps after any time slot. 
+These minimisation steps will allow us to eliminiate the need of considering any possible scheduling choice at any time slot. Rather, we just need to 
 \begin{align*}
 	&V\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
 	&E_s\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in\fromto{0}{m}\bigr\}\\
@@ -632,16 +687,13 @@ Our memory demand is defined by the size of the arrays $C$ and $P$. As both arra
 	&c_G(e)\coloneqq
 	\begin{cases}
 		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1})\in E_s$}\\
-		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow}\dotcup E_e)$}\\
-		\opcosts(x,\lambda_t), & \text{if $e=(v_{x,t},v_{x,t+1})\in E_{\uparrow\downarrow}$}\\
+		\opcosts(x,\lambda_{t+1}), & \text{if $e=(v_{x,t},v_{x,t+1})\in E_{\uparrow\downarrow}$}\\
+		\beta, & \text{if $e\in E_\uparrow$}\\
+		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow}\dotcup E_e)$}
 	\end{cases}\\
 	&G\coloneqq(V,E,c_G)
 \end{align*}
-%\unsure{Maybe something different than $c_G$?}
-%For any possible amount of active servers $x$ and any time slot $t$ we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$ we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
-%
-%The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by\unsure{Is this well-written?}
-
+\unsure{caption of figure}
 \begin{figure}[H]
 \centering
 \scalebox{0.535}{
@@ -750,9 +802,8 @@ Our memory demand is defined by the size of the arrays $C$ and $P$. As both arra
     (19) edge[red] node[black,right] {$\beta$} ($(19)!.35!(21)$);
 \end{tikzpicture}
 }
-\caption{Graph for a pseudo-linear, optimal offline algorithm; path of topological sorting in red.}
+\caption{Graph for a pseudo-linear, optimal offline algorithm; the path of the topological sorting is highlighted in red.}
 \end{figure}
-
 \section{A polynomial $4$-approximation algorithm for monotonically increasing convex f}
 We consider a modification of the problem discussed in chapter. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
 
