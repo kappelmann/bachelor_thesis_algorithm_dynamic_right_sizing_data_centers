@@ -196,6 +196,10 @@
 \usepackage{xcolor}  % Coloured text etc.
 \usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
 
+% absolute text block
+\usepackage[absolute]{textpos}
+\usepackage{framed}
+
 % Custom commands
 \DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\mx}{\mathcal{X}}
@@ -245,7 +249,7 @@ For any time slot $t\in[T]$, we have a \textit{mean arrival rate} denoted by $\l
 The costs incurred by a single machine are described by the sum of the machine's \textit{operating costs}, specified by \makebox{$f:[0,1]\rightarrow \mathbb{R}$}, as well as its \textit{(power state) switching costs}, specified by $\beta\in\mathbb{R}_{\ge 0}$. 
 The operating costs $f$ may not exclusively consider energy costs. For example, $f$ may also allow for costs incurred by delays, such as lost revenue caused by users waiting for their responses. Similarly, $\beta$ may also allow for delay costs, wear and tear costs or the like.\cite{dyn_right_size}\unsure{Citation needed/appropriate?}
 
-We assume that a sleeping server does not cause any costs. Note that $f(0)$ describes the costs incurred by an idle server, not a sleeping one; in particular, $f(0)$ may be non-zero. Further, we assume convexity for $f$. This may seem like a notable restriction at first, but it indeed captures the behaviour of most modern server models. Since we are dealing with homogeneous servers, $f$ and $\beta$ are the same for all machines.
+We assume that a sleeping server does not cause any costs. Note that $f(0)$ denotes the costs incurred by an idle server, not a sleeping one; in particular, $f(0)$ may be non-zero. Further, we assume convexity for $f$. This may seem like a notable restriction at first, but it indeed captures the behaviour of most modern server models. Since we are dealing with homogeneous servers, $f$ and $\beta$ are the same for all machines.
 
 For convenience, we assume all machines sleeping at time $t=0$ and force all machines to sleep after the scheduling process, i.e.\ at times $t>T$. Consequently, every server must power down exactly as many times as it powers on. This allows us to consolidate power up and power down costs into $\beta$ and to model both costs as being incurred when powering up a server; that is, a model with power up costs $\beta_\uparrow$ and power down costs $\beta_\downarrow$ can be simply transferred to our model by setting $\beta\coloneqq \beta_\uparrow'\coloneqq\beta_\uparrow+\beta_\downarrow$ and $\beta_\downarrow'=0$. Similarly, we assume that there are no loads at times $t\notin[T]$, that is $\lambda_t=\lambda_{i,t}=0$ for $t\notin[T]$.
 
@@ -319,11 +323,11 @@ Finally, we construct a new schedule $\Sigma'\coloneqq(\mathcal{S}',\mathcal{L}'
 	\mathcal{S}'&\coloneqq(S_1,\ldots,S_{i-1},S_i',S_{i+1},\ldots,S_{j-1},S_j',S_{j+1},\ldots,S_T)\\
 	\mathcal{L}'&\coloneqq(L_1,\ldots,L_{i-1},L_i',L_{i+1},\ldots,L_{j-1},L_j',L_{j+1},\ldots,L_T)
 \end{align*}
-We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq_feasible_constraint}. For time slots $<t$ the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$ we only changed the order of summation in~\eqref{eq_feasible_constraint}. Thus, $\Sigma'$ is feasible.
+We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq_feasible_constraint}. For time slots $<t$, the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$, we only changed the order of summation in~\eqref{eq_feasible_constraint}. Thus, $\Sigma'$ is feasible.
 
-$\Sigma$ and $\Sigma'$ coincide in their operating costs; however, their switching costs differ in that there are no switching costs $\beta$ at time slot $t$ for server $i$ using $\Sigma'$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$
+$\Sigma$ and $\Sigma'$ coincide in their operating costs; however, their switching costs differ in that there are no switching costs $\beta$ at time $t$ for server $i$ using $\Sigma'$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$
 
-Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time slot $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
+Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
 As a special case, proposition~\ref{prop_strict_switching} unfolds its power on optimal schedules, yielding the next corrolary.
@@ -342,10 +346,10 @@ As we assume all machines sleeping at times $t\notin[T]$, we have $x_t=0$ for $t
 
 The next proposition poses the cornerstone of our subsequent works. We want to establish an optimal scheduling strategy given a fixed amount of active servers. It turns out that equal load-sharing seems a very desirable strategy.
 \begin{prop}[Equal load sharing]\label{prop_equ_load_sharing}
-Given $x_t\in\mathbb{N}$ active servers at time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.\unsure{This is sounds awkwardly formulated, doesn't it?}
+Given $x_t\in\mathbb{N}$ active servers in time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.\unsure{This is sounds awkwardly formulated, doesn't it?}
 \end{prop}
 \begin{proof}
-Let $\Sigma$ be an arbitrary, feasible schedule using $x_t$ servers at time slot $t$, and let $A$ be its set of active servers at time slot $t$, that is $A\coloneqq\{i\in[m]\mid s_{i,t}=1\}$.
+Let $\Sigma$ be an arbitrary, feasible schedule using $x_t$ servers in time slot $t$, and let $A$ be its set of active servers in time slot $t$, that is $A\coloneqq\{i\in[m]\mid s_{i,t}=1\}$.
 Consider the operating costs of $\Sigma$ at time $t$ given by
 \begin{equation*}
 	\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})*s_{i,t}\bigr)=\sum\limits_{i\in A}\bigl(f(\lambda_{i,t})*1\bigr)+\sum\limits_{i\in [m]\setminus A}\bigl(f(\lambda_{i,t})*0\bigr)=\sum\limits_{i\in A}f(\lambda_{i,t})
@@ -421,7 +425,7 @@ Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that t
 	&G\coloneqq(V,E,c_G)
 \end{align*}
 \unsure{Maybe something different than $c_G$?}
-For any possible amount of active servers $x$ and any time slot $t$ we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers at time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$ we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
+For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers in time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$, we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
 
 The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by\unsure{Is this well-written?}
 \begin{equation*}
@@ -538,7 +542,7 @@ and the claim follows.
 In the following, we give an algorithm based on our just verified construction. 
 We split our procedure into two subroutines. 
 
-\textproc{shortest\_paths} uses a dynamic programming approach similar to the well-known Bellman-Ford algorithm. It returns the minimum costs to all vertices as well as the predecessor of any vertex in respect to its shortest path.
+\textproc{shortest\_paths} uses a dynamic programming approach similar to the well-known Bellman-Ford algorithm. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
 
 \textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path and thereby a schedule for our problem instance.
 %\begin{algorithm}[H]
@@ -610,7 +614,7 @@ We split our procedure into two subroutines.
 \label{alg_opt_offline}
 \end{algorithm}
 Naturally, we are interested in our algorithm's time and memory complexity. Subroutine
-\textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialisation, $\Theta(Tm^2)$ steps for the iterative calculation process, and $\Theta(m)$ steps for its final minimisation search. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
+\textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialisation, $\Theta(Tm^2)$ steps for the iterative calculation, and $\Theta(m)$ steps for its final minimisation search. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
 \begin{equation*}
 	\Theta(m+Tm^2+m+T)=\Theta(Tm^2)
 \end{equation*}
@@ -621,7 +625,7 @@ Our memory demand is defined by the size of the arrays $C$ and $P$. As both arra
 \subsection{A pseudo-linear algorithm}
 The algorithm developed in section~\ref{sec_opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
 
-\unsure{Is this well written?}Let us revise our initial algorithm. For any vertex $v_{i,t}$ of $G$, the algorithm calculates the minimum cost to $v_{i,t}$. This cost orresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $i$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $j\neq i$ servers at time slot $t$ and to switch to $i$ servers just at the very last moment of $t$ when calculating the cost of $v_{i,t}$. Consider the following two examples:
+\unsure{Is this well written? Should add table with arrival rates, opcosts, beta, etc./ for figure?}Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any node $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following two examples:
 \begin{figure}[H]
 \captionsetup{farskip=-1em} 
 \centering
@@ -669,19 +673,18 @@ The algorithm developed in section~\ref{sec_opt_offline_pseudo_poly} is of a qui
     (5) edge node[above] {$0$} (6)
     (2) edge[dashed] node[left] {$1=\beta$} (3);
 \end{tikzpicture} }}
-\caption{Two examples depicting the shortcoming of our initial approach. The calculated vertices' costs are highlighted in red. Dashed edges are not part of the initial algorithm.}
+\caption{Two examples depicting a shortcoming of our initial approach. The calculated nodes' costs are highlighted in red. Dashed edges are not part of the initial algorithm.}
 \end{figure}
-Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. In practice, we can reach a state $v_{i,t}$ by moving down from a state $v_{j,t}$ where $j>i$ with cost $0$ or by moving up from a state $v_{j,t}$ where $j<i$ with costs $\beta*(i-j)$.
+Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. We want our states to capture a more general notion than given in section~\ref{sec_opt_offline_pseudo_poly}; preferably, we would like a node $v_{x,t}$ to denote the state of having $x$ active servers at the end of time slot $t$. In practice, we may reach a state $v_{x,t}$ by moving down from a state $v_{y^\downarrow,t}$ where $y^\downarrow>i$ with cost $0$ or by moving up from a state $v_{y^\uparrow,t}$ where $y^\uparrow<i$ with cost $\beta*(x-y^\uparrow)$.
 
-For this, we add local minimisation steps after any time slot. 
-These minimisation steps will allow us to eliminiate the need of considering any possible scheduling choice at any time slot. Rather, we just need to 
+In order to allow for these new possibilities, we define a directed, weighted graph as follows:
 \begin{align*}
 	&V\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
 	&E_s\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in\fromto{0}{m}\bigr\}\\
 	&E_e\coloneqq\bigl\{(v_{x,T\uparrow},v_{0,T+1})\mid x\in\fromto{0}{m}\bigr\}\\
 	&E_\downarrow\coloneqq\bigl\{(v_{x,t\downarrow},v_{x-1,t\downarrow})\mid x\in[m],t\in[T]\bigr\}\\
 	&E_\uparrow\coloneqq\bigl\{(v_{x-1,t\uparrow},v_{x,t\uparrow})\mid x\in[m],t\in[T]\bigr\}\\
-	&E_{\downarrow\uparrow}\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t+1\uparrow})\mid x\in\fromto{0}{m},t\in[T]\bigr\}\\
+	&E_{\downarrow\uparrow}\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in\fromto{0}{m},t\in[T]\bigr\}\\
 	&E_{\uparrow\downarrow}\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in\fromto{0}{m},t\in[T]\bigr\}\\
 	&E\coloneqq E_s\dotcup E_e\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
 	&c_G(e)\coloneqq
@@ -693,6 +696,18 @@ These minimisation steps will allow us to eliminiate the need of considering any
 	\end{cases}\\
 	&G\coloneqq(V,E,c_G)
 \end{align*}
+\begin{textblock}{3}(10,5.5)
+\begin{framed}
+As the phrase goes, \textit{``A picture is worth a thousand words.''} See figure~\ref{fig_graph_pseudo_lin} for a more appealing illustration.%TODO set position!!
+\end{framed}
+\end{textblock}
+For any possible amount of active servers $x$ and any time slot $t$, we add two nodes $v_{x,t\downarrow}$ and $v_{x,t\uparrow}$. Semantically, the cost of $v_{x,t\downarrow}$ will denote the minimum cost up to time slot $t$ when processing $\lambda_t$ with $x$ or more servers whereas the cost of $v_{x,t\uparrow}$ will denote the minimum cost of having $x$ active servers at the end of time slot $t$. Moreover, we again add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. 
+
+The set of edges $E_s$ and $E_e$ denote the start initialisation and the end minimisation step, respectively. An edge $(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$ accounts for the operating costs that incur when processing the arrival rate $\lambda_{t+1}$ with $x$ active servers.
+
+After every time step from $t-1$ to $t$ that incurs operatings costs, we have a minimisation step in our graph. For this, we first move down along the chain $v_{m,t\downarrow},v_{m-1,t\downarrow},\ldots,v_{0,t\downarrow}$ using edges from $E_\downarrow$ with cost $0$. Then we proceed to move to the right from $v_{0,t\downarrow}$ to $v_{0,t\uparrow}$. Lastly, we move up along the chain $v_{0,t\uparrow},v_{1,t\uparrow},\ldots,v_{m,t\uparrow}$ using edges from $E_\uparrow$ with cost $\beta$. In order to have the possibility to keep the calculated costs of $v_{x,t\downarrow}$ during the upward movement, we added edges $(v_{x,t\downarrow},v_{x,t\uparrow})\in E_{\downarrow\uparrow}$ with cost $0$.
+
+This minimisation step is the key to our runtime improvement. It facilitates the determination of the best predecessor of a state $v_{x,t\downarrow}$ because we already know that the minimum cost of having $x$ servers at the end of time slot $t-1$ is stored in $v_{x,t-1\uparrow}$. Thus, the cheapest possibility to process the next arrival rate $\lambda_t$ using $x$ servers can simply be calculated by adding $\opcosts(x,\lambda_t)$ to the cost of $v_{x,t-1\uparrow}$. Consequently, the cost of $v_{x,t\downarrow}$ is given by the minimum of $v_{x,t-1\uparrow}+\opcosts(x,\lambda_t)$ and $v_{x+1,\downarrow}$.
 \unsure{caption of figure}
 \begin{figure}[H]
 \centering
@@ -803,12 +818,15 @@ These minimisation steps will allow us to eliminiate the need of considering any
 \end{tikzpicture}
 }
 \caption{Graph for a pseudo-linear, optimal offline algorithm; the path of the topological sorting is highlighted in red.}
+\label{fig_graph_pseudo_lin}
 \end{figure}
+As one can see in above figure, we stretched our graph but at the same time also greatly reduced the amount of edges compared to our initial approach in section~\ref{sec_opt_offline_pseudo_poly}. By following the marked path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T+1}$. Our next task shall be the verification of our new construction.
+
 \section{A polynomial $4$-approximation algorithm for monotonically increasing convex f}
 We consider a modification of the problem discussed in chapter. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
 
 \subsection{Graph for a $4$-optimal schedule}
-We modify our graph from section~\ref{sec_opt_offline_pseudo_poly} to the reduce the number of vertices. For this, we stop adding m vertices for each timestep, but use vertices that approximate the number of active servers instead. First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add vertices $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$. All edges and weights are added analogous to chapter~\ref{sec_opt_offline_pseudo_poly}.
+We modify our graph from section~\ref{sec_opt_offline_pseudo_poly} to the reduce the number of nodes. For this, we stop adding m nodes for each timestep, but use nodes that approximate the number of active servers instead. First, let $b\coloneqq\lceil\log_2(m)\rceil$. We add nodes $(t,0)$ and $(t,2^i),\forall t\in[T-1],0\le i\le b$. All edges and weights are added analogous to chapter~\ref{sec_opt_offline_pseudo_poly}.
 \begin{figure}[H]
 \begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
 
