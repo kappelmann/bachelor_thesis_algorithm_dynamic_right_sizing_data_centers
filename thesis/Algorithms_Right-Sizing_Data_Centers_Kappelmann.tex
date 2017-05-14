@@ -516,7 +516,6 @@ We examine the costs and conclude
 \begin{equation*}
 	\costs(\mx)\stackrel{\eqref{eq_equ_sharing_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
 \end{equation*}
-
 \item[``$\Leftarrow$'':] Let $P=(v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})$ be a path from $v_{0,0}$ to $v_{0,T+1}$.
 We construct a schedule for $\inp$ by setting 
 \begin{equation*}
@@ -821,6 +820,20 @@ This minimisation step is the key to our runtime improvement. It facilitates the
 \label{fig_graph_pseudo_lin}
 \end{figure}
 As one can see in above figure, we stretched our graph but at the same time also greatly reduced the amount of edges compared to our initial approach in section~\ref{sec_opt_offline_pseudo_poly}. By following the marked path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T+1}$. Our next task shall be the verification of our new construction.
+\begin{prop}
+Any given schedule $\mx$ for $\inp$ corresponds to a path $P$ from $v_{0,0}$ to $v_{0,T+1}$ with $\costs(\mx)=\costs(P)$.
+\end{prop}
+\begin{proof}
+Let $\mx=(x_1,\ldots,x_T)$ be a schedule for $\inp$. 
+%We construct a path in our graph by setting
+%\begin{align*}
+	%P\coloneqq(v_{0,0},v_{x_1,1\downarrow},v_{x_1,1\uparrow},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})
+%\end{align*}
+%We examine the costs and conclude
+%\begin{equation*}
+	%\costs(\mx)\stackrel{\eqref{eq_equ_sharing_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
+%\end{equation*}
+\end{proof}
 
 \section{A polynomial $4$-approximation algorithm for monotonically increasing convex f}
 We consider a modification of the problem discussed in chapter. Assuming that f is convex and monotonically increasing, we can modify our algorithm to obtain a polynomial time $4$-approximation algorithm.
