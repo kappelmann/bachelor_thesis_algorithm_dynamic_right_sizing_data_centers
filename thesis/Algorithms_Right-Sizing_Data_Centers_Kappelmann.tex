@@ -330,12 +330,12 @@ $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, their switchi
 Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
-As a special case, proposition~\ref{prop_strict_switching} unfolds its power on optimal schedules, yielding the next corrolary.
+As a special case, Proposition~\ref{prop_strict_switching} unfolds its power on optimal schedules, yielding the next corrolary.
 \begin{cor}\label{cor_strict_opt_schedule}
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ satisfying~\eqref{eq_strict_switching}.
 \end{cor}
 \begin{proof}
-Let $\Sigma$ be an optimal schedule for $\inp$. Applying proposition~\ref{prop_strict_switching} to $\Sigma$ yields $\Sigma^*$ and the claim follows.
+Let $\Sigma$ be an optimal schedule for $\inp$. Applying Proposition~\ref{prop_strict_switching} to $\Sigma$ yields $\Sigma^*$ satisfying~\eqref{eq_strict_switching} with $\costs(\Sigma^*)\le\costs(\Sigma)$. The claim follows.
 \end{proof}
 
 Next, we want to consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, that is
@@ -344,8 +344,8 @@ Next, we want to consider the sequence of active servers. For this, let $\mx$ de
 \end{equation*}
 As we assume all machines sleeping at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$.
 
-The next proposition poses the cornerstone of our subsequent works. We want to establish an optimal scheduling strategy given a fixed amount of active servers. It turns out that equal load-sharing seems a very desirable strategy.
-\begin{prop}[Equal load sharing]\label{prop_equ_load_sharing}
+The next proposition poses the cornerstone of our subsequent works. We want to establish an optimal scheduling strategy given a fixed amount of active servers. It turns out that an even load-sharing seems a very desirable strategy.
+\begin{prop}[even load distribution]\label{prop_even_load_sharing}
 Given $x_t\in\mathbb{N}$ active servers in time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.\unsure{This is sounds awkwardly formulated, doesn't it?}
 \end{prop}
 \begin{proof}
@@ -366,7 +366,7 @@ In particular, we have
 \begin{equation}
 	\sum_{i=1}^{x_t}\mu_i\lambda_t=\lambda_t\label{eq_mu_convex_comb}
 \end{equation}
-Using these weights, we now consider the operating costs of a schedule $\Sigma^*$ that equally distributes $\lambda_t$ to its $x_t$ active servers:
+Using these weights, we now consider the operating costs of a schedule $\Sigma^*$ that evenly distributes $\lambda_t$ to its $x_t$ active servers:
 \begin{align*}
 	\sum\limits_{i=1}^{x_t}f\Bigl(\frac{\lambda_t}{x_t}\Bigr)=x_t*f\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\eqref{eq_mu_convex_comb}}{=}x_t*f\Bigl(\sum\limits_{i=1}^{x_t}{\frac{\mu_i\lambda_t}{x_t}}\Bigr)
 \end{align*}
@@ -380,16 +380,16 @@ With the use of Jensen's inequality\unsure{style (footnote) okay?}\footnote{For 
 Thus, the operating costs of $\Sigma^*$ give a lower bound for the operatings costs of $\Sigma$, and the claim follows.
 \end{proof}
 As a special case, we can again apply our just derived proposition to optimal schedules.
-\begin{cor}\label{cor_equ_load_sharing}
-Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that equally distributes its arrival rates to its active servers in each time slot.
+\begin{cor}\label{cor_even_load_sharing}
+Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates to its active servers in each time slot.
 \end{cor}
 \begin{proof}
-Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy $\mathcal{L}^*$ that equally distributes the arrival rates to all active servers of $\Sigma$ in each time slot. Setting $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$ we have $\costs(\Sigma^*)\leq \costs(\Sigma)$ by proposition~\ref{prop_equ_load_sharing} and the claim follows.
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy $\mathcal{L}^*$ that evenly distributes the arrival rates to all active servers of $\Sigma$ in each time slot. Setting $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$ we have $\costs(\Sigma^*)\leq \costs(\Sigma)$ by Proposition~\ref{prop_even_load_sharing}. The claim follows.
 \end{proof}
-As a result of corrolary~\ref{cor_equ_load_sharing}, we can restrict ourselves in finding an optimal schedule that equally distributes its arrival rates to its active servers. Together with corollary~\ref{cor_strict_opt_schedule}, this allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. 
+As a result of Corrolary~\ref{cor_even_load_sharing}, we can restrict ourselves in finding an optimal schedule that evenly distributes its arrival rates to its active servers. Together with Corollary~\ref{cor_strict_opt_schedule}, this allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. 
 
 We are now able to simplify our optimisation conditions~\eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}. 
-For this, given a problem instance $\inp$, we define the operating costs function $\opcosts(x,\lambda)$ that describes the costs incurred by equally distributing $\lambda$ on $x$ active servers using $f$:
+For this, given a problem instance $\inp$, we define the operating costs function $\opcosts(x,\lambda)$ that describes the costs incurred by evenly distributing $\lambda$ on $x$ active servers using $f$:
 \begin{equation*}
 	\opcosts:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R}\cup\{\infty\},\quad \opcosts(x,\lambda)=\begin{cases}
           0, & \text{if $x=0$}\\
@@ -401,15 +401,15 @@ We assign infinite costs in case $\lambda>x$ as there would be too few active se
 \begin{equation*}
 	\swcosts(x_{t-1},x_t)\coloneqq\beta*\max\{0,x_t-x_{t-1}\}
 \end{equation*}
-Lastly, we can define the costs function $\costs(x_{t-1},x_t,\lambda_t)$ that describes the incurring costs for a single time step using an equal distribution of loads:
+Lastly, we can define the costs function $\costs(x_{t-1},x_t,\lambda_t)$ that describes the incurring costs for a single time step using an even distribution of loads:
 \begin{equation*}
 	\costs(x_{t-1},x_{t},\lambda_t)\coloneqq\opcosts(x_t,\lambda_t)+\swcosts(x_{t-1},x_t)
 \end{equation*}
 The optimisation conditions for a schedule now simplify to one single minimalisation:
 \begin{align}
-	\text{minimise}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq_equ_sharing_schedule_costs}
+	\text{minimise}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq_even_sharing_schedule_costs}
 \end{align}
-We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq_equ_sharing_schedule_costs}.
+We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq_even_sharing_schedule_costs}.
 
 \section{Optimal offline scheduling}
 In this section, we derive two optimal offline algorithms based on our preliminary work.
@@ -425,7 +425,7 @@ Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that t
 	&G\coloneqq(V,E,c_G)
 \end{align*}
 \unsure{Maybe something different than $c_G$?}
-For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers in time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$, we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
+For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$, we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
 
 The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by\unsure{Is this well-written?}
 \begin{equation*}
@@ -435,7 +435,7 @@ In particular, for a path $P=(v_{0,0},v_{x_1,1},\ldots,v_{x_T,T},v_{0,T+1})$ fro
 \begin{equation}
 	\costs(P)=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})+\underbrace{\costs(x_T,0,0)}_{=0}=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})\label{eq_v0_VT1_path_costs}
 \end{equation}
-Note that the costs of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_equ_sharing_schedule_costs}).
+Note that the costs of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_even_sharing_schedule_costs}).
 Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the costs of the corresponding schedule. Needless to say, this demands for a proof of correctness.
 \begin{figure}[H]
 \centering
@@ -514,7 +514,7 @@ $ $
 \end{align*}
 We examine the costs and conclude
 \begin{equation*}
-	\costs(\mx)\stackrel{\eqref{eq_equ_sharing_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
+	\costs(\mx)\stackrel{\eqref{eq_even_sharing_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
 \end{equation*}
 \item[``$\Leftarrow$'':] Let $P=(v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})$ be a path from $v_{0,0}$ to $v_{0,T+1}$.
 We construct a schedule for $\inp$ by setting 
@@ -523,7 +523,7 @@ We construct a schedule for $\inp$ by setting
 \end{equation*}
 Again, by examing the costs we conclude
 \begin{equation*}
-	\costs(P)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\underbrace{\costs(0,x_1,\lambda_1)}_{=\costs(x_0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_equ_sharing_schedule_costs}}{=}\costs(\mx)
+	\costs(P)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\underbrace{\costs(0,x_1,\lambda_1)}_{=\costs(x_0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_even_sharing_schedule_costs}}{=}\costs(\mx)
 \end{equation*}
 \end{itemize}
 Thus, the claim follows.
@@ -532,7 +532,7 @@ Thus, the claim follows.
 Any given optimal schedule $\mx$ for $\inp$ corresponds to a shortest path $P$ from $v_{0,0}$ to $v_{0,T+1}$ with $\costs(\mx)=\costs(P)$ and vice versa.
 \end{thm} 
 \begin{proof}
-By lemma~\ref{lem_opt_sched} we have a one-to-one correspondence between schedules $\mx$ and paths $P$ obeying $\costs(\mx)=\costs(P)$. Thus, we have 
+By Lemma~\ref{lem_opt_sched} we have a one-to-one correspondence between schedules $\mx$ and paths $P$ obeying $\costs(\mx)=\costs(P)$. Thus, we have 
 \begin{equation*}
 	\costs(\mx)\text{ minimal}\iff \costs(P)\text{ minimal}
 \end{equation*}
@@ -621,10 +621,10 @@ The runtime is polynomial in the numeric value of the input; however, as we just
 
 Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$
 
-\subsection{A pseudo-linear algorithm}
+\subsection{A pseudo-linear algorithm}\label{sec_opt_offline_pseudo_lin}
 The algorithm developed in section~\ref{sec_opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
 
-\unsure{Is this well written? Should add table with arrival rates, opcosts, beta, etc./ for figure?}Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any node $v_{x,t}$ denotes the state of scheduling the arrival rate $\lambda_{t}$ equally to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following two examples:
+\unsure{Is this well written? Should add table with arrival rates, opcosts, beta, etc./ for figure?}Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any node $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following two examples:
 \begin{figure}[H]
 \captionsetup{farskip=-1em} 
 \centering
@@ -704,7 +704,7 @@ For any possible amount of active servers $x$ and any time slot $t$, we add two 
 
 The set of edges $E_s$ and $E_e$ denote the start initialisation and the end minimisation step, respectively. An edge $(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$ accounts for the operating costs that incur when processing the arrival rate $\lambda_{t+1}$ with $x$ active servers.
 
-After every time step from $t-1$ to $t$ that incurs operatings costs, we have a minimisation step in our graph. For this, we first move down along the chain $v_{m,t\downarrow},v_{m-1,t\downarrow},\ldots,v_{0,t\downarrow}$ using edges from $E_\downarrow$ with cost $0$. Then we proceed to move to the right from $v_{0,t\downarrow}$ to $v_{0,t\uparrow}$. Lastly, we move up along the chain $v_{0,t\uparrow},v_{1,t\uparrow},\ldots,v_{m,t\uparrow}$ using edges from $E_\uparrow$ with cost $\beta$. In order to have the possibility to keep the calculated costs of $v_{x,t\downarrow}$ during the upward movement, we added edges $(v_{x,t\downarrow},v_{x,t\uparrow})\in E_{\downarrow\uparrow}$ with cost $0$.
+After any time step from $t-1$ to $t$ that incurs operatings costs, we have a minimisation step in our graph. For this, we first move down the chain $v_{m,t\downarrow},v_{m-1,t\downarrow},\ldots,v_{0,t\downarrow}$ using edges from $E_\downarrow$ with cost $0$. Then we proceed to move to the right from $v_{0,t\downarrow}$ to $v_{0,t\uparrow}$. Lastly, we move up the chain $v_{0,t\uparrow},v_{1,t\uparrow},\ldots,v_{m,t\uparrow}$ using edges from $E_\uparrow$ with cost $\beta$. In order to have the possibility to keep the calculated costs of $v_{x,t\downarrow}$ during the upward movement, we add edges $(v_{x,t\downarrow},v_{x,t\uparrow})\in E_{\downarrow\uparrow}$ with cost $0$.
 
 This minimisation step is the key to our runtime improvement. It facilitates the determination of the best predecessor of a state $v_{x,t\downarrow}$ because we already know that the minimum cost of having $x$ servers at the end of time slot $t-1$ is stored in $v_{x,t-1\uparrow}$. Thus, the cheapest possibility to process the next arrival rate $\lambda_t$ using $x$ servers can simply be calculated by adding $\opcosts(x,\lambda_t)$ to the cost of $v_{x,t-1\uparrow}$. Consequently, the cost of $v_{x,t\downarrow}$ is given by the minimum of $v_{x,t-1\uparrow}+\opcosts(x,\lambda_t)$ and $v_{x+1,\downarrow}$.
 \unsure{caption of figure}
@@ -819,20 +819,37 @@ This minimisation step is the key to our runtime improvement. It facilitates the
 \caption{Graph for a pseudo-linear, optimal offline algorithm; the path of the topological sorting is highlighted in red.}
 \label{fig_graph_pseudo_lin}
 \end{figure}
-As one can see in above figure, we stretched our graph but at the same time also greatly reduced the amount of edges compared to our initial approach in section~\ref{sec_opt_offline_pseudo_poly}. By following the marked path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T+1}$. Our next task shall be the verification of our new construction.
+As one can see in above figure, we stretched our graph but at the same time also greatly reduced the amount of edges compared to our initial approach in section~\ref{sec_opt_offline_pseudo_poly}. By following the coloured path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T+1}$. 
+
+Our next task shall be the verification of our new construction. For this, we first examine the possible paths from $v_{0,0}$ to $v_{0,T+1}$ in our graph.
+In contrast to our approach in section~\ref{sec_opt_offline_pseudo_poly}, our new graph contains paths which do not directly correspond to a schedule $\mx$. For example, consider the following path:
+\begin{equation*}
+	P\coloneqq(v_{0,0},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T+1})
+\end{equation*}
+A schedule corresponding to $P$ would use one active server in its first time slot, then power down this server, and subsequently turn on two servers to process the next arrival rate. This seems somewhat unreasonable. We could just keep the initial server on to save switching costs. In fact, this behaviour cannot even be represented using our schedule notation $\mx$ and optimisation condition~\eqref{eq_even_sharing_schedule_costs}. We can, however, modify $P$ to represent a more reasonable sequence, that is we set
+\begin{equation*}
+	P'\coloneqq(v_{0,0},v_{1,1\downarrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T+1})
+\end{equation*}
+This revised path now pleasantly translates to a schedule $\mx$, in this case $\mx=(1,2,\ldots)$. We now want to give a more formal definition of our observation.
+\begin{defn}[reasonable paths]\label{defn_reasn_paths}
+Let $P$ be a path from $v_{0,0}$ to $v_{0,T+1}$. For any time slot $t\in[T]$, let $E_\downarrow^t$ be the set of edges $(v_{x,t\downarrow},v_{x-1,t\downarrow})\in E_\downarrow$ used by $P$ at time $t$. Similarly, let $E_\uparrow^t$ be the set of edges $(v_{x,t\uparrow},v_{x+1,t\uparrow})\in E_\uparrow$ used by $P$ at time $t$.
+A path $P$ from $v_{0,0}$ to $v_{0,T+1}$ is called \textit{reasonable} if for any time slot $t\in[T]$ the path does not power off and power on servers simultaneously at $t$. More formally, $P$ must satisfy the formula
+\begin{equation}
+	\forall t\in[T]\left(E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset\right)\label{eq_reasn_path}
+\end{equation}
+\end{defn}
+Using this definition, we can now verify that our reasonable paths indeed deserve to be called \textit{reasonable}.
+\begin{prop}
+Any given path $P$ from $v_{0,0}$ to $v_{0,T+1}$ corresponds to a reasonable path $P'$ with $\costs(P')\le\costs(P)$.
+\end{prop}
+\begin{proof}
+Let $P$ be a path from $v_{0,0}$ to $v_{0,T+1}$. Further, let $E_\downarrow^t$ and $E_\uparrow^t$ be its sets of edges for $t\in[T]$ as defined in Definition~\ref{defn_reasn_paths}. We give a procedure that repeatedly modifies $P$ such that it satisfies~\eqref{eq_reasn_path} and reduces or retains its costs. 
+\end{proof}
 \begin{prop}
 Any given schedule $\mx$ for $\inp$ corresponds to a path $P$ from $v_{0,0}$ to $v_{0,T+1}$ with $\costs(\mx)=\costs(P)$.
 \end{prop}
 \begin{proof}
 Let $\mx=(x_1,\ldots,x_T)$ be a schedule for $\inp$. 
-%We construct a path in our graph by setting
-%\begin{align*}
-	%P\coloneqq(v_{0,0},v_{x_1,1\downarrow},v_{x_1,1\uparrow},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})
-%\end{align*}
-%We examine the costs and conclude
-%\begin{equation*}
-	%\costs(\mx)\stackrel{\eqref{eq_equ_sharing_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
-%\end{equation*}
 \end{proof}
 
 \section{A polynomial $4$-approximation algorithm for monotonically increasing convex f}
