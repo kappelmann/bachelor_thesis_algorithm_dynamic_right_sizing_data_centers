@@ -327,7 +327,7 @@ We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satis
 
 $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, their switching costs differ in that there are no switching costs $\beta$ at time $t$ for server $i$ using $\Sigma'$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$
 
-Moreover, we decreased the amount of bad spots\unsure{bad spots? better description?} at time $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
+Moreover, we decreased the number of bad spots\unsure{bad spots? better description?} at time $t$ concerning~\eqref{eq_strict_switching}. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
 As a special case, Proposition~\ref{prop_strict_switching} unfolds its power on optimal schedules, yielding the next corrolary.
@@ -833,7 +833,7 @@ A schedule corresponding to $P$ would use one active server in its first time sl
 This revised path now pleasantly translates to a schedule $\mx$, in this case $\mx=(1,2,\ldots)$. We now want to give a more formal definition of our observation.
 \begin{defn}[reasonable paths]\label{defn_reasn_paths}
 Let $P$ be a path from $v_{0,0}$ to $v_{0,T+1}$. For any time slot $t\in[T]$, let $E_\downarrow^t$ be the set of edges $(v_{x,t\downarrow},v_{x-1,t\downarrow})\in E_\downarrow$ used by $P$ at time $t$. Similarly, let $E_\uparrow^t$ be the set of edges $(v_{x,t\uparrow},v_{x+1,t\uparrow})\in E_\uparrow$ used by $P$ at time $t$.
-A path $P$ from $v_{0,0}$ to $v_{0,T+1}$ is called \textit{reasonable} if for any time slot $t\in[T]$ the path does not power off and power on servers simultaneously at $t$. More formally, $P$ must satisfy the formula
+A path $P$ from $v_{0,0}$ to $v_{0,T+1}$ is called \textit{reasonable} if for any time slot $t\in[T]$ the path does not shut down and power on servers simultaneously at $t$. More formally, $P$ must satisfy the formula
 \begin{equation}
 	\forall t\in[T]\left(E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset\right)\label{eq_reasn_path}
 \end{equation}
@@ -843,7 +843,27 @@ Using this definition, we can now verify that our reasonable paths indeed deserv
 Any given path $P$ from $v_{0,0}$ to $v_{0,T+1}$ corresponds to a reasonable path $P'$ with $\costs(P')\le\costs(P)$.
 \end{prop}
 \begin{proof}
-Let $P$ be a path from $v_{0,0}$ to $v_{0,T+1}$. Further, let $E_\downarrow^t$ and $E_\uparrow^t$ be its sets of edges for $t\in[T]$ as defined in Definition~\ref{defn_reasn_paths}. We give a procedure that repeatedly modifies $P$ such that it satisfies~\eqref{eq_reasn_path} and reduces or retains its costs. 
+Let $P$ be a path from $v_{0,0}$ to $v_{0,T+1}$. We give a procedure that repeatedly modifies $P$ such that it satisfies~\eqref{eq_reasn_path} and reduces or retains its costs. 
+
+Let $t\in[T]$ be the first time slot falsifying~\eqref{eq_reasn_path}. If there does not exist such a time slot, we are done. Otherwise, let $E_\downarrow^t$ and $E_\uparrow^t$ be its sets of edges as defined in Definition~\ref{defn_reasn_paths}. Since $P$ falsifies~\eqref{eq_reasn_path} at time $t$, both $E_\downarrow^t$ as well as $E_\uparrow^t$ must be non-empty. Thus, we can obtain the ``maximum'' nodes involved in these sets.
+\begin{align*}
+	x_s\coloneqq&\max\bigl\{x\in[m]\mid (v_{x,t\downarrow},v_{x-1,t\downarrow})\in E_\downarrow^t\bigr\}\\
+	x_e\coloneqq&\max\bigl\{x\in[m]\mid (v_{x-1,t\uparrow},v_{x,t\uparrow})\in E_\uparrow^t\bigr\}
+\end{align*}
+Next, consider the subpath $S=(v_{x_s,t\downarrow},\ldots,v_{x_e,t\uparrow})$ of $P$. Note that the subpath uses all edges from $E_\downarrow^t$ as well as from $E_\uparrow^t$.
+Naturally, a most cost-efficient path $S'$ from node $v_{x_s,t\downarrow}$ to $v_{x_e,t\uparrow}$ minimises the number of edges $(v_{x,t\uparrow},v_{x+1,t\uparrow})$ since each of these edges incurs cost $\beta\ge 0$. For this, we observe that we must not shut down servers if $x_s\le x_e$, and that we must not power on servers if $x_s\ge x_e$; thus, we consider three cases for $S'$:
+\begin{equation*}
+	S'\coloneqq
+	\begin{cases}
+		(v_{x_s,t\downarrow},v_{x_s,t\uparrow},v_{x_s+1,t\uparrow},\ldots,v_{x_e,t\uparrow}), & \text{if $x_s< x_e$}\\
+		(v_{x_s,t\downarrow},v_{x_s-1,t\downarrow},\ldots,v_{x_e,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s>x_e$}\\
+		(v_{x_s,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s=x_e$}
+	\end{cases}
+\end{equation*}
+	In each case, $S'$ uses edges from at most one of the sets $E_\downarrow^t$ and $E_\uparrow^t$. Thus, by replacing the subpath $S$ of $P$ with $S'$, we obtain a new schedule $P'$ that satisfies~\eqref{eq_reasn_path} at time $t$. The paths $P$ and $P'$ coincide in their costs before visiting $v_{x_s,t\downarrow}$ and after visiting $v_{x_e,t\uparrow}$; 
+however, their switching costs differ in that there are less switching costs $\beta$ at time $t$ using $P'$. As we assume $\beta\ge0$, we conclude $\costs(P')\le \costs(P)$
+
+Hence, by repeating described process on $P'$, we obtain a terminating procedure that returns a path satisfying the conditions.
 \end{proof}
 \begin{prop}
 Any given schedule $\mx$ for $\inp$ corresponds to a path $P$ from $v_{0,0}$ to $v_{0,T+1}$ with $\costs(\mx)=\costs(P)$.
