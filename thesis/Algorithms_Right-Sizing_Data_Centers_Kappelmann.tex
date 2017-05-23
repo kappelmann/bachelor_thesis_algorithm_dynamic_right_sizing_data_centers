@@ -234,7 +234,9 @@
 \pagenumbering{gobble}
 \maketitle
 \newpage
-\tableofcontents 
+\begingroup\hypersetup{linkcolor=black}
+\tableofcontents
+\endgroup 
 \newpage
 
 \pagenumbering{arabic}
@@ -355,15 +357,31 @@ Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, 
 \begin{proof}
 We proof the claim by induction on $n\in\mathbb{N}$.
 \begin{itemize}
-\item\textbf{Basis:} For $n=1$ we have $x_1=1$ and thus
+\item\underline{Basis:} For $n=1$ we have $x_1=1$ and thus
 \begin{equation*}
 	f\Bigl(\sum\limits_{i=1}^1x_i\lambda_i\Bigr)=f(\lambda_1)=\sum\limits_{i=1}^1x_if(\lambda_i)
 \end{equation*}
-\item\textbf{Step:} Let $n\in\mathbb{N}$ be arbitrary but fixed.
+\item\underline{Step:} Let $n\in\mathbb{N}$ be arbitrary and fixed.
 \begin{itemize}
-	\item\textbf{I.H.:} The assertion holds for $n$.
-	\item\textbf{Claim:} The assertion holds for $n+1$.
-	\item\textbf{Proof:}
+	\item\underline{I.H.:} The assertion holds for $n$.
+	\item\underline{Claim:} The assertion holds for $n+1$.
+	\item\underline{Proof:} Since $\sum\limits_{i=1}^{n+1}x_i=1$, at least one $x_i$ must be positive. Without loss of generality, we may assume $x_1>0$.
+	\begin{equation*}
+		f\Bigl(\sum\limits_{i=1}^{n+1}x_i\lambda_i\Bigr)=f\Bigl(x_1\lambda_1+\sum\limits_{i=2}^{n+1}x_i\lambda_i\Bigr)\stackrel{x_1\neq 0}{=}f\Bigl(x_1\lambda_1+(1-x_1)\sum\limits_{i=2}^{n+1}\frac{x_i\lambda_i}{1-x_1}\Bigr)
+	\end{equation*}
+	As $f$ is convex, we have
+	\begin{equation*}
+		f\Bigl(x_1\lambda_1+(1-x_1)\sum\limits_{i=2}^{n+1}\frac{x_i\lambda_i}{1-x_1}\Bigr)\stackrel{\text{f convex}}{\le} x_1f(\lambda_1)+(1-x_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{x_i\lambda_i}{1-x_1}\Bigr)
+	\end{equation*}
+	Since $\sum\limits_{i=2}^{n+1}\frac{x_i}{1-x_1}=1$, we can apply our induction hypothesis.
+	\begin{equation*}
+		x_1f(\lambda_1)+(1-x_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{x_i\lambda_i}{1-x_1}\Bigr)\stackrel{\text{I.H.}}{\le} x_1f(\lambda_1)+(1-x_1)\sum\limits_{i=2}^{n+1}\frac{x_i}{1-x_1}f(\lambda_i)
+	\end{equation*}
+	We combine our steps and obtain
+	\begin{align*}
+		f\Bigl(\sum\limits_{i=1}^{n+1}x_i\lambda_i\Bigr)&\le x_1f(\lambda_1)+(1-x_1)\sum\limits_{i=2}^{n+1}\frac{x_i}{1-x_1}f(\lambda_i)\\
+		&=x_1f(\lambda_1)+\sum\limits_{i=2}^{n+1}x_if(\lambda_i)=\sum_{i=1}^{n+1} x_i f(\lambda_i)\qedhere
+	\end{align*}
 \end{itemize}
 \end{itemize}
 \end{proof}
@@ -388,7 +406,7 @@ Hence, we can obtain weights $\mu_1,\ldots,\mu_{x_t}\in[0,1]$ that relate $\lamb
 \end{align}
 In particular, we have 
 \begin{equation}
-	\sum_{i=1}^{x_t}(\mu_i\lambda_t)=\lambda_t\label{eq_mu_convex_comb}
+	\sum_{i=1}^{x_t}\mu_i\lambda_t=\lambda_t\label{eq_mu_convex_comb}
 \end{equation}
 Using these weights, we now consider the operating costs of a schedule $\Sigma^*$ that evenly distributes $\lambda_t$ to its $x_t$ active servers:
 \begin{align*}
