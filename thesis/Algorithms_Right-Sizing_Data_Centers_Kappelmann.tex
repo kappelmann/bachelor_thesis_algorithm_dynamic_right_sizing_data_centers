@@ -463,18 +463,7 @@ Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that t
 	&c_G(v_{x,t},v_{x',t+1})\coloneqq\costs(x,x',\lambda_{t+1})\\
 	&G\coloneqq(V,E,c_G)
 \end{align*}
-For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$, we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines.
-
-The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by
-\begin{equation*}
-	\costs(P)\coloneqq\sum\limits_{t=1}^{n}\costs(x_{t-1},x_t,\lambda_{T_0+t})
-\end{equation*}
-In particular, for a path $P=(v_{0,0},v_{x_1,1},\ldots,v_{x_T,T},v_{0,T+1})$ from our start node $v_{0,0}$ to our end node $v_{0,T+1}$ we have
-\begin{equation}
-	\costs(P)=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})+\underbrace{\costs(x_T,0,0)}_{=0}=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})\label{eq_v0_VT1_path_costs}
-\end{equation}
-Note that the costs of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_even_sharing_schedule_costs}).
-Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the costs of the corresponding schedule. Needless to say, this demands for a proof of correctness.
+For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$, we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines. A graphical representation can be found in the following figure.
 \begin{figure}[H]
 \centering
 \scalebox{0.85}{
@@ -539,7 +528,18 @@ Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the c
 \end{tikzpicture}
 }
 \caption{Level structured graph for a pseudo-polynomial, optimal offline algorithm}
+\label{fig_graph_pseudo_poly}
 \end{figure}
+The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by
+\begin{equation*}
+	\costs(P)\coloneqq\sum\limits_{t=1}^{n}\costs(x_{t-1},x_t,\lambda_{T_0+t})
+\end{equation*}
+In particular, for a path $P=(v_{0,0},v_{x_1,1},\ldots,v_{x_T,T},v_{0,T+1})$ from our start node $v_{0,0}$ to our end node $v_{0,T+1}$ we have
+\begin{equation}
+	\costs(P)=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})+\underbrace{\costs(x_T,0,0)}_{=0}=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})\label{eq_v0_VT1_path_costs}
+\end{equation}
+Note that the costs of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_even_sharing_schedule_costs}).
+Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the costs of the corresponding schedule. Needless to say, this demands for a proof of correctness.
 \begin{lem}\label{lem_sched_path_pseudo_poly}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all paths from $v_{0,0}$ to $v_{0,T+1}$. The map
 \begin{equation*}
@@ -628,11 +628,14 @@ Our memory demand is defined by the size of the arrays $C$ and $P$. As both arra
 \subsection{A pseudo-linear algorithm}\label{sec_opt_offline_pseudo_lin}
 The algorithm developed in section~\ref{sec_opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
 
-\unsure{Is this well written? Should add table with arrival rates, opcosts, beta, etc./ for figure?}Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any node $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following two examples:
+Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any node $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following two example:
+\begin{exmpl}
+Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances with $f(x)=x^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the algorithm and the corresponding graphs for the two problem instances as derived in section~\ref{sec_opt_offline_pseudo_poly}.
 \begin{figure}[H]
 \captionsetup{farskip=-1em} 
+\captionsetup[subfigure]{labelformat=empty}
 \centering
-\subfloat[State $v_{0,1}$ could be reached with cost $3$ by moving down from node $v_{1,1}$.]{
+\subfloat[\underline{Problem $\inp_1$:} State $v_{0,1}$ could be reached with cost $3$ by moving down from node $v_{1,1}$.]{
 \scalebox{0.75}{
   \begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1cm,circle,draw}]
   \node[node, label={[color=red]$0$}] (1) {0,0};
@@ -655,29 +658,30 @@ The algorithm developed in section~\ref{sec_opt_offline_pseudo_poly} is of a qui
 \end{tikzpicture}
 }}
 \qquad
-\subfloat[State $v_{1,1}$ could be reached with cost $1$ by moving up from $v_{0,1}$.]{
+\subfloat[\underline{Problem $\inp_2$:} State $v_{1,1}$ could be reached with cost $1$ by moving up from $v_{0,1}$.]{
 \scalebox{0.75}{
   \begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1cm,circle,draw}]
   \node[node, label={[color=red]$0$}] (1) {0,0};
   \node[node, label={[below=1.05cm,color=red]$0$}] (2) [below right =of 1] {0,1};
-  \node[node, label={[color=red]$3$}] (3) [above right=of 1] {1,1};
+  \node[node, label={[color=red]$2$}] (3) [above right=of 1] {1,1};
   \node[node, label={[below=1.05cm,color=red]$\infty$}] (4) [right =of 2] {0,2};
-  \node[node, label={[color=red]$4$}] (5) [right =of 3] {1,2};
-  \node[node, label={[color=red]$4$}] (6) [below right =of 5] {0,3};
+  \node[node, label={[color=red]$3$}] (5) [right =of 3] {1,2};
+  \node[node, label={[color=red]$3$}] (6) [below right =of 5] {0,3};
 
   \path[every node/.style={font=\sffamily\small}]
     (1) edge node[below left] {$0$} (2)
-	edge node[above left] {$3$} (3)
+	edge node[above left] {$2$} (3)
     (2) edge node[below] {$\infty$} (4)
-    (2) edge node[label={[xshift=0.88cm, yshift=0.9cm]$4$}] {} (5)
+    (2) edge node[label={[xshift=0.88cm, yshift=0.9cm]$3$}] {} (5)
     (3) edge node[label={[xshift=0.55cm, yshift=-1.82cm]$\infty$}] {} (4)
-    (3) edge node[above] {$3$} (5)
+    (3) edge node[above] {$2$} (5)
     (4) edge node[above] {$0$} (6)
     (5) edge node[above] {$0$} (6)
     (2) edge[dashed] node[left] {$1=\beta$} (3);
 \end{tikzpicture} }}
 \caption{Two examples depicting a shortcoming of our initial approach. The calculated nodes' costs are highlighted in red. Dashed edges are not part of the initial algorithm.}
 \end{figure}
+\end{exmpl}
 Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. We want our states to capture a more general notion than given in section~\ref{sec_opt_offline_pseudo_poly}; preferably, we would like a node $v_{x,t}$ to denote the state of having $x$ active servers at the end of time slot $t$. In practice, we may reach a state $v_{x,t}$ by moving down from a state $v_{y^\downarrow,t}$ where $y^\downarrow>i$ with cost $0$ or by moving up from a state $v_{y^\uparrow,t}$ where $y^\uparrow<i$ with cost $\beta(x-y^\uparrow)$.
 
 In order to allow for these new possibilities, given a problem instance $\inp$, we define a directed, weighted graph given a problem instance as follows:
@@ -701,7 +705,7 @@ In order to allow for these new possibilities, given a problem instance $\inp$, 
 \end{align*}
 \begin{textblock}{3}(10,5.5)
 \begin{framed}
-As the phrase goes, \textit{``A picture is worth a thousand words.''} See figure~\ref{fig_graph_pseudo_lin} for a more appealing illustration.%TODO set position!!
+As the phrase goes, \textit{``A picture is worth a thousand words.''} See Figure~\ref{fig_graph_pseudo_lin} for a more appealing illustration.%TODO set position!!
 \end{framed}
 \end{textblock}
 For any possible amount of active servers $x$ and any time slot $t$, we add two nodes $v_{x,t\downarrow}$ and $v_{x,t\uparrow}$. Semantically, the cost of $v_{x,t\downarrow}$ will denote the minimum cost up to time slot $t$ when processing $\lambda_t$ with $x$ or more servers whereas the cost of $v_{x,t\uparrow}$ will denote the minimum cost of having $x$ active servers at the end of time slot $t$. Moreover, we again add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. 
