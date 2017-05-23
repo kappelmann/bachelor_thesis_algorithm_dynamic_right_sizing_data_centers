@@ -343,18 +343,32 @@ Next, we want to consider the sequence of active servers. For this, let $\mx$ de
 \begin{equation*}
 	\mx\coloneqq\bigl(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T}\bigr)\in\fromto{0}{m}^T
 \end{equation*}
-As we assume all machines sleeping at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$. Our next proposition poses the cornerstone of our subsequent works. But before we.
+As we assume all machines sleeping at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$.
 
+Our next proposition requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906.
 \begin{lem}[Jensen's inequality]
-For convex $f:\mathbb{R}\rightarrow\mathbb{R}$, arbitrary $\lambda_1,\ldots,\lambda_n\in\mathbb{R}$, and $x_1,\ldots,x_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}x_i=1$ we have: 
+Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, $\lambda_1,\ldots,\lambda_n\in\mathbb{R}$, and $x_1,\ldots,x_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}x_i=1$. Then the following inequality holds:
 \begin{equation*}
 	f\Bigl(\sum_{i=1}^n x_i \lambda_i\Bigr) \leq \sum_{i=1}^n x_i f(\lambda_i)
 \end{equation*}
 \end{lem}
 \begin{proof}
+We proof the claim by induction on $n\in\mathbb{N}$.
+\begin{itemize}
+\item\textbf{Basis:} For $n=1$ we have $x_1=1$ and thus
+\begin{equation*}
+	f\Bigl(\sum\limits_{i=1}^1x_i\lambda_i\Bigr)=f(\lambda_1)=\sum\limits_{i=1}^1x_if(\lambda_i)
+\end{equation*}
+\item\textbf{Step:} Let $n\in\mathbb{N}$ be arbitrary but fixed.
+\begin{itemize}
+	\item\textbf{I.H.:}
+	\item\textbf{Claim:}
+	\item\textbf{Proof:}
+\end{itemize}
+\end{itemize}
 \end{proof}
 
-We now want to establish an optimal scheduling strategy given a fixed amount of active servers. It turns out that an even load-sharing seems a very desirable strategy.
+The next proposition poses the cornerstone of our subsequent works. We want to establish an optimal scheduling strategy given a fixed amount of active servers. It turns out that an even load-sharing seems a very desirable strategy.
 \begin{prop}[even load distribution]\label{prop_even_load_sharing}
 Given $x_t\in\mathbb{N}$ active servers in time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.
 \end{prop}
