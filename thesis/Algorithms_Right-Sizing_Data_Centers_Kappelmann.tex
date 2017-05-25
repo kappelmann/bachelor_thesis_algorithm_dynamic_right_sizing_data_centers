@@ -284,26 +284,26 @@ In this section, we conduct the preparatory work that will lay the foundations f
 
 We begin by examining the state sequences of feasible schedules. As we are considering homogeneous servers, we do not care which exact servers process the given work loads. Rather we only care about the amount of active servers and the distribution of loads between them. It is in particular unreasonable to power down a machine and to power on a different machine in return; we could just keep the first machine powered on, saving switching costs.
 This investigation is captured by our first proposition.
-\begin{prop}\label{prop_strict_switching}
+\begin{prop}[Reasonable switching]\label{prop_reasonable_switching}
 Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
 \begin{enumerate}[(i)]
 		\item $\costs(\Sigma')\le \costs(\Sigma)$ and 
 		\item $\Sigma'$ never powers on and shuts down servers at the same time slot, i.e.\ $\Sigma'$ satisfies the following formula:
 \begin{equation}
-	\forall t\in[T]\Bigl[\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\ge0)\bigr)\lor\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\le 0)\bigr)\Bigr]\label{eq_strict_switching}
+	\forall t\in[T]\Bigl[\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\ge0)\bigr)\lor\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\le 0)\bigr)\Bigr]\label{eq_reasonable_switching}
 \end{equation}
 \end{enumerate}
 \end{prop}
 \begin{proof}
-Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies~\eqref{eq_strict_switching} and reduces or retains its costs. 
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies~\eqref{eq_reasonable_switching} and reduces or retains its costs. 
 	
-Let $t\in[T]$ be the first time slot falsifying~\eqref{eq_strict_switching}. If there does not exist such a time slot, we are done. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, i.e.\ server $i$ powers on at time $t$ and server $j$ powers off. Without loss of generality, we may assume $i<j$. 
+Let $t\in[T]$ be the first time slot falsifying~\eqref{eq_reasonable_switching}. If there does not exist such a time slot, we are done. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, i.e.\ server $i$ powers on at time $t$ and server $j$ powers off. Without loss of generality, we may assume $i<j$. 
 	
 First, since all servers are sleeping at time $t=0$, we have
 \begin{equation*}
 	s_{k,1}-s_{k,0}=s_{k,1}-0=s_{k,1}\ge 0,\quad\forall k\in[m]
 \end{equation*}
-which satisfies formula~\eqref{eq_strict_switching} for $t=1$.
+which satisfies formula~\eqref{eq_reasonable_switching} for $t=1$.
 Thus, we may assume $t>1$. 
 	
 Now consider the state sequences of server $i$ and $j$:
@@ -330,15 +330,7 @@ We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satis
 
 Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however $\mathcal{S}'$ minimises the switching costs at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$.
 
-Moreover, we decreased the number of servers violating~\eqref{eq_strict_switching} at time $t$. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
-\end{proof}
-
-As a special case, Proposition~\ref{prop_strict_switching} unfolds its power on optimal schedules, yielding the next corollary.
-\begin{cor}\label{cor_strict_opt_schedule}
-Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ satisfying~\eqref{eq_strict_switching}.
-\end{cor}
-\begin{proof}
-Let $\Sigma$ be an optimal schedule for $\inp$. Applying Proposition~\ref{prop_strict_switching} to $\Sigma$ yields a feasible schedule $\Sigma^*$ satisfying~\eqref{eq_strict_switching} with $\costs(\Sigma^*)=\costs(\Sigma)$. The claim follows.
+Moreover, we decreased the number of servers violating~\eqref{eq_reasonable_switching} at time $t$. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
 Next, we want to consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, that is
@@ -347,47 +339,47 @@ Next, we want to consider the sequence of active servers. For this, let $\mx$ de
 \end{equation*}
 As we assume all machines sleeping at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$.
 
-Our next proposition requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906.
+Our next proposition will require the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906.
 \begin{lem}[Jensen's inequality]
-Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, $\lambda_1,\ldots,\lambda_n\in\mathbb{R}$, and $x_1,\ldots,x_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}x_i=1$. Then the following inequality holds:
+Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\ldots,\lambda_n\in\mathbb{R}$}, and $\mu_1,\ldots,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
 \begin{equation*}
-	f\Bigl(\sum_{i=1}^n x_i \lambda_i\Bigr) \leq \sum_{i=1}^n x_i f(\lambda_i)
+	f\Bigl(\sum_{i=1}^n \mu_i \lambda_i\Bigr) \leq \sum_{i=1}^n \mu_i f(\lambda_i)
 \end{equation*}
 \end{lem}
 \begin{proof}
 We proof the claim by induction on $n\in\mathbb{N}$.
 \begin{itemize}
-\item\underline{Basis:} For $n=1$ we have $x_1=1$ and thus
+\item\underline{Basis:} For $n=1$ we have $\mu_1=1$ and thus
 \begin{equation*}
-	f\Bigl(\sum\limits_{i=1}^1x_i\lambda_i\Bigr)=f(\lambda_1)=\sum\limits_{i=1}^1x_if(\lambda_i)
+	f\Bigl(\sum\limits_{i=1}^1\mu_i\lambda_i\Bigr)=f(\lambda_1)=\sum\limits_{i=1}^1\mu_if(\lambda_i)
 \end{equation*}
 \item\underline{Step:} Let $n\in\mathbb{N}$ be arbitrary and fixed.
 \begin{itemize}
 	\item\underline{I.H.:} The assertion holds for $n$.
 	\item\underline{Claim:} The assertion holds for $n+1$.
-	\item\underline{Proof:} Since $\sum\limits_{i=1}^{n+1}x_i=1$, at least one $x_i$ must be positive. Without loss of generality, we may assume $x_1>0$.
+	\item\underline{Proof:} Since $\sum\limits_{i=1}^{n+1}\mu_i=1$, at least one $\mu_i$ must be positive. Without loss of generality, we may assume $\mu_1>0$.
 	\begin{equation*}
-		f\Bigl(\sum\limits_{i=1}^{n+1}x_i\lambda_i\Bigr)=f\Bigl(x_1\lambda_1+\sum\limits_{i=2}^{n+1}x_i\lambda_i\Bigr)\stackrel{x_1\neq 0}{=}f\Bigl(x_1\lambda_1+(1-x_1)\sum\limits_{i=2}^{n+1}\frac{x_i\lambda_i}{1-x_1}\Bigr)
+		f\Bigl(\sum\limits_{i=1}^{n+1}\mu_i\lambda_i\Bigr)=f\Bigl(\mu_1\lambda_1+\sum\limits_{i=2}^{n+1}\mu_i\lambda_i\Bigr)\stackrel{\mu_1\neq 0}{=}f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
 	\end{equation*}
 	As $f$ is convex, we have
 	\begin{equation*}
-		f\Bigl(x_1\lambda_1+(1-x_1)\sum\limits_{i=2}^{n+1}\frac{x_i\lambda_i}{1-x_1}\Bigr)\stackrel{\text{f convex}}{\le} x_1f(\lambda_1)+(1-x_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{x_i\lambda_i}{1-x_1}\Bigr)
+		f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)\stackrel{\text{f convex}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
 	\end{equation*}
-	Since $\sum\limits_{i=2}^{n+1}\frac{x_i}{1-x_1}=1$, we can apply our induction hypothesis.
+	Since $\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}=1$, we can apply our induction hypothesis.
 	\begin{equation*}
-		x_1f(\lambda_1)+(1-x_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{x_i\lambda_i}{1-x_1}\Bigr)\stackrel{\text{I.H.}}{\le} x_1f(\lambda_1)+(1-x_1)\sum\limits_{i=2}^{n+1}\frac{x_i}{1-x_1}f(\lambda_i)
+		\mu_1f(\lambda_1)+(1-\mu_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)\stackrel{\text{I.H.}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}f(\lambda_i)
 	\end{equation*}
 	We combine our steps and obtain
 	\begin{align*}
-		f\Bigl(\sum\limits_{i=1}^{n+1}x_i\lambda_i\Bigr)&\le x_1f(\lambda_1)+(1-x_1)\sum\limits_{i=2}^{n+1}\frac{x_i}{1-x_1}f(\lambda_i)\\
-		&=x_1f(\lambda_1)+\sum\limits_{i=2}^{n+1}x_if(\lambda_i)=\sum_{i=1}^{n+1} x_i f(\lambda_i)\qedhere
+		f\Bigl(\sum\limits_{i=1}^{n+1}\mu_i\lambda_i\Bigr)&\le \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}f(\lambda_i)\\
+		&=\mu_1f(\lambda_1)+\sum\limits_{i=2}^{n+1}\mu_if(\lambda_i)=\sum_{i=1}^{n+1} \mu_i f(\lambda_i)\qedhere
 	\end{align*}
 \end{itemize}
 \end{itemize}
 \end{proof}
 
-The next proposition poses the cornerstone of our subsequent works. We want to establish an optimal scheduling strategy given a fixed amount of active servers. It turns out that an even load-sharing seems a very desirable strategy.
-\begin{prop}[even load distribution]\label{prop_even_load_sharing}
+The following proposition poses the cornerstone of our subsequent works. We want to establish an optimal scheduling strategy given a fixed amount of active servers. It turns out that an even load distribution seems a very desirable strategy.
+\begin{prop}[Even load distribution]\label{prop_even_load_distribution}
 Given $x_t\in\mathbb{N}$ active servers in time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.
 \end{prop}
 \begin{proof}
@@ -418,16 +410,22 @@ With the use of Jensen's inequality and the fact that $\sum_{i=1}^{x_t}(1/x_t)=1
 \end{align*}
 Thus, the operating costs of $\Sigma^*$ give a lower bound for the operating costs of $\Sigma$, and the claim follows.
 \end{proof}
-As a special case, we can again apply our just derived proposition to optimal schedules.
-\begin{cor}\label{cor_even_load_sharing}
+As a special case, we can apply our just derived proposition to optimal schedules.
+\begin{cor}\label{cor_even_load_distribution}
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates to its active servers in each time slot.
 \end{cor}
 \begin{proof}
-Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy $\mathcal{L}^*$ that evenly distributes the arrival rates to all active servers of $\Sigma$ in each time slot. Setting $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$ we have $\costs(\Sigma^*)=\costs(\Sigma)$ by Proposition~\ref{prop_even_load_sharing}. The claim follows.
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy $\mathcal{L}^*$ that evenly distributes the arrival rates to all active servers of $\Sigma$ in each time slot. Setting $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$ we have $\costs(\Sigma^*)=\costs(\Sigma)$ by Proposition~\ref{prop_even_load_distribution}. The claim follows.
 \end{proof}
-As a result of Corollary~\ref{cor_even_load_sharing}, we can restrict ourselves in finding an optimal schedule that evenly distributes its arrival rates to its active servers. Together with Corollary~\ref{cor_strict_opt_schedule}, this allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$. 
+As a result of Corollary~\ref{cor_even_load_distribution}, we can restrict ourselves to finding an optimal schedule that evenly distributes its arrival rates to its active servers. We now combine our results to derive the main theorem of our preliminary work.
+\begin{thm}\label{thm_even_load_distribution_reasonable_switching}
+Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates to its active servers in each time slot and further satisfies~\eqref{eq_reasonable_switching}.
+\end{thm}
+\begin{proof}
+By Corollary~\ref{cor_even_load_distribution}, we obtain an optimal schedule $\Sigma$ that evenly distributes its arrival rates to its active servers. Applying the procedure given in Proposition~\ref{prop_reasonable_switching} to $\Sigma$ yields $\Sigma^*$ that further satisfies~\eqref{eq_reasonable_switching}.
+\end{proof}
 
-We are now able to simplify our optimisation conditions~\eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}. 
+Theorem~\ref{thm_even_load_distribution_reasonable_switching} allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$ and thereby to simplify our optimisation conditions~\eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}. 
 For this, given a problem instance $\inp$, we define the operating costs function $\opcosts(x,\lambda)$ that describes the costs incurred by evenly distributing $\lambda$ on $x$ active servers using $f$:
 \begin{equation*}
 	\opcosts:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R}\cup\{\infty\},\quad \opcosts(x,\lambda)=\begin{cases}
@@ -446,9 +444,9 @@ Lastly, we can define the costs function $\costs(x_{t-1},x_t,\lambda_t)$ that de
 \end{equation*}
 The optimisation conditions for a schedule now simplify to one single minimisation:
 \begin{align}
-	\text{minimise}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq_even_sharing_schedule_costs}
+	\text{minimise}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq_even_distribution_schedule_costs}
 \end{align}
-We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq_even_sharing_schedule_costs}.
+We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq_even_distribution_schedule_costs}.
 
 \section{Optimal offline scheduling}
 In this section, we derive two optimal offline algorithms based on our preliminary work.
@@ -538,7 +536,7 @@ In particular, for a path $P=(v_{0,0},v_{x_1,1},\ldots,v_{x_T,T},v_{0,T+1})$ fro
 \begin{equation}
 	\costs(P)=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})+\underbrace{\costs(x_T,0,0)}_{=0}=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})\label{eq_v0_VT1_path_costs}
 \end{equation}
-Note that the costs of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_even_sharing_schedule_costs}).
+Note that the costs of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_even_distribution_schedule_costs}).
 Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the costs of the corresponding schedule. Needless to say, this demands for a proof of correctness.
 \begin{lem}\label{lem_sched_path_pseudo_poly}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all paths from $v_{0,0}$ to $v_{0,T+1}$. The map
@@ -558,15 +556,15 @@ It is easy to check that $\Psi\circ\Phi=id_{\bm{\mathcal{\mx}}}$ and $\Phi\circ\
 \end{equation*}
 We examine the costs of $\mx$ and conclude
 \begin{equation*}
-\costs(\mx)\stackrel{\eqref{eq_even_sharing_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
+\costs(\mx)\stackrel{\eqref{eq_even_distribution_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
 \end{equation*}
-Which shows that $\Phi$ and, as a consequence, $\Psi$ are cost-preserving maps, and the claim follows.
+Which shows that $\Phi$ and, as a consequence, $\Psi$ are cost-preserving maps. The claim follows.
 \end{proof}
-\begin{thm}
+\begin{thm}\label{thm_opt_sched_short_path_pseudo_poly}
 There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest paths from $v_{0,0}$ to $v_{0,T+1}$.
 \end{thm} 
 \begin{proof}
-By Lemma~\ref{lem_sched_path_pseudo_poly} we have a bijection $\Phi$ between schedules $\mx$ and paths from $v_{0,0}$ to $v_{0,T+1}$ obeying $\costs(\mx)=\costs\bigl(\Phi(\mx)\bigr)$. Thus, we have 
+By Lemma~\ref{lem_sched_path_pseudo_poly}, we have a bijection $\Phi$ between schedules $\mx$ and paths from $v_{0,0}$ to $v_{0,T+1}$ obeying $\costs(\mx)=\costs\bigl(\Phi(\mx)\bigr)$. Thus, we have 
 \begin{equation*}
 	\costs(\mx)\text{ minimal}\iff \costs\bigl(\Phi(\mx)\big)\text{ minimal}
 \end{equation*}
@@ -614,8 +612,10 @@ We split our procedure into two subroutines.
   \EndFunction
 
   \end{algorithmic}
-\label{alg_opt_offline}
+\label{alg_opt_offline_pseudo_poly}
 \end{algorithm}
+The correctness of Algorithm~\ref{alg_opt_offline_pseudo_poly} directly follows from the correctness of the Bellman-Ford algorithm and Theorem~\ref{thm_opt_sched_short_path_pseudo_poly}.
+
 Naturally, we are interested in our algorithm's time and memory complexity. Subroutine
 \textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialisation, $\Theta(Tm^2)$ steps for the iterative calculation, and $\Theta(m)$ steps for its final minimisation search. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
 \begin{equation*}
@@ -628,9 +628,9 @@ Our memory demand is defined by the size of the arrays $C$ and $P$. As both arra
 \subsection{A pseudo-linear algorithm}\label{sec_opt_offline_pseudo_lin}
 The algorithm developed in section~\ref{sec_opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
 
-Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any node $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following two example:
+Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any node $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following example:
 \begin{exmpl}
-Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances with $f(x)=x^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the algorithm and the corresponding graphs for the two problem instances as derived in section~\ref{sec_opt_offline_pseudo_poly}.
+Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances with $f(x)=x^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the graphs for the two problem instances and the corresponding calculations done by the algorithm derived in section~\ref{sec_opt_offline_pseudo_poly}.
 \begin{figure}[H]
 \captionsetup{farskip=-1em} 
 \captionsetup[subfigure]{labelformat=empty}
@@ -684,7 +684,7 @@ Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instanc
 \end{exmpl}
 Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. We want our states to capture a more general notion than given in section~\ref{sec_opt_offline_pseudo_poly}; preferably, we would like a node $v_{x,t}$ to denote the state of having $x$ active servers at the end of time slot $t$. In practice, we may reach a state $v_{x,t}$ by moving down from a state $v_{y^\downarrow,t}$ where $y^\downarrow>i$ with cost $0$ or by moving up from a state $v_{y^\uparrow,t}$ where $y^\uparrow<i$ with cost $\beta(x-y^\uparrow)$.
 
-In order to allow for these new possibilities, given a problem instance $\inp$, we define a directed, weighted graph given a problem instance as follows:
+In order to allow for these new possibilities, given a problem instance $\inp$, we define a directed, weighted graph as follows:
 \begin{align*}
 	&V\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
 	&E_s\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in\fromto{0}{m}\bigr\}\\
@@ -705,7 +705,8 @@ In order to allow for these new possibilities, given a problem instance $\inp$, 
 \end{align*}
 %\begin{textblock}{3}(10,4.5)
 %\begin{framed}
-As the phrase goes, \textit{``A picture is worth a thousand words.''} See Figure~\ref{fig_graph_pseudo_lin} for a more appealing illustration.%TODO set position!!
+A more appealing, graphical representation can be found in the following figure.
+%As the phrase goes, \textit{``A picture is worth a thousand words.''} See Figure~\ref{fig_graph_pseudo_lin} for a more appealing illustration.%TODO set position!!
 %\end{framed}
 %\end{textblock}
 \begin{figure}[H]
@@ -834,7 +835,7 @@ In contrast to our approach in section~\ref{sec_opt_offline_pseudo_poly}, our ne
 \begin{equation*}
 	P\coloneqq(v_{0,0},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T+1})
 \end{equation*}
-A schedule corresponding to $P$ would use one active server in its first time slot, then power down this server, and subsequently turn on two servers to process the next arrival rate. This seems somewhat unreasonable. We could just keep the initial server on to save switching costs (c.f.\ Proposition~\ref{prop_strict_switching}). In fact, this behaviour cannot even be represented using our schedule notation $\mx$ and optimisation condition~\eqref{eq_even_sharing_schedule_costs}. We can, however, modify $P$ to represent a more reasonable sequence, that is we set
+A schedule corresponding to $P$ would use one active server in its first time slot, then power down this server, and subsequently turn on two servers to process the next arrival rate. This seems somewhat unreasonable. We could just keep the initial server on to save switching costs (note the correspondence to Proposition~\ref{prop_reasonable_switching}). In fact, this behaviour cannot even be represented using our schedule notation $\mx$ and optimisation condition~\eqref{eq_even_distribution_schedule_costs}. We can, however, modify $P$ to represent a more reasonable sequence, that is we set
 \begin{equation*}
 	P'\coloneqq(v_{0,0},v_{1,1\downarrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T+1})
 \end{equation*}
@@ -892,7 +893,7 @@ Which shows that $\Phi$ and, as a consequence, $\Psi$ are cost-preserving maps, 
 There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest, reasonable paths.
 \end{thm} 
 \begin{proof}
-By Lemma~\ref{lem_sched_path_pseudo_lin} we have a bijection $\Phi$ between schedules $\mx$ and reasonable paths beying $\costs(\mx)=\costs\bigl(\Phi(\mx)\bigr)$. Thus, we have 
+By Lemma~\ref{lem_sched_path_pseudo_lin}, we have a bijection $\Phi$ between schedules $\mx$ and reasonable paths beying $\costs(\mx)=\costs\bigl(\Phi(\mx)\bigr)$. Thus, we have 
 \begin{equation*}
 	\costs(\mx)\text{ minimal}\iff \costs\bigl(\Phi(\mx)\big)\text{ minimal}
 \end{equation*}
@@ -902,7 +903,7 @@ and the claim follows.
 Any shortest path $P$ from $v_{0,0}$ to $v_{0,T+1}$ can be transformed to an optimal schedule $\mx$ for $\inp$ with $\costs(\mx)=\costs(P)$.
 \end{cor}
 \begin{proof}
-Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T+1}$. By Proposition~\ref{prop_path_to_reasn_path} the path $P$ can be transformed to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
+Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T+1}$. By Proposition~\ref{prop_path_to_reasn_path}, the path $P$ can be transformed to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to an optimal schedule $\mx$ with $\costs(\mx)=\costs(P')$ by Theorem~\ref{thm_opt_sched_reasn_path}. Thus, we have $c(\mx)=c(P)$ and, the claim follows.
 \end{proof}
 
