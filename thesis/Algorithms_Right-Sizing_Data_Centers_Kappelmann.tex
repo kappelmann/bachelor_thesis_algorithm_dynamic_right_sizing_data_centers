@@ -464,7 +464,7 @@ Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that t
 For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$, we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines. A graphical representation can be found in the following figure.
 \begin{figure}[H]
 \centering
-\scalebox{0.85}{
+\scalebox{0.86}{
 \begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
 
   \node[node] (1) {0,0};
@@ -541,32 +541,32 @@ Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the c
 \begin{lem}\label{lem_sched_path_pseudo_poly}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all paths from $v_{0,0}$ to $v_{0,T+1}$. The map
 \begin{equation*}
-	\Phi:\bm{\mx}\rightarrow\bm{\mathcal{P}},\quad(x_1,\ldots,x_T)\mapsto (v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})
+	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad (v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})\mapsto (x_1,\ldots,x_T)
 \end{equation*}
 is a bijection with inverse map
 \begin{equation*}
-	\Psi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad (v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})\mapsto (x_1,\ldots,x_T)
+	\Psi:\bm{\mx}\rightarrow\bm{\mathcal{P}},\quad(x_1,\ldots,x_T)\mapsto (v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})
 \end{equation*}
-satisfying $\costs(\mx)=\costs\bigl(\Phi(\mx)\bigr)$.
+satisfying $\costs(\mx)=\costs\bigl(\Psi(\mx)\bigr)$.
 \end{lem}
 \begin{proof}
-It is easy to check that $\Psi\circ\Phi=id_{\bm{\mathcal{\mx}}}$ and $\Phi\circ\Psi=id_{\bm{\mathcal{P}}}$. Thus, $\Phi$ is indeed bijective with inverse map $\Psi$. Next, let $\mx=(x_1,\ldots,x_T)$ be a schedule for $\inp$. We have
+It is easy to check that $\Psi\circ\Phi=id_{\bm{\mathcal{P}}}$ and $\Phi\circ\Psi=id_{\bm{\mx}}$. Thus, $\Phi$ is indeed bijective with inverse map $\Psi$. Next, let $\mx=(x_1,\ldots,x_T)$ be a schedule for $\inp$. We have
 \begin{equation*}
-	P\coloneqq\Phi(\mx)=(v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})
+	P\coloneqq\Psi(\mx)=(v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})
 \end{equation*}
 We examine the costs of $\mx$ and conclude
 \begin{equation*}
 \costs(\mx)\stackrel{\eqref{eq_even_distribution_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
 \end{equation*}
-Which shows that $\Phi$ and, as a consequence, $\Psi$ are cost-preserving maps. The claim follows.
+Which shows that $\Psi$ and, as a consequence, $\Phi$ are cost-preserving maps. The claim follows.
 \end{proof}
 \begin{thm}\label{thm_opt_sched_short_path_pseudo_poly}
 There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest paths from $v_{0,0}$ to $v_{0,T+1}$.
 \end{thm} 
 \begin{proof}
-By Lemma~\ref{lem_sched_path_pseudo_poly}, we have a bijection $\Phi$ between schedules $\mx$ and paths from $v_{0,0}$ to $v_{0,T+1}$ obeying $\costs(\mx)=\costs\bigl(\Phi(\mx)\bigr)$. Thus, we have 
+By Lemma~\ref{lem_sched_path_pseudo_poly}, we have a bijection $\Psi$ between schedules $\mx$ and paths from $v_{0,0}$ to $v_{0,T+1}$ obeying $\costs(\mx)=\costs\bigl(\Psi(\mx)\bigr)$. Thus, we have 
 \begin{equation*}
-	\costs(\mx)\text{ minimal}\iff \costs\bigl(\Phi(\mx)\big)\text{ minimal}
+	\costs(\mx)\text{ minimal}\iff \costs\bigl(\Psi(\mx)\big)\text{ minimal}
 \end{equation*}
 and the claim follows.
 \end{proof}
@@ -865,28 +865,20 @@ In each case, $S'$ uses edges from at most one of the sets $E_\downarrow^t$ and 
 Hence, by repeating described process on $P'$, we obtain a terminating procedure that returns a path satisfying the conditions.
 \end{proof}
 \begin{lem}\label{lem_sched_path_pseudo_lin}
-Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths. There exists a bijective map 
-\begin{equation*}
-	\Phi:\bm{\mx}\rightarrow\bm{\mathcal{P}}
-\end{equation*}
-with inverse
-\begin{equation*}
-	\Psi:\bm{\mathcal{P}}\rightarrow\bm{\mx}
-\end{equation*}
-satisfying $\costs(\mx)=\costs\bigl(\Phi(\mx)\bigr)$.
+Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths. There exists a bijective map $\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx}$ satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
 \end{lem}
 \begin{proof}
 TODO
 
-Which shows that $\Phi$ and, as a consequence, $\Psi$ are cost-preserving maps, and the claim follows.
+Which shows that $\Phi$ is a cost-preserving maps, and the claim follows.
 \end{proof}
 \begin{thm}\label{thm_opt_sched_reasn_path}
 There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest, reasonable paths.
 \end{thm} 
 \begin{proof}
-By Lemma~\ref{lem_sched_path_pseudo_lin}, we have a bijection $\Phi$ between schedules $\mx$ and reasonable paths beying $\costs(\mx)=\costs\bigl(\Phi(\mx)\bigr)$. Thus, we have 
+By Lemma~\ref{lem_sched_path_pseudo_lin}, we have a bijection $\Phi$ between reasonable paths $P$ and schedules $\mx$ obeying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$. Thus, we have 
 \begin{equation*}
-	\costs(\mx)\text{ minimal}\iff \costs\bigl(\Phi(\mx)\big)\text{ minimal}
+	\costs(P)\text{ minimal}\iff \costs\bigl(\Phi(P)\big)\text{ minimal}
 \end{equation*}
 and the claim follows.
 \end{proof}
