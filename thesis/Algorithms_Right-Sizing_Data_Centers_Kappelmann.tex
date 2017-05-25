@@ -682,24 +682,23 @@ Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instanc
 \caption{Two examples depicting a shortcoming of our initial approach. The calculated nodes' costs are highlighted in red. Dashed edges are not part of the initial algorithm.}
 \end{figure}
 \end{exmpl}
-Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. We want our states to capture a more general notion than given in section~\ref{sec_opt_offline_pseudo_poly}; preferably, we would like a node $v_{x,t}$ to denote the state of having $x$ active servers at the end of time slot $t$. In practice, we may reach a state $v_{x,t}$ by moving down from a state $v_{y^\downarrow,t}$ where $y^\downarrow>i$ with cost $0$ or by moving up from a state $v_{y^\uparrow,t}$ where $y^\uparrow<i$ with cost $\beta(x-y^\uparrow)$.
+Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. We want our states to capture a more general notion than given in section~\ref{sec_opt_offline_pseudo_poly}; preferably, we would like a node $v_{x,t}$ to denote the state of having $x$ active servers at the end of time slot $t$. In practice, we may reach a state $v_{x,t}$ by moving down from a state $v_{y^\downarrow,t}$ where $y^\downarrow>x$ with cost $0$ or by moving up from a state $v_{y^\uparrow,t}$ where $y^\uparrow<x$ with cost $\beta(x-y^\uparrow)$.
 
 In order to allow for these new possibilities, given a problem instance $\inp$, we define a directed, weighted graph as follows:
 \begin{align*}
-	&V\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
+	&V\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
 	&E_s\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in\fromto{0}{m}\bigr\}\\
-	&E_e\coloneqq\bigl\{(v_{x,T\uparrow},v_{0,T+1})\mid x\in\fromto{0}{m}\bigr\}\\
 	&E_\downarrow\coloneqq\bigl\{(v_{x,t\downarrow},v_{x-1,t\downarrow})\mid x\in[m],t\in[T]\bigr\}\\
-	&E_\uparrow\coloneqq\bigl\{(v_{x-1,t\uparrow},v_{x,t\uparrow})\mid x\in[m],t\in[T]\bigr\}\\
-	&E_{\downarrow\uparrow}\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in\fromto{0}{m},t\in[T]\bigr\}\\
-	&E_{\uparrow\downarrow}\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in\fromto{0}{m},t\in[T]\bigr\}\\
-	&E\coloneqq E_s\dotcup E_e\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
+	&E_\uparrow\coloneqq\bigl\{(v_{x-1,t\uparrow},v_{x,t\uparrow})\mid x\in[m],t\in[T-1]\bigr\}\\
+	&E_{\downarrow\uparrow}\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\\
+	&E_{\uparrow\downarrow}\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\\
+	&E\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
 	&c_G(e)\coloneqq
 	\begin{cases}
-		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1})\in E_s$}\\
-		\opcosts(x,\lambda_{t+1}), & \text{if $e=(v_{x,t},v_{x,t+1})\in E_{\uparrow\downarrow}$}\\
+		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1\downarrow})\in E_s$}\\
+		\opcosts(x,\lambda_{t+1}), & \text{if $e=(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$}\\
 		\beta, & \text{if $e\in E_\uparrow$}\\
-		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow}\dotcup E_e)$}
+		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow})$}
 	\end{cases}\\
 	&G\coloneqq(V,E,c_G)
 \end{align*}
@@ -711,7 +710,7 @@ A more appealing, graphical representation can be found in the following figure.
 %\end{textblock}
 \begin{figure}[H]
 \centering
-\scalebox{0.535}{
+\scalebox{0.6}{
 \begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.5cm,circle,draw}]
   \node[node] (1) {0,0};
   \node[node] (4) [below right=4cm of 1] {0,1$\downarrow$};
@@ -730,11 +729,10 @@ A more appealing, graphical representation can be found in the following figure.
   \node[node] (14) [right =of 10] {m,2$\uparrow$};
   \node[node] (16) [right =of 12] {0,2$\uparrow$};
   \node[node] (17) [right =of 13] {m-1,2$\uparrow$};
-  \node[node] (19) [right =4cm of 15] {1,T$\uparrow$};
-  \node[node] (18) [right =4cm of 14] {m,T$\uparrow$};
-  \node[node] (20) [right =4cm of 16] {0,T$\uparrow$};
-  \node[node] (21) [right =4cm of 17] {m-1,T$\uparrow$};
-  \node[node] (22) [above right =4cm of 20] {0,T+1};
+  \node[node] (19) [right =5cm of 15] {1,T$\downarrow$};
+  \node[node] (18) [right =5cm of 14] {m,T$\downarrow$};
+  \node[node] (20) [right =5cm of 16] {0,T$\downarrow$};
+  \node[node] (21) [right =5cm of 17] {m-1,T$\downarrow$};
 
   \node at ($(14)!.5!(18)$) {\ldots};
   \node (23) at ($(15)!.5!(19)$) {\ldots};
@@ -753,7 +751,6 @@ A more appealing, graphical representation can be found in the following figure.
 	edge node[label={[xshift=0.9cm, yshift=-0.8cm]$\costs(0,m-1,\lambda_1)$}] {} (5)
 	edge node[above right=-0.15cm] {$\costs(0,1,\lambda_1)$} (3)
 	edge node[left] {$\costs(0,0,\lambda_1)$} (4)
-    	edge ($(1)!.13!(22)$)
 
     (2) edge node[above] {$0$} (6)
     (3) edge node[above] {$0$} (7)
@@ -782,14 +779,6 @@ A more appealing, graphical representation can be found in the following figure.
     (17) edge[red] node[black,right] {$\beta$} (14)
     (16) edge[red] node[black,right] {$\beta$} (15)
 
-    (21) edge[red] node[black,right] {$\beta$} (18)
-    (20) edge[red] node[black,right] {$\beta$} (19)
-
-    (18) edge[red] node[black,right] {$0$} (22)
-    (19) edge node[above] {$0$} (22)
-    (20) edge node[above] {$0$} (22)
-    (21) edge node[above] {$0$} (22)
-
     (5) edge[red] node[black,right] {$0$} ($(5)!.35!(3)$)
     ($(5)!.65!(3)$) edge[red] node[black,right] {$0$} (3)
 
@@ -803,41 +792,43 @@ A more appealing, graphical representation can be found in the following figure.
     (15) edge[red] node[black,right] {$\beta$} ($(15)!.35!(17)$)
 
 
-    (14) edge[red] node[label={[black,xshift=0.2cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
-    (15) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(1,\lambda_3)$}] {} ($(15)!.4!(19)$)
-    (16) edge node[label={[xshift=0.2cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
-    (17) edge node[label={[xshift=0.5cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_3)$}] {} ($(17)!.4!(21)$)
+    (14) edge[red] node[label={[black,xshift=0cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
+    (15) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(1,\lambda_3)$}] {} ($(15)!.4!(19)$)
+    (16) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
+    (17) edge node[label={[xshift=0.3cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_3)$}] {} ($(17)!.4!(21)$)
 
-    ($(14)!.6!(18)$) edge node[above] {$0$} (18)
-    ($(15)!.6!(19)$) edge node[above] {$0$} (19)
-    ($(16)!.6!(20)$) edge[red] node[black,above] {$0$} (20)
-    ($(17)!.6!(21)$) edge node[above] {$0$} (21)
+    ($(14)!.6!(18)$) edge[red] node[black,above] {$\opcosts(m,\lambda_T)$} (18)
+    ($(15)!.6!(19)$) edge node[above] {$\opcosts(1,\lambda_T)$} (19)
+    ($(16)!.6!(20)$) edge node[above] {$\opcosts(0,\lambda_T)$} (20)
+    ($(17)!.6!(21)$) edge node[label={[xshift=-0.2cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_T)$}] {} (21)
 
-    ($(19)!.65!(21)$) edge[red] node[black,right] {$\beta$} (21)
-    (19) edge[red] node[black,right] {$\beta$} ($(19)!.35!(21)$);
+    (18) edge[red] node[black,right] {$0$} (21)
+    (19) edge[red] node[black,right] {$0$} (20)
+    (21) edge[red] node[black,right] {$0$} ($(21)!.35!(19)$)
+    ($(21)!.65!(19)$) edge[red] node[black,right] {$0$} (19);
 \end{tikzpicture}
 }
 \caption{Graph for a pseudo-linear, optimal offline algorithm; the path of the topological sorting is highlighted in red.}
 \label{fig_graph_pseudo_lin}
 \end{figure}
-For any possible amount of active servers $x$ and any time slot $t$, we add two nodes $v_{x,t\downarrow}$ and $v_{x,t\uparrow}$. Semantically, the cost of $v_{x,t\downarrow}$ will denote the minimum cost up to time slot $t$ when processing $\lambda_t$ with $x$ or more servers whereas the cost of $v_{x,t\uparrow}$ will denote the minimum cost of having $x$ active servers at the end of time slot $t$. Moreover, we again add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. 
+For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t\downarrow}$. Semantically, the cost of $v_{x,t\downarrow}$ will denote the minimum cost up to time slot $t$ when processing $\lambda_t$ with $x$ or more servers. Further, for any time slot $t\in[T-1]$ we add a node $v_{x,t\uparrow}$. The cost of $v_{x,t\uparrow}$ will denote the minimum cost of having $x$ active servers at the end of time slot $t$. Moreover, we add a start node $v_{0,0}$. Our end node will be $v_{0,T\downarrow}$.
 
-The set of edges $E_s$ and $E_e$ denote the start initialisation and the end minimisation step, respectively. An edge $(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$ accounts for the operating costs that incur when processing the arrival rate $\lambda_{t+1}$ with $x$ active servers.
+The set of edges $E_s$ denotes the start initialisation step. An edge $(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$ accounts for the operating costs that incur when processing the arrival rate $\lambda_{t+1}$ with $x$ active servers.
 
 After any time step from $t-1$ to $t$ that incurs operating costs, we have a minimisation step in our graph. For this, we first move down the chain $v_{m,t\downarrow},v_{m-1,t\downarrow},\ldots,v_{0,t\downarrow}$ using edges from $E_\downarrow$ with cost $0$. Then we proceed to move to the right from $v_{0,t\downarrow}$ to $v_{0,t\uparrow}$. Lastly, we move up the chain $v_{0,t\uparrow},v_{1,t\uparrow},\ldots,v_{m,t\uparrow}$ using edges from $E_\uparrow$ with cost $\beta$. In order to have the possibility to keep the calculated costs of $v_{x,t\downarrow}$ during the upward movement, we add edges $(v_{x,t\downarrow},v_{x,t\uparrow})\in E_{\downarrow\uparrow}$ with cost $0$.
 
 This minimisation step is the key to our runtime improvement. It facilitates the determination of the best predecessor of a state $v_{x,t\downarrow}$ because we already know that the minimum cost of having $x$ servers at the end of time slot $t-1$ is stored in $v_{x,t-1\uparrow}$. Thus, the cheapest possibility to process the next arrival rate $\lambda_t$ using $x$ servers can simply be calculated by adding $\opcosts(x,\lambda_t)$ to the cost of $v_{x,t-1\uparrow}$. Consequently, the cost of $v_{x,t\downarrow}$ is given by the minimum of $v_{x,t-1\uparrow}+\opcosts(x,\lambda_t)$ and $v_{x+1,\downarrow}$.
 
-As one can see in Figure~\ref{fig_graph_pseudo_lin}, we stretched our graph but at the same time also greatly reduced the amount of edges compared to our initial approach in section~\ref{sec_opt_offline_pseudo_poly}. By following the coloured path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T+1}$. 
+As one can see in Figure~\ref{fig_graph_pseudo_lin}, we stretched our graph but at the same time also greatly reduced the amount of edges compared to our initial approach in section~\ref{sec_opt_offline_pseudo_poly}. By following the coloured path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. The cost of our destination $v_{0,T\downarrow}$ will denote the minimum cost up to time slot $T$ when processing $\lambda_T$ with 0 or more servers. Hence, it will contain our desired end result --- the minimum cost of all possible schedules.
 
-Our next task shall be the verification of our new construction. For this, we first examine the possible paths from $v_{0,0}$ to $v_{0,T+1}$ in our graph.
+Our next task shall be the verification of our new construction. For this, we first examine the possible paths from $v_{0,0}$ to $v_{0,T\downarrow}$ in our graph.
 In contrast to our approach in section~\ref{sec_opt_offline_pseudo_poly}, our new graph contains paths which do not directly correspond to a schedule $\mx$. For example, consider the following path:
 \begin{equation*}
-	P\coloneqq(v_{0,0},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T+1})
+	P\coloneqq(v_{0,0},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T\downarrow})
 \end{equation*}
 A schedule corresponding to $P$ would use one active server in its first time slot, then power down this server, and subsequently turn on two servers to process the next arrival rate. This seems somewhat unreasonable. We could just keep the initial server on to save switching costs (note the correspondence to Proposition~\ref{prop_reasonable_switching}). In fact, this behaviour cannot even be represented using our schedule notation $\mx$ and optimisation condition~\eqref{eq_even_distribution_schedule_costs}. We can, however, modify $P$ to represent a more reasonable sequence, that is we set
 \begin{equation*}
-	P'\coloneqq(v_{0,0},v_{1,1\downarrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T+1})
+	P'\coloneqq(v_{0,0},v_{1,1\downarrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T\downarrow})
 \end{equation*}
 This revised path now pleasantly translates to a schedule $\mx$, in this case $\mx=(1,2,\ldots)$. We now want to give a more formal definition of our observation.
 \begin{defn}[reasonable paths]\label{defn_reasn_paths}
