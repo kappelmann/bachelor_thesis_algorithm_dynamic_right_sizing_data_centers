@@ -891,10 +891,10 @@ By Lemma~\ref{lem_sched_path_pseudo_lin}, we have a bijection $\Phi$ between sch
 and the claim follows.
 \end{proof}
 \begin{cor}
-Any shortest path $P$ from $v_{0,0}$ to $v_{0,T+1}$ can be transformed to an optimal schedule $\mx$ for $\inp$ with $\costs(\mx)=\costs(P)$.
+Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to an optimal schedule $\mx$ for $\inp$ with $\costs(\mx)=\costs(P)$.
 \end{cor}
 \begin{proof}
-Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T+1}$. By Proposition~\ref{prop_path_to_reasn_path}, the path $P$ can be transformed to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
+Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By Proposition~\ref{prop_path_to_reasn_path}, the path $P$ can be transformed to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to an optimal schedule $\mx$ with $\costs(\mx)=\costs(P')$ by Theorem~\ref{thm_opt_sched_reasn_path}. Thus, we have $c(\mx)=c(P)$ and, the claim follows.
 \end{proof}
 
