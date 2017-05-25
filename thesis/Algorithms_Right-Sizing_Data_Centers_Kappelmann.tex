@@ -831,7 +831,7 @@ A schedule corresponding to $P$ would use one active server in its first time sl
 	P'\coloneqq(v_{0,0},v_{1,1\downarrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T\downarrow})
 \end{equation*}
 This revised path now pleasantly translates to a schedule $\mx$, in this case $\mx=(1,2,\ldots)$. We now want to give a more formal definition of our observation.
-\begin{defn}[reasonable paths]\label{defn_reasn_paths}
+\begin{defn}[Reasonable paths]\label{defn_reasn_paths}
 Let $P$ be a path from $v_{0,0}$ to $v_{0,T\downarrow}$. For any time slot $t\in[T]$, let $E_\downarrow^t$ be the set of edges $(v_{x,t\downarrow},v_{x-1,t\downarrow})\in E_\downarrow$ used by $P$ at time $t$. Similarly, let $E_\uparrow^t$ be the set of edges $(v_{x,t\uparrow},v_{x+1,t\uparrow})\in E_\uparrow$ used by $P$ at time $t\in[T-1]$.
 The path $P$ is called \textit{reasonable} if for any time slot $t\in[T-1]$, the path does not shut down and power on servers simultaneously at $t$. More formally, $P$ must satisfy the formula
 \begin{equation}
@@ -864,11 +864,41 @@ In each case, $S'$ uses edges from at most one of the sets $E_\downarrow^t$ and 
 
 Hence, by repeating described process on $P'$, we obtain a terminating procedure that returns a path satisfying the conditions.
 \end{proof}
+As a result of Proposition~\ref{prop_path_to_reasn_path}, we shall subsequently focus our attention on reasonable paths. Intuitively, one can see that such a path $P$ can be uniquely identified by the ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$ at any time slot $t$. The next proposition formalises this intuition.
+\begin{prop}
+Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set of nodes $v_{x,t\downarrow}$ visited by $P$. Moreover, identify the ``maximum'' node at each time slot $t\in[T]$ by
+\begin{equation*}
+	x_t\coloneqq\max\bigl\{x\in\fromto{0}{m}\mid v_{x,t\downarrow}\in V_\downarrow^t\bigr\}
+\end{equation*}
+Then the map
+\begin{equation*}\label{prop_reasn_paths_identify}
+	\Phi:\bm{\mathcal{P}}\rightarrow\fromto{0}{m}^T\eqqcolon\bm{\mx},\quad P\mapsto (x_1,\ldots,x_T)
+\end{equation*}
+is a bijection.
+\end{prop}
+\begin{proof}
+We need to check that $\Phi$ is injective and surjective. 
+
+Let $P,P'$ be reasonable paths with $\Phi(P)=\Phi(P')$. Then $P$ as well as $P'$ must start with the edge $(v_{0,0},v_{x_1,1\downarrow})$. As $P$ and $P'$ are reasonable, their paths between $v_{x_t,t\downarrow}$ and $v_{x_{t+1},t+1\downarrow}$ must coincide for $t\in[T-1]$. Further, the path from $v_{x_T,T}$ to $v_{0,T}$ is unique in our graph. Thus, we have $P=P'$, which shows the injectivity of $\Phi$.
+
+Next, let $(x_1,\ldots,x_T)\in\bm{\mx}$ be arbitrary. For any $t\in[T]$, we set
+\begin{equation*}
+	S'\coloneqq
+	\begin{cases}
+		(v_{x_s,t\downarrow},v_{x_s,t\uparrow},v_{x_s+1,t\uparrow},\ldots,v_{x_e,t\uparrow}), & \text{if $x_s< x_e$}\\
+		(v_{x_s,t\downarrow},v_{x_s-1,t\downarrow},\ldots,v_{x_e,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s>x_e$}\\
+		(v_{x_s,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s=x_e$}
+	\end{cases}
+\end{equation*}
+
+which shows the surjectivity of $\Phi$.
+\end{proof}
+
 \begin{lem}\label{lem_sched_path_pseudo_lin}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths. There exists a bijective map $\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx}$ satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
 \end{lem}
 \begin{proof}
-TODO
+By Proposition~\ref{prop_reasn_paths_identify}. Let $P$ be a reasonable path.
 
 Which shows that $\Phi$ is a cost-preserving maps, and the claim follows.
 \end{proof}
