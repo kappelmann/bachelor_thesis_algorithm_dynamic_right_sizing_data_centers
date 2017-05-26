@@ -436,18 +436,18 @@ For this, given a problem instance $\inp$, we define the operating costs functio
 	  \end{cases} \label{fct:c}
 \end{equation*}
 We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate, i.e.\ the schedule would not be feasible. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$ that describes the incurred costs when changing the amount of active server from $x_{t-1}$ to $x_t$:
-\begin{equation*}
+\begin{equation}\label{eq_mx_schedule_sw_costs}
 	\swcosts(x_{t-1},x_t)\coloneqq\beta\max\{0,x_t-x_{t-1}\}
-\end{equation*}
+\end{equation}
 Lastly, we can define the costs function $\costs(x_{t-1},x_t,\lambda_t)$ that describes the incurring costs for a single time step using an even distribution of loads:
-\begin{equation*}
+\begin{equation}\label{eq_mx_schedule_costs}
 	\costs(x_{t-1},x_{t},\lambda_t)\coloneqq\opcosts(x_t,\lambda_t)+\swcosts(x_{t-1},x_t)
-\end{equation*}
+\end{equation}
 The optimisation conditions for a schedule now simplify to one single minimisation:
 \begin{align}
-	\text{minimise}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq_even_distribution_schedule_costs}
+	\text{minimise}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq_mx_schedule_total_costs}
 \end{align}
-We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq_even_distribution_schedule_costs}.
+We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq_mx_schedule_total_costs}.
 
 \section{Optimal offline scheduling}
 In this section, we derive two optimal offline algorithms based on our preliminary work.
@@ -537,7 +537,7 @@ In particular, for a path $P=(v_{0,0},v_{x_1,1},\ldots,v_{x_T,T},v_{0,T+1})$ fro
 \begin{equation}
 	\costs(P)=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})+\underbrace{\costs(x_T,0,0)}_{=0}=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})\label{eq_v0_VT1_path_costs}
 \end{equation}
-Note that the costs of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_even_distribution_schedule_costs}).
+Note that the costs of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_mx_schedule_total_costs}).
 Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the costs of the corresponding schedule. Needless to say, this demands for a proof of correctness.
 \begin{lem}\label{lem_sched_path_pseudo_poly}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all paths from $v_{0,0}$ to $v_{0,T+1}$. The map
@@ -557,7 +557,7 @@ It is easy to check that $\Psi\circ\Phi=id_{\bm{\mathcal{P}}}$ and $\Phi\circ\Ps
 \end{equation*}
 We examine the costs of $\mx$ and conclude
 \begin{equation*}
-\costs(\mx)\stackrel{\eqref{eq_even_distribution_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
+\costs(\mx)\stackrel{\eqref{eq_mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
 \end{equation*}
 Which shows that $\Psi$ and, as a consequence, $\Phi$ are cost-preserving maps.
 \end{proof}
@@ -832,7 +832,7 @@ In contrast to our approach in section~\ref{sec_opt_offline_pseudo_poly}, our ne
 \begin{equation*}
 	P\coloneqq(v_{0,0},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T\downarrow})
 \end{equation*}
-A schedule corresponding to $P$ would use one active server in its first time slot, then power down this server, and subsequently turn on two servers to process the next arrival rate. This seems somewhat unreasonable. We could just keep the initial server on to save switching costs (note the correspondence to Proposition~\ref{prop_reasonable_switching}). In fact, this behaviour cannot even be represented using our schedule notation $\mx$ and optimisation condition~\eqref{eq_even_distribution_schedule_costs}. We can, however, modify $P$ to represent a more reasonable sequence, that is we set
+A schedule corresponding to $P$ would use one active server in its first time slot, then power down this server, and subsequently turn on two servers to process the next arrival rate. This seems somewhat unreasonable. We could just keep the initial server on to save switching costs (note the correspondence to Proposition~\ref{prop_reasonable_switching}). In fact, this behaviour cannot even be represented using our schedule notation $\mx$ and optimisation condition~\eqref{eq_mx_schedule_total_costs}. We can, however, modify $P$ to represent a more reasonable sequence, that is we set
 \begin{equation*}
 	P'\coloneqq(v_{0,0},v_{1,1\downarrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T\downarrow})
 \end{equation*}
@@ -962,15 +962,15 @@ Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set
 \end{defn}
 Remember that a schedule $\mx=(x_1,\ldots,x_T)$ also uses the notation $x_t$ to identify the number of active severs at time $t$. Needless to say, this clash of names is intentional and justified by the next lemma.
 \begin{lem}
-Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths. There exists a bijective map $\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx}$ satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
+Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths.
 Then the map
 \begin{equation*}\label{prop_reasn_paths_identify}
-	\Phi:\bm{\mathcal{P}}\rightarrow\fromto{0}{m}^T\eqqcolon\bm{\mx},\quad P\mapsto (x_1,\ldots,x_T)
+	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\ldots,x_T)
 \end{equation*}
-is a bijection.
+is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
 \end{lem}
 \begin{proof}
-We need to check that $\Phi$ is injective and surjective. 
+First, we check that $\Phi$ is bijective, i.e.\ $\Phi$ is injective and surjective. 
 
 Let $P,P'$ be reasonable paths with $\Phi(P)=\Phi(P')$. Then $P$ as well as $P'$ must start with the edge $(v_{0,0},v_{x_1,1\downarrow})$. As $P$ and $P'$ are reasonable, their paths between $v_{x_t,t\downarrow}$ and $v_{x_{t+1},t+1\downarrow}$ must coincide for $t\in[T-1]$. Further, the path from $v_{x_T,T}$ to $v_{0,T}$ is unique in our graph. Thus, we have $P=P'$, which shows the injectivity of $\Phi$.
 
@@ -983,8 +983,16 @@ Next, let $(x_1,\ldots,x_T)\in\bm{\mx}$. For any $t\in[T]$, we set
 		(v_{x_s,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s=x_e$}
 	\end{cases}
 \end{equation*}
-
 which shows the surjectivity of $\Phi$.
+
+It remains to show that $\Phi$ is cost-preserving. For this, let $P$ be a reasonable path and let $\mx\coloneqq\Phi(P)=(x_1,\ldots,x_T)$ be its image. 
+As $P$ is reasonable, we have $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for any time slot $t$. If $E_\uparrow^t$ is empty, the costs between the nodes $v_{x,t-1\downarrow}$ and $v_{x,t\downarrow}$ are given by $\opcosts(x_{t-1},x_t)$. If $E_\uparrow^t$ is non-empty, the costs are given by $\beta(x_t-x_{t-1})+\opcosts(x_{t-1},x_t)$. The costs of $P$ can thus be calculated by 
+\begin{align*}
+\costs(P)&=c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\beta\max\{0,x_t-x_{t-1}\}+\opcosts(x_{t},\lambda_t)\bigr)\\
+	&\stackrel{\eqref{eq_mx_schedule_sw_costs}}{=}c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\swcosts(x_{t-1},x_t)+\opcosts(x_{t},\lambda_t)\bigr)\\
+	&\stackrel{\eqref{eq_mx_schedule_costs}}{=}c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_t,\lambda_t)=\sum\limits_{t=1}^{T}\costs(x_{t-1},x_t,\lambda_t)\stackrel{\eqref{eq_mx_schedule_total_costs}}{=}c(\mx)
+\end{align*}
+Which shows that $\Phi$ is a cost-preserving map.
 \end{proof}
 
 \begin{lem}\label{lem_sched_path_pseudo_lin}
