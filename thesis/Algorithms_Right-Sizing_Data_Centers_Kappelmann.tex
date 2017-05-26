@@ -203,6 +203,7 @@
 
 % Custom commands
 \DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
 \newcommand{\mx}{\mathcal{X}}
 \newcommand{\inp}{\mathcal{I}}
 \newcommand{\costs}{c}
@@ -869,20 +870,21 @@ In each case, $S'$ uses edges from at most one of the sets $E_\downarrow^t$ and 
 
 Hence, by repeating described process on $P'$, we obtain a terminating procedure that returns a path satisfying the conditions.
 \end{proof}
-As a result of Proposition~\ref{prop_path_to_reasn_path}, we shall subsequently focus our attention on reasonable paths. Our goal is to establish the connection between reasonable paths $P$ of our graph and schedules $\mx$. Intuitively, one can see that such a path $P$ is uniquely determined by the ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$ at any time slot $t$; these nodes represent the state of processing $\lambda_t$ with $x$. Consider the following example:
+As a result of Proposition~\ref{prop_path_to_reasn_path}, we shall subsequently focus our attention on reasonable paths. Our goal is to establish the connection between reasonable paths $P$ of our graph and schedules $\mx$. Intuitively, one can see that such a path $P$ is uniquely determined by the ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$ at any time slot $t$; these nodes represent the state of processing $\lambda_t$ with $x$ servers. Consider the following example:
 \begin{exmpl}
-Let $\inp=\bigl(m=3,T=3,\Lambda=(3,1,1),\beta=1,f\bigr)$ be the input for a problem instance with  $f(x)=x^2$. Then the path  
-\begin{equation*}
-	P=(v_{0,0},v_{3,1\downarrow},v_{2,1\downarrow},v_{2,1\uparrow},v_{2,2\downarrow},v_{1,2\uparrow},v_{0,2\downarrow})
-\end{equation*}
+Let $\inp=\bigl(m=3,T=3,\Lambda=(3,0,1),\beta,f\bigr)$ be the input for a problem instance. Then one example of a reasonable path is given by
+\begin{align*}
+	P&=(v_{0,0},v_{3,1\downarrow},v_{2,1\downarrow},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{0,2\downarrow},v_{0,2\uparrow},v_{1,2\uparrow},v_{1,3\downarrow},v_{0,3\downarrow})
+\end{align*}
+A schedule corresponding to $P$ would use three active server in its first time slot, then power down all servers for the second time slot, and ultimately power on one server to process the last arrival rate; that is, the corresponding schedule of $P$ is $\mx=(3,0,1)$. This sequence also corresponds to the sequence of ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$, as can be seen in the following figure.
 \begin{figure}[H]
 \centering
-\scalebox{0.6}{
-\begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.5cm,circle,draw}]
+\scalebox{0.79}{
+\begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
   \node[node] (1) {0,0};
-  \node[node] (4) [below right=4cm of 1] {0,1$\downarrow$};
+  \node[node] (4) [below right=3.5cm of 1] {0,1$\downarrow$};
   \node[node] (3) [above =1cm of 4] {1,1$\downarrow$};
-  \node[node] (2) [above right=4cm of 1] {3,1$\downarrow$};
+  \node[node,draw=blue] (2) [above right=3.5cm of 1] {3,1$\downarrow$};
   \node[node] (5) [below =1cm of 2] {2,1$\downarrow$};
   \node[node] (7) [right =of 3] {1,1$\uparrow$};
   \node[node] (6) [right =of 2] {3,1$\uparrow$};
@@ -890,21 +892,21 @@ Let $\inp=\bigl(m=3,T=3,\Lambda=(3,1,1),\beta=1,f\bigr)$ be the input for a prob
   \node[node] (9) [right =of 5] {2,1$\uparrow$};
   \node[node] (11) [right =of 7] {1,2$\downarrow$};
   \node[node] (10) [right =of 6] {3,2$\downarrow$};
-  \node[node] (12) [right =of 8] {0,2$\downarrow$};
+  \node[node,draw=blue] (12) [right =of 8] {0,2$\downarrow$};
   \node[node] (13) [right =of 9] {2,2$\downarrow$};
   \node[node] (15) [right =of 11] {1,2$\uparrow$};
   \node[node] (14) [right =of 10] {3,2$\uparrow$};
   \node[node] (16) [right =of 12] {0,2$\uparrow$};
   \node[node] (17) [right =of 13] {2,2$\uparrow$};
-  \node[node] (19) [right =of 15] {1,T$\downarrow$};
-  \node[node] (18) [right =of 14] {3,T$\downarrow$};
-  \node[node] (20) [right =of 16] {0,T$\downarrow$};
-  \node[node] (21) [right =of 17] {2,T$\downarrow$};
+  \node[node,draw=blue] (19) [right =of 15] {1,3$\downarrow$};
+  \node[node] (18) [right =of 14] {3,3$\downarrow$};
+  \node[node] (20) [right =of 16] {0,3$\downarrow$};
+  \node[node] (21) [right =of 17] {2,3$\downarrow$};
 
   \path[every node/.style={font=\sffamily\small}]
     (1) edge[red] node[black, above left] {$\costs(0,3,3)$} (2)
-	edge node[label={[xshift=0.78cm, yshift=-0.8cm]$\costs(0,2,3)$}] {} (5)
-	edge node[above right=-0.08cm] {$\costs(0,1,3)$} (3)
+	edge node[label={[xshift=0.5cm, yshift=-0.8cm]$\costs(0,2,3)$}] {} (5)
+	edge node[label={[xshift=0.28cm, yshift=-0.3cm]$\costs(0,1,3)$}] {} (3)
 	edge node[below left] {$\costs(0,0,3)$} (4)
 
     (2) edge node[above] {$0$} (6)
@@ -914,70 +916,59 @@ Let $\inp=\bigl(m=3,T=3,\Lambda=(3,1,1),\beta=1,f\bigr)$ be the input for a prob
 
     (2) edge[red] node[black,right] {$0$} (5)
     (3) edge[red] node[black,right] {$0$} (4)
+    (5) edge[red] node[black,right] {$0$} (3)
 
-    (9) edge[red] node[black,right] {$\beta$} (6)
-    (8) edge[red] node[black,right] {$\beta$} (7)
+    (9) edge node[right] {$\beta$} (6)
+    (8) edge node[right] {$\beta$} (7)
+    (7) edge node[right] {$\beta$} (9)
 
-    (6) edge[red] node[black,above] {$\opcosts(m,\lambda_2)$} (10)
-    (7) edge node[above] {$\opcosts(1,\lambda_2)$} (11)
-    (8) edge node[above] {$\opcosts(0,\lambda_2)$} (12)
-    (9) edge node[above] {$\opcosts(m-1,\lambda_2)$} (13)
+    (6) edge node[above] {$\opcosts(3,1)$} (10)
+    (7) edge node[above] {$\opcosts(1,1)$} (11)
+    (8) edge[red] node[black,above] {$\opcosts(0,1)$} (12)
+    (9) edge node[above] {$\opcosts(2,1)$} (13)
 
     (10) edge node[above] {$0$} (14)
     (11) edge node[above] {$0$} (15)
     (12) edge[red] node[black,above] {$0$} (16)
     (13) edge node[above] {$0$} (17)
 
-    (10) edge[red] node[black,right] {$0$} (13)
-    (11) edge[red] node[black,right] {$0$} (12)
+    (10) edge node[right] {$0$} (13)
+    (11) edge node[right] {$0$} (12)
+    (13) edge node[right] {$0$} (11)
 
-    (17) edge[red] node[black,right] {$\beta$} (14)
+    (17) edge node[right] {$\beta$} (14)
     (16) edge[red] node[black,right] {$\beta$} (15)
+    (15) edge node[right] {$\beta$} (17)
 
-    (5) edge[red] node[black,right] {$0$} ($(5)!.35!(3)$)
-    ($(5)!.65!(3)$) edge[red] node[black,right] {$0$} (3)
+    (14) edge node[above] {$\opcosts(3,2)$} (18)
+    (15) edge[red] node[black,above] {$\opcosts(1,2)$} (19)
+    (16) edge node[above] {$\opcosts(0,2)$} (20)
+    (17) edge node[above] {$\opcosts(2,2)$} (21)
 
-    ($(7)!.65!(9)$) edge[red] node[black,right] {$\beta$} (9)
-    (7) edge[red] node[black,right] {$\beta$} ($(7)!.35!(9)$)
- 
-    (13) edge[red] node[black,right] {$0$} ($(13)!.35!(11)$)
-    ($(13)!.65!(11)$) edge[red] node[black,right] {$0$} (11)
-
-    ($(15)!.65!(17)$) edge[red] node[black,right] {$\beta$} (17)
-    (15) edge[red] node[black,right] {$\beta$} ($(15)!.35!(17)$)
-
-
-    (14) edge[red] node[label={[black,xshift=0cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
-    (15) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(1,\lambda_3)$}] {} ($(15)!.4!(19)$)
-    (16) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
-    (17) edge node[label={[xshift=0.3cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_3)$}] {} ($(17)!.4!(21)$)
-
-    ($(14)!.6!(18)$) edge[red] node[black,above] {$\opcosts(m,\lambda_T)$} (18)
-    ($(15)!.6!(19)$) edge node[above] {$\opcosts(1,\lambda_T)$} (19)
-    ($(16)!.6!(20)$) edge node[above] {$\opcosts(0,\lambda_T)$} (20)
-    ($(17)!.6!(21)$) edge node[label={[xshift=-0.2cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_T)$}] {} (21)
-
-    (18) edge[red] node[black,right] {$0$} (21)
+    (18) edge node[right] {$0$} (21)
     (19) edge[red] node[black,right] {$0$} (20)
-    (21) edge[red] node[black,right] {$0$} ($(21)!.35!(19)$)
-    ($(21)!.65!(19)$) edge[red] node[black,right] {$0$} (19);
-\end{tikzpicture}
-}
+    (21) edge node[right] {$0$} (19);
+\end{tikzpicture}}
+\caption{Illustration of the path $P$. The path is highlighted in red. The maximum nodes $v_{x,t\downarrow}$ taken by $P$ are highlighted in blue.}
 \end{figure}
+Conversely, given the schedule $\mx=(3,0,1)$, is can easily be seen that there exists only one reasonable path corresponding to $\mx$, namely $P$.
 \end{exmpl}
-
-The next lemma formalises these ideas.
-\begin{prop}
-Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set of nodes $v_{x,t\downarrow}$ visited by $P$. Moreover, identify the ``maximum'' node at each time slot $t\in[T]$ by
+Before we approach our next lemma, which formalises these ideas, we need to make a precise definition of ``maximum'' nodes $v_{x,t\downarrow}$ used by a reasonable path.
+\begin{defn}
+Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set of nodes $v_{x,t\downarrow}$ visited by $P$. The ``maximum'' node $v_{x,t\downarrow}$ at each time slot $t\in[T]$ can then be identified by
 \begin{equation*}
 	x_t\coloneqq\max\bigl\{x\in\fromto{0}{m}\mid v_{x,t\downarrow}\in V_\downarrow^t\bigr\}
 \end{equation*}
+\end{defn}
+Remember that a schedule $\mx=(x_1,\ldots,x_T)$ also uses the notation $x_t$ to identify the number of active severs at time $t$. Needless to say, this clash of names is intentional and justified by the next lemma.
+\begin{lem}
+Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths. There exists a bijective map $\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx}$ satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
 Then the map
 \begin{equation*}\label{prop_reasn_paths_identify}
 	\Phi:\bm{\mathcal{P}}\rightarrow\fromto{0}{m}^T\eqqcolon\bm{\mx},\quad P\mapsto (x_1,\ldots,x_T)
 \end{equation*}
 is a bijection.
-\end{prop}
+\end{lem}
 \begin{proof}
 We need to check that $\Phi$ is injective and surjective. 
 
@@ -1266,7 +1257,7 @@ Below, we give an overview of just given definitions and conventions commonly re
 
 \item Miscellaneous:
 \begin{itemize}
-	\item $x_t\in\fromto{0}{m}$\ldots number of active servers at time t
+	\item $x_t\in\fromto{0}{m}$\ldots number of active servers at time $t$
 	\item $\mx\coloneqq(x_1,\ldots,x_T)$\ldots sequence of number of active servers
 \end{itemize}
 
