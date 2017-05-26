@@ -490,9 +490,9 @@ For any possible amount of active servers $x$ and any time slot $t$, we add a no
   \node at ($(8)!.5!(9)$) {\vdots};
 
   \path[every node/.style={font=\sffamily\small}]
-    (1) edge node[left] {$\costs(0,m,\lambda_1)$} (2)
+    (1) edge node[above left] {$\costs(0,m,\lambda_1)$} (2)
 	edge node[above right=-0.15cm] {$\costs(0,1,\lambda_1)$} (3)
-	edge node[left] {$\costs(0,0,\lambda_1)$} (4)
+	edge node[below left] {$\costs(0,0,\lambda_1)$} (4)
     (2) edge node[above] {$\costs(m,m,\lambda_2)$} (5)
     (3) edge (6)
 	edge (7)
@@ -558,7 +558,7 @@ We examine the costs of $\mx$ and conclude
 \begin{equation*}
 \costs(\mx)\stackrel{\eqref{eq_even_distribution_schedule_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
 \end{equation*}
-Which shows that $\Psi$ and, as a consequence, $\Phi$ are cost-preserving maps. The claim follows.
+Which shows that $\Psi$ and, as a consequence, $\Phi$ are cost-preserving maps.
 \end{proof}
 \begin{thm}\label{thm_opt_sched_short_path_pseudo_poly}
 There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest paths from $v_{0,0}$ to $v_{0,T+1}$.
@@ -652,8 +652,8 @@ Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instanc
     (2) edge node[label={[xshift=0.88cm, yshift=0.9cm]$2$}] {} (5)
     (3) edge node[label={[xshift=0.55cm, yshift=-1.82cm]$0$}] {} (4)
     (3) edge node[above] {$1$} (5)
-    (4) edge node[above] {$0$} (6)
-    (5) edge node[above] {$0$} (6)
+    (4) edge node[below right] {$0$} (6)
+    (5) edge node[above right] {$0$} (6)
     (3) edge[dashed] node[left] {$0$} (2);
 \end{tikzpicture}
 }}
@@ -675,8 +675,8 @@ Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instanc
     (2) edge node[label={[xshift=0.88cm, yshift=0.9cm]$3$}] {} (5)
     (3) edge node[label={[xshift=0.55cm, yshift=-1.82cm]$\infty$}] {} (4)
     (3) edge node[above] {$2$} (5)
-    (4) edge node[above] {$0$} (6)
-    (5) edge node[above] {$0$} (6)
+    (4) edge node[below right] {$0$} (6)
+    (5) edge node[above right] {$0$} (6)
     (2) edge[dashed] node[left] {$1=\beta$} (3);
 \end{tikzpicture} }}
 \caption{Two examples depicting a shortcoming of our initial approach. The calculated nodes' costs are highlighted in red. Dashed edges are not part of the initial algorithm.}
@@ -734,23 +734,28 @@ A more appealing, graphical representation can be found in the following figure.
   \node[node] (20) [right =5cm of 16] {0,T$\downarrow$};
   \node[node] (21) [right =5cm of 17] {m-1,T$\downarrow$};
 
-  \node at ($(14)!.5!(18)$) {\ldots};
-  \node (23) at ($(15)!.5!(19)$) {\ldots};
-  \node at ($(16)!.5!(20)$) {\ldots};
-  \node at ($(17)!.5!(21)$) {\ldots};
-  \node [above =1.48cm of 23] {\ldots};
+  \node (22) at ($(2)!.5!(4)$) {};
+  \node (23) at ($(2)!.487!(4)$) {\vdots};
+  \node (24) at ($(6)!.487!(8)$) {\vdots};
+  \node (25) at ($(10)!.487!(12)$) {\vdots};
+  \node (26) at ($(14)!.487!(16)$) {\vdots};
+  \node at ($(18)!.487!(20)$) {\vdots};
+  \node at ($(23)!.487!(24)$) {\vdots};
+  \node at ($(24)!.487!(25)$) {\vdots};
+  \node at ($(25)!.487!(26)$) {\vdots};
 
-  \node at ($(2)!.5!(4)$) {\vdots};
-  \node at ($(6)!.5!(8)$) {\vdots};
-  \node at ($(10)!.5!(12)$) {\vdots};
-  \node at ($(14)!.5!(16)$) {\vdots};
-  \node at ($(18)!.5!(20)$) {\vdots};
+  \node (27) at ($(14)!.5!(18)$) {\ldots};
+  \node at ($(15)!.5!(19)$) {\ldots};
+  \node (28) at ($(16)!.5!(20)$) {\ldots};
+  \node at ($(17)!.5!(21)$) {\ldots};
+  \node at ($(27)!.5!(28)$) {\ldots};
 
   \path[every node/.style={font=\sffamily\small}]
-    (1) edge[red] node[black,left] {$\costs(0,m,\lambda_1)$} (2)
-	edge node[label={[xshift=0.9cm, yshift=-0.8cm]$\costs(0,m-1,\lambda_1)$}] {} (5)
-	edge node[above right=-0.15cm] {$\costs(0,1,\lambda_1)$} (3)
-	edge node[left] {$\costs(0,0,\lambda_1)$} (4)
+    (1) edge[red] node[black,above left] {$\costs(0,m,\lambda_1)$} (2)
+	edge node[label={[xshift=0.8cm, yshift=-0.9cm]$\costs(0,m-1,\lambda_1)$}] {} (5)
+	edge node[above right=-0.13cm] {$\costs(0,1,\lambda_1)$} (3)
+	edge node[below left] {$\costs(0,0,\lambda_1)$} (4)
+    (1) edge ($(1)!.82!(22)$)
 
     (2) edge node[above] {$0$} (6)
     (3) edge node[above] {$0$} (7)
@@ -864,7 +869,104 @@ In each case, $S'$ uses edges from at most one of the sets $E_\downarrow^t$ and 
 
 Hence, by repeating described process on $P'$, we obtain a terminating procedure that returns a path satisfying the conditions.
 \end{proof}
-As a result of Proposition~\ref{prop_path_to_reasn_path}, we shall subsequently focus our attention on reasonable paths. Intuitively, one can see that such a path $P$ can be uniquely identified by the ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$ at any time slot $t$. The next proposition formalises this intuition.
+As a result of Proposition~\ref{prop_path_to_reasn_path}, we shall subsequently focus our attention on reasonable paths. Our goal is to establish the connection between reasonable paths $P$ of our graph and schedules $\mx$. Intuitively, one can see that such a path $P$ is uniquely determined by the ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$ at any time slot $t$; these nodes represent the state of processing $\lambda_t$ with $x$. Consider the following example:
+\begin{exmpl}
+Let $\inp=\bigl(m=3,T=3,\Lambda=(3,1,1),\beta=1,f\bigr)$ be the input for a problem instance with  $f(x)=x^2$. Then the path  
+\begin{equation*}
+	P=(v_{0,0},v_{3,1\downarrow},v_{2,1\downarrow},v_{2,1\uparrow},v_{2,2\downarrow},v_{1,2\uparrow},v_{0,2\downarrow})
+\end{equation*}
+\begin{figure}[H]
+\centering
+\scalebox{0.6}{
+\begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.5cm,circle,draw}]
+  \node[node] (1) {0,0};
+  \node[node] (4) [below right=4cm of 1] {0,1$\downarrow$};
+  \node[node] (3) [above =1cm of 4] {1,1$\downarrow$};
+  \node[node] (2) [above right=4cm of 1] {3,1$\downarrow$};
+  \node[node] (5) [below =1cm of 2] {2,1$\downarrow$};
+  \node[node] (7) [right =of 3] {1,1$\uparrow$};
+  \node[node] (6) [right =of 2] {3,1$\uparrow$};
+  \node[node] (8) [right =of 4] {0,1$\uparrow$};
+  \node[node] (9) [right =of 5] {2,1$\uparrow$};
+  \node[node] (11) [right =of 7] {1,2$\downarrow$};
+  \node[node] (10) [right =of 6] {3,2$\downarrow$};
+  \node[node] (12) [right =of 8] {0,2$\downarrow$};
+  \node[node] (13) [right =of 9] {2,2$\downarrow$};
+  \node[node] (15) [right =of 11] {1,2$\uparrow$};
+  \node[node] (14) [right =of 10] {3,2$\uparrow$};
+  \node[node] (16) [right =of 12] {0,2$\uparrow$};
+  \node[node] (17) [right =of 13] {2,2$\uparrow$};
+  \node[node] (19) [right =of 15] {1,T$\downarrow$};
+  \node[node] (18) [right =of 14] {3,T$\downarrow$};
+  \node[node] (20) [right =of 16] {0,T$\downarrow$};
+  \node[node] (21) [right =of 17] {2,T$\downarrow$};
+
+  \path[every node/.style={font=\sffamily\small}]
+    (1) edge[red] node[black, above left] {$\costs(0,3,3)$} (2)
+	edge node[label={[xshift=0.78cm, yshift=-0.8cm]$\costs(0,2,3)$}] {} (5)
+	edge node[above right=-0.08cm] {$\costs(0,1,3)$} (3)
+	edge node[below left] {$\costs(0,0,3)$} (4)
+
+    (2) edge node[above] {$0$} (6)
+    (3) edge node[above] {$0$} (7)
+    (4) edge[red] node[black,above] {$0$} (8)
+    (5) edge node[above] {$0$} (9)
+
+    (2) edge[red] node[black,right] {$0$} (5)
+    (3) edge[red] node[black,right] {$0$} (4)
+
+    (9) edge[red] node[black,right] {$\beta$} (6)
+    (8) edge[red] node[black,right] {$\beta$} (7)
+
+    (6) edge[red] node[black,above] {$\opcosts(m,\lambda_2)$} (10)
+    (7) edge node[above] {$\opcosts(1,\lambda_2)$} (11)
+    (8) edge node[above] {$\opcosts(0,\lambda_2)$} (12)
+    (9) edge node[above] {$\opcosts(m-1,\lambda_2)$} (13)
+
+    (10) edge node[above] {$0$} (14)
+    (11) edge node[above] {$0$} (15)
+    (12) edge[red] node[black,above] {$0$} (16)
+    (13) edge node[above] {$0$} (17)
+
+    (10) edge[red] node[black,right] {$0$} (13)
+    (11) edge[red] node[black,right] {$0$} (12)
+
+    (17) edge[red] node[black,right] {$\beta$} (14)
+    (16) edge[red] node[black,right] {$\beta$} (15)
+
+    (5) edge[red] node[black,right] {$0$} ($(5)!.35!(3)$)
+    ($(5)!.65!(3)$) edge[red] node[black,right] {$0$} (3)
+
+    ($(7)!.65!(9)$) edge[red] node[black,right] {$\beta$} (9)
+    (7) edge[red] node[black,right] {$\beta$} ($(7)!.35!(9)$)
+ 
+    (13) edge[red] node[black,right] {$0$} ($(13)!.35!(11)$)
+    ($(13)!.65!(11)$) edge[red] node[black,right] {$0$} (11)
+
+    ($(15)!.65!(17)$) edge[red] node[black,right] {$\beta$} (17)
+    (15) edge[red] node[black,right] {$\beta$} ($(15)!.35!(17)$)
+
+
+    (14) edge[red] node[label={[black,xshift=0cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
+    (15) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(1,\lambda_3)$}] {} ($(15)!.4!(19)$)
+    (16) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
+    (17) edge node[label={[xshift=0.3cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_3)$}] {} ($(17)!.4!(21)$)
+
+    ($(14)!.6!(18)$) edge[red] node[black,above] {$\opcosts(m,\lambda_T)$} (18)
+    ($(15)!.6!(19)$) edge node[above] {$\opcosts(1,\lambda_T)$} (19)
+    ($(16)!.6!(20)$) edge node[above] {$\opcosts(0,\lambda_T)$} (20)
+    ($(17)!.6!(21)$) edge node[label={[xshift=-0.2cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_T)$}] {} (21)
+
+    (18) edge[red] node[black,right] {$0$} (21)
+    (19) edge[red] node[black,right] {$0$} (20)
+    (21) edge[red] node[black,right] {$0$} ($(21)!.35!(19)$)
+    ($(21)!.65!(19)$) edge[red] node[black,right] {$0$} (19);
+\end{tikzpicture}
+}
+\end{figure}
+\end{exmpl}
+
+The next lemma formalises these ideas.
 \begin{prop}
 Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set of nodes $v_{x,t\downarrow}$ visited by $P$. Moreover, identify the ``maximum'' node at each time slot $t\in[T]$ by
 \begin{equation*}
@@ -881,7 +983,7 @@ We need to check that $\Phi$ is injective and surjective.
 
 Let $P,P'$ be reasonable paths with $\Phi(P)=\Phi(P')$. Then $P$ as well as $P'$ must start with the edge $(v_{0,0},v_{x_1,1\downarrow})$. As $P$ and $P'$ are reasonable, their paths between $v_{x_t,t\downarrow}$ and $v_{x_{t+1},t+1\downarrow}$ must coincide for $t\in[T-1]$. Further, the path from $v_{x_T,T}$ to $v_{0,T}$ is unique in our graph. Thus, we have $P=P'$, which shows the injectivity of $\Phi$.
 
-Next, let $(x_1,\ldots,x_T)\in\bm{\mx}$ be arbitrary. For any $t\in[T]$, we set
+Next, let $(x_1,\ldots,x_T)\in\bm{\mx}$. For any $t\in[T]$, we set
 \begin{equation*}
 	S'\coloneqq
 	\begin{cases}
@@ -898,7 +1000,7 @@ which shows the surjectivity of $\Phi$.
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths. There exists a bijective map $\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx}$ satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
 \end{lem}
 \begin{proof}
-By Proposition~\ref{prop_reasn_paths_identify}. Let $P$ be a reasonable path.
+By Proposition~\ref{prop_reasn_paths_identify}, we already have a bijection. Let $P$ be a reasonable path.
 
 Which shows that $\Phi$ is a cost-preserving maps, and the claim follows.
 \end{proof}
