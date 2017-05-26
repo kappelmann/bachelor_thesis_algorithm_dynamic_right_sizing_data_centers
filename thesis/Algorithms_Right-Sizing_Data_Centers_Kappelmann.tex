@@ -405,7 +405,7 @@ Using these weights, we now consider the operating costs of a schedule $\Sigma^*
 \begin{align*}
 	\sum\limits_{i=1}^{x_t}f\Bigl(\frac{\lambda_t}{x_t}\Bigr)=x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\eqref{eq_mu_convex_comb}}{=}x_tf\Bigl(\sum\limits_{i=1}^{x_t}{\frac{\mu_i\lambda_t}{x_t}}\Bigr)
 \end{align*}
-With the use of Jensen's inequality and the fact that $\sum_{i=1}^{x_t}(1/x_t)=1$, we can give an upper bound for the costs :
+With the use of Jensen's inequality and the fact that $\sum_{i=1}^{x_t}(1/x_t)=1$, we can give an upper bound for the costs:
 \begin{align*}
 	x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\le x_t\sum\limits_{i=1}^{x_t}\frac{1}{x_t}f(\mu_i\lambda_t)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\stackrel{\eqref{eq_mu_lambda_costs}}{=}\sum\limits_{i\in A}f(\lambda_{i,t})
 \end{align*}
@@ -462,7 +462,7 @@ Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that t
 	&c_G(v_{x,t},v_{x',t+1})\coloneqq\costs(x,x',\lambda_{t+1})\\
 	&G\coloneqq(V,E,c_G)
 \end{align*}
-For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$, we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the costs of taking the edge correspond to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines. A graphical representation can be found in the following figure.
+For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$, we assign costs $\costs(x,x',\lambda_{t+1})$, i.e.\ the cost of taking the edge corresponds to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines. A graphical representation can be found in the following figure.
 \begin{figure}[H]
 \centering
 \scalebox{0.86}{
@@ -529,7 +529,7 @@ For any possible amount of active servers $x$ and any time slot $t$, we add a no
 \caption{Level structured graph for a pseudo-polynomial, optimal offline algorithm}
 \label{fig_graph_pseudo_poly}
 \end{figure}
-The costs of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) are thus given by
+The cost of a path $P=(v_{x_0,T_0},v_{x_1,T_0+1},\ldots,v_{x_n,T_0+n})$ with length $n$ in our graph (where $x_t\in\fromto{0}{m}, T_0\in\fromto{0}{T}$ and $T_0+n\leq T+1$) is thus given by
 \begin{equation*}
 	\costs(P)\coloneqq\sum\limits_{t=1}^{n}\costs(x_{t-1},x_t,\lambda_{T_0+t})
 \end{equation*}
@@ -537,8 +537,8 @@ In particular, for a path $P=(v_{0,0},v_{x_1,1},\ldots,v_{x_T,T},v_{0,T+1})$ fro
 \begin{equation}
 	\costs(P)=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})+\underbrace{\costs(x_T,0,0)}_{=0}=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})\label{eq_v0_VT1_path_costs}
 \end{equation}
-Note that the costs of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_mx_schedule_total_costs}).
-Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the costs of the corresponding schedule. Needless to say, this demands for a proof of correctness.
+Note that the cost of such a path directly correspond to those of a schedule $\mx$ (see~\eqref{eq_mx_schedule_total_costs}).
+Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimise the cost of the corresponding schedule. Needless to say, this demands for a proof of correctness.
 \begin{lem}\label{lem_sched_path_pseudo_poly}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all paths from $v_{0,0}$ to $v_{0,T+1}$. The map
 \begin{equation*}
@@ -555,7 +555,7 @@ It is easy to check that $\Psi\circ\Phi=id_{\bm{\mathcal{P}}}$ and $\Phi\circ\Ps
 \begin{equation*}
 	P\coloneqq\Psi(\mx)=(v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})
 \end{equation*}
-We examine the costs of $\mx$ and conclude
+We examine the cost of $\mx$ and conclude
 \begin{equation*}
 \costs(\mx)\stackrel{\eqref{eq_mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq_v0_VT1_path_costs}}{=}\costs(P)
 \end{equation*}
@@ -905,8 +905,8 @@ A schedule corresponding to $P$ would use three active server in its first time 
 
   \path[every node/.style={font=\sffamily\small}]
     (1) edge[red] node[black, above left] {$\costs(0,3,3)$} (2)
-	edge node[label={[xshift=0.5cm, yshift=-0.8cm]$\costs(0,2,3)$}] {} (5)
-	edge node[label={[xshift=0.28cm, yshift=-0.3cm]$\costs(0,1,3)$}] {} (3)
+	edge node[label={[xshift=0.4cm, yshift=-0.1cm]$\costs(0,2,3)$}] {} (5)
+	edge node[label={[xshift=0.14cm, yshift=-0.25cm]$\costs(0,1,3)$}] {} (3)
 	edge node[below left] {$\costs(0,0,3)$} (4)
 
     (2) edge node[above] {$0$} (6)
@@ -961,7 +961,7 @@ Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set
 \end{equation*}
 \end{defn}
 Remember that a schedule $\mx=(x_1,\ldots,x_T)$ also uses the notation $x_t$ to identify the number of active severs at time $t$. Needless to say, this clash of names is intentional and justified by the next lemma.
-\begin{lem}
+\begin{lem}\label{lem_sched_path_pseudo_lin}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths.
 Then the map
 \begin{equation*}\label{prop_reasn_paths_identify}
@@ -986,22 +986,13 @@ Next, let $(x_1,\ldots,x_T)\in\bm{\mx}$. For any $t\in[T]$, we set
 which shows the surjectivity of $\Phi$.
 
 It remains to show that $\Phi$ is cost-preserving. For this, let $P$ be a reasonable path and let $\mx\coloneqq\Phi(P)=(x_1,\ldots,x_T)$ be its image. 
-As $P$ is reasonable, we have $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for any time slot $t$. If $E_\uparrow^t$ is empty, the costs between the nodes $v_{x,t-1\downarrow}$ and $v_{x,t\downarrow}$ are given by $\opcosts(x_{t-1},x_t)$. If $E_\uparrow^t$ is non-empty, the costs are given by $\beta(x_t-x_{t-1})+\opcosts(x_{t-1},x_t)$. The costs of $P$ can thus be calculated by 
+As $P$ is reasonable, we have $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for any time slot $t$. If $E_\uparrow^t$ is empty, we have $x_t\le x_{t-1}$. Thus, the cost between the nodes $v_{x_{t-1},t-1\downarrow}$ and $v_{x_t,t\downarrow}$ is given by $\opcosts(x_t,\lambda_t)$. If $E_\uparrow^t$ is non-empty, we have $x_t>x_{t-1}$. Thus, the cost is given by $\beta(x_t-x_{t-1})+\opcosts(x_t,\lambda_t)$. Using this observation, the cost of $P$ can be calculated by 
 \begin{align*}
-\costs(P)&=c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\beta\max\{0,x_t-x_{t-1}\}+\opcosts(x_{t},\lambda_t)\bigr)\\
-	&\stackrel{\eqref{eq_mx_schedule_sw_costs}}{=}c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\swcosts(x_{t-1},x_t)+\opcosts(x_{t},\lambda_t)\bigr)\\
+	\costs(P)&=c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\overbrace{\beta\max\{0,x_t-x_{t-1}\}}^{\swcosts(x_{t-1},x_t)}+\opcosts(x_{t},\lambda_t)\bigr)\\
+	&\stackrel{\eqref{eq_mx_schedule_sw_costs}}{=}c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\overbrace{\swcosts(x_{t-1},x_t)+\opcosts(x_{t},\lambda_t)}^{\costs(x_{t-1},x_t,\lambda_t)}\bigr)\\
 	&\stackrel{\eqref{eq_mx_schedule_costs}}{=}c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_t,\lambda_t)=\sum\limits_{t=1}^{T}\costs(x_{t-1},x_t,\lambda_t)\stackrel{\eqref{eq_mx_schedule_total_costs}}{=}c(\mx)
 \end{align*}
 Which shows that $\Phi$ is a cost-preserving map.
-\end{proof}
-
-\begin{lem}\label{lem_sched_path_pseudo_lin}
-Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths. There exists a bijective map $\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx}$ satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
-\end{lem}
-\begin{proof}
-By Proposition~\ref{prop_reasn_paths_identify}, we already have a bijection. Let $P$ be a reasonable path.
-
-Which shows that $\Phi$ is a cost-preserving maps, and the claim follows.
 \end{proof}
 \begin{thm}\label{thm_opt_sched_reasn_path}
 There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest, reasonable paths.
@@ -1018,7 +1009,7 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 \end{cor}
 \begin{proof}
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By Proposition~\ref{prop_path_to_reasn_path}, the path $P$ can be transformed to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
-In turn, $P'$ corresponds to an optimal schedule $\mx$ with $\costs(\mx)=\costs(P')$ by Theorem~\ref{thm_opt_sched_reasn_path}. Thus, we have $c(\mx)=c(P)$ and, the claim follows.
+In turn, $P'$ corresponds to an optimal schedule $\mx$ with $\costs(\mx)=\costs(P')$ by Theorem~\ref{thm_opt_sched_reasn_path}. Thus, we have $c(\mx)=c(P)$, and the claim follows.
 \end{proof}
 
 \section{Approximative offline scheduling}
