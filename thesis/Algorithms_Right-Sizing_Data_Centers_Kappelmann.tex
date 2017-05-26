@@ -618,14 +618,23 @@ We split our procedure into two subroutines.
 \end{algorithm}
 The correctness of Algorithm~\ref{alg_opt_offline_pseudo_poly} directly follows from the correctness of the Bellman-Ford algorithm and Theorem~\ref{thm_opt_sched_short_path_pseudo_poly}.
 
-Naturally, we are interested in our algorithm's time and memory complexity. Subroutine
-\textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialisation, $\Theta(Tm^2)$ steps for the iterative calculation, and $\Theta(m)$ steps for its final minimisation search. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
+Naturally, we are interested in our algorithm's time and memory complexity. 
+For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\beta,f)$. In theory, our function $f:[0,1]\rightarrow \mathbb{R}$ may be, for example, easily defined by saying $f(x)\coloneqq x^2$; however, practically, it is difficult to answer the question what the size of such a function as part of the input may be. For simplicity, we consider the size of $f$ negligible in comparison with the size of the remaining input parts. Further, we assume a real number $r$ to require $\Theta\bigl(\log_2(r)\bigr)$ bits for its encoding.\unsure{Real numbers? How should I write this? What about $\log_2(0)$?} The size of our input is then given by
+\begin{align}
+	size(\inp)&=size(m)+size(T)+size(\Lambda)+size(\beta)\nonumber\\
+	&=\Theta\bigl(\log_2(m)\bigr)+\Theta\bigl(\log_2(T)\bigr)+\sum\limits_{i=1}^T \Theta\bigl(\log_2(\lambda_i)\bigr)+\Theta\bigl(\log_2(\beta)\bigr)\nonumber\\
+	&=\Theta\bigl(\log_2(m)+\log_2(T)+\log_2(\beta)\bigr)+\sum\limits_{i=1}^T \Theta\bigl(\log_2(\overbrace{\lambda_i}^{\le m})\bigr)\nonumber\\
+	&\in\Theta\bigl(\log_2(m)+\log_2(T)+\log_2(\beta)\bigr)+\mathcal{O}\bigl(T\log_2(m)\bigr)\nonumber\\
+	&\in\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)\label{eq_inp_size}
+\end{align}
+
+Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialisation, $\Theta(Tm^2)$ steps for the iterative calculation, and $\Theta(m)$ steps for its final minimisation search. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
 \begin{equation*}
 	\Theta(m+Tm^2+m+T)=\Theta(Tm^2)
 \end{equation*}
-The runtime is polynomial in the numeric value of the input; however, as we just need $\log_2(m)$ bits to encode $m$, it is exponential in the length of the input. Hence, the algorithm is pseudo-polynomial.
+The runtime is polynomial in the numeric value of $m$ and $T$; however, it is exponential in the size of the input because, as we saw in~\eqref{eq_inp_size}, we only need $\log_2(m)$ bits to encode $m$. Hence, the algorithm is pseudo-polynomial.
 
-Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$
+Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$\unsure{Is this enough?}
 
 \subsection{A pseudo-linear algorithm}\label{sec_opt_offline_pseudo_lin}
 The algorithm developed in section~\ref{sec_opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
@@ -1009,7 +1018,7 @@ By Lemma~\ref{lem_sched_path_pseudo_lin}, we have a bijection $\Phi$ between rea
 \end{equation*}
 and the claim follows.
 \end{proof}
-Naturally, common shortest path algorithms do not have any knowledge about our ``resonable'' paths. What if we obtain a shortest path that coincidentally is not reasonable? This shall not turn out to be a problem, as the next corollary teaches us.
+Naturally, common shortest path algorithms do not have any knowledge about our ``resonable'' paths. What if we obtain a shortest path that coincidentally is not reasonable? This shall not turn out to be a problem, as the next corollary shows us.
 \begin{cor}
 Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to an optimal schedule $\mx$ for $\inp$ with $\costs(\mx)=\costs(P)$.
 \end{cor}
@@ -1017,6 +1026,51 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By Proposition~\ref{prop_path_to_reasn_path}, the path $P$ can be transformed to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to an optimal schedule $\mx$ with $\costs(\mx)=\costs(P')$ by Theorem~\ref{thm_opt_sched_reasn_path}. Thus, we have $c(\mx)=c(P)$, and the claim follows.
 \end{proof}
+In the following, we give an algorithm based on our just verified constructions. 
+We split our procedure into two subroutines. 
+
+\textproc{shortest\_paths} uses a dynamic programming approach similar to the well-known Bellman-Ford algorithm. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
+
+\textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path and thereby a schedule for our problem instance.
+\begin{algorithm}[H]
+  \caption{Pseudo-polynomial optimal offline scheduling}
+  \begin{algorithmic}[1]
+  \Function{optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
+	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
+	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T$}}
+	  \State \Return{$\mx$}
+  \EndFunction
+  \Statex
+  \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
+	\Blet{$C[T+1,m]$ and $P[T+1,m]$}{new arrays}\Comment{Costs and predecessors of nodes}
+	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialisation}
+		\Let{$C[1,x]$}{$\costs(0,x,\lambda_1)$}
+		\Let{$P[1,x]$}{$0$}
+	\EndFor
+	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and predecessors}
+		\For{$x' \gets 0 \textrm{ to } m$}
+			\Let{$P[t,x']$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[t-1,x]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Find best preceding choice}
+			\Let{$C[t,x']$}{$C\bigl[t-1,P[t,x']\bigr]+c\bigl(P[t,x'],x',\lambda_t\bigr)$}
+		\EndFor
+	\EndFor
+	\Let{$P[T+1,0]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[T,x]\bigr\}$}\Comment{Find best choice for last time slot}
+	\Let{$C[T+1,0]$}{$C\bigl[T,P[T+1,0]\bigr]$}
+	\State \Return{$(C,P)$}
+  \EndFunction
+  \Statex
+  \Function{extract\_schedule}{$P,T$}
+	\Blet{$\mx[T]$}{a new array}
+    	\Let{$\mx[T]$}{$P[T+1,0]$}\Comment{Get best choice for last time slot}
+        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
+		\Let{$\mx[t]$}{$P\bigl[t+1,\mx[t+1]\bigr]$}
+	\EndFor
+	\State \Return{$\mx$}
+  \EndFunction
+
+  \end{algorithmic}
+\label{alg_opt_offline_pseudo_poly}
+\end{algorithm}
+The correctness of Algorithm~\ref{alg_opt_offline_pseudo_poly} directly follows from the correctness of the Bellman-Ford algorithm and Theorem~\ref{thm_opt_sched_reasn_path}.
 
 \section{Approximative offline scheduling}
 \subsection{A polynomial $4$-approximation algorithm}
