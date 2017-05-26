@@ -561,6 +561,7 @@ We examine the cost of $\mx$ and conclude
 \end{equation*}
 Which shows that $\Psi$ and, as a consequence, $\Phi$ are cost-preserving maps.
 \end{proof}
+We can now use this bijection to obtain our desired result: the correspondence between optimal schedules and shortest paths.
 \begin{thm}\label{thm_opt_sched_short_path_pseudo_poly}
 There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest paths from $v_{0,0}$ to $v_{0,T+1}$.
 \end{thm} 
@@ -962,8 +963,7 @@ Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set
 \end{defn}
 Remember that a schedule $\mx=(x_1,\ldots,x_T)$ also uses the notation $x_t$ to identify the number of active severs at time $t$. Needless to say, this clash of names is intentional and justified by the next lemma.
 \begin{lem}\label{lem_sched_path_pseudo_lin}
-Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths.
-Then the map
+Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths. The map
 \begin{equation*}\label{prop_reasn_paths_identify}
 	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\ldots,x_T)
 \end{equation*}
@@ -972,21 +972,25 @@ is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
 \begin{proof}
 First, we check that $\Phi$ is bijective, i.e.\ $\Phi$ is injective and surjective. 
 
-Let $P,P'$ be reasonable paths with $\Phi(P)=\Phi(P')$. Then $P$ as well as $P'$ must start with the edge $(v_{0,0},v_{x_1,1\downarrow})$. As $P$ and $P'$ are reasonable, their paths between $v_{x_t,t\downarrow}$ and $v_{x_{t+1},t+1\downarrow}$ must coincide for $t\in[T-1]$. Further, the path from $v_{x_T,T}$ to $v_{0,T}$ is unique in our graph. Thus, we have $P=P'$, which shows the injectivity of $\Phi$.
+Let $P$ and $P'$ be reasonable paths with $\Phi(P)=\Phi(P')$. Then $P$ as well as $P'$ must start with the edge $(v_{0,0},v_{x_1,1\downarrow})$. As $P$ and $P'$ are reasonable, they both satisfy $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for each time slot $t$. Due to this restriction, their paths between $v_{x_t,t\downarrow}$ and $v_{x_{t+1},t+1\downarrow}$ must coincide for $t\in[T-1]$. Further, the path from $v_{x_T,T}$ to $v_{0,T}$ is unique in our graph. Thus, we have $P=P'$, which shows the injectivity of $\Phi$.
 
-Next, let $(x_1,\ldots,x_T)\in\bm{\mx}$. For any $t\in[T]$, we set
+Next, let $(x_1,\ldots,x_T)\in\bm{\mx}$ be a schedule for $\inp$. For any $t\in[T-1]$, we set
 \begin{equation*}
-	S'\coloneqq
+	S_t\coloneqq
 	\begin{cases}
-		(v_{x_s,t\downarrow},v_{x_s,t\uparrow},v_{x_s+1,t\uparrow},\ldots,v_{x_e,t\uparrow}), & \text{if $x_s< x_e$}\\
-		(v_{x_s,t\downarrow},v_{x_s-1,t\downarrow},\ldots,v_{x_e,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s>x_e$}\\
-		(v_{x_s,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s=x_e$}
+		(v_{x_t,t\downarrow},v_{x_t,t\uparrow},v_{x_t+1,t\uparrow},\ldots,v_{x_{t+1},t\uparrow}), & \text{if $x_t<x_{t+1}$}\\
+		(v_{x_t,t\downarrow},v_{x_t-1,t\downarrow},\ldots,v_{x_{t+1},t\downarrow},v_{x_{t+1},t\uparrow}), & \text{if $x_t>x_{t+1}$}\\
+		(v_{x_t,t\downarrow},v_{x_{t+1},t\uparrow}), & \text{if $x_t=x_{t+1}$}
 	\end{cases}
 \end{equation*}
-which shows the surjectivity of $\Phi$.
+We then concatenate these subpaths to construct a reasonable path
+\begin{equation*}
+	P\coloneqq(v_{0,0},S_1,S_2,\ldots,S_{T-1},v_{x_T,T\downarrow},v_{x_T-1,T\downarrow},\ldots,v_{0,T\downarrow})
+\end{equation*}
+Evidently, the constructed path satisfies $\Phi(P)=\mx$, which shows the surjectivity of $\Phi$.
 
 It remains to show that $\Phi$ is cost-preserving. For this, let $P$ be a reasonable path and let $\mx\coloneqq\Phi(P)=(x_1,\ldots,x_T)$ be its image. 
-As $P$ is reasonable, we have $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for any time slot $t$. If $E_\uparrow^t$ is empty, we have $x_t\le x_{t-1}$. Thus, the cost between the nodes $v_{x_{t-1},t-1\downarrow}$ and $v_{x_t,t\downarrow}$ is given by $\opcosts(x_t,\lambda_t)$. If $E_\uparrow^t$ is non-empty, we have $x_t>x_{t-1}$. Thus, the cost is given by $\beta(x_t-x_{t-1})+\opcosts(x_t,\lambda_t)$. Using this observation, the cost of $P$ can be calculated by 
+As $P$ is reasonable, we have $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for any time slot $t$. If $E_\uparrow^t$ is empty, we have $x_t\le x_{t-1}$. The cost between the nodes $v_{x_{t-1},t-1\downarrow}$ and $v_{x_t,t\downarrow}$ is then given by $\opcosts(x_t,\lambda_t)$. If $E_\uparrow^t$ is non-empty, we have $x_t>x_{t-1}$. In this case, the cost is given by $\beta(x_t-x_{t-1})+\opcosts(x_t,\lambda_t)$. Using this observation, the cost of $P$ can be calculated by 
 \begin{align*}
 	\costs(P)&=c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\overbrace{\beta\max\{0,x_t-x_{t-1}\}}^{\swcosts(x_{t-1},x_t)}+\opcosts(x_{t},\lambda_t)\bigr)\\
 	&\stackrel{\eqref{eq_mx_schedule_sw_costs}}{=}c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\overbrace{\swcosts(x_{t-1},x_t)+\opcosts(x_{t},\lambda_t)}^{\costs(x_{t-1},x_t,\lambda_t)}\bigr)\\
@@ -994,6 +998,7 @@ As $P$ is reasonable, we have $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\empty
 \end{align*}
 Which shows that $\Phi$ is a cost-preserving map.
 \end{proof}
+Again, we can use this bijection to obtain our desired result: the correspondence between optimal schedules and shortest, reasonable paths.
 \begin{thm}\label{thm_opt_sched_reasn_path}
 There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest, reasonable paths.
 \end{thm} 
@@ -1004,6 +1009,7 @@ By Lemma~\ref{lem_sched_path_pseudo_lin}, we have a bijection $\Phi$ between rea
 \end{equation*}
 and the claim follows.
 \end{proof}
+Naturally, common shortest path algorithms do not have any knowledge about our ``resonable'' paths. What if we obtain a shortest path that coincidentally is not reasonable? This shall not turn out to be a problem, as the next corollary teaches us.
 \begin{cor}
 Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to an optimal schedule $\mx$ for $\inp$ with $\costs(\mx)=\costs(P)$.
 \end{cor}
