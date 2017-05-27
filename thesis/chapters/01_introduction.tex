@@ -4,7 +4,7 @@
 \chapter{Introduction}
 TODO: Hardware prices vs.\ energy costs in data centers, related work and purpose of this paper (offline algorithm, approximation algorithm,\ldots).
 
-\section{Model description}\label{sec_model_descr}
+\section{Model description}\label{sec:model_descr}
 We want to address the issue of above-mentioned ever-growing energy consumption by examining a scheduling problem that commonly arises in data centers. More specifically, we consider a model consisting of a fixed amount of homogeneous servers denoted by $m\in\mathbb{N}$ and a fixed amount of time slots denoted by $T\in\mathbb{N}$. In turn, each server possesses two power states, i.e.\ each server is either powered on (\textit{active state}) or powered off (\textit{sleep state}).
 	
 For any time slot $t\in[T]$, we have a \textit{mean arrival rate} denoted by $\lambda_t$, i.e.\ the amount of expected load to process in time slot $t$. We expect the arrival rates to be normalized such that each server can handle a load between 0 and 1 in any time slot. We denote the assigned load for server $i$ in time slot $t$ by $\lambda_{i,t}\in[0,1]$. Consequently, for any time slot $t$, we expect an arrival rate between 0 and $m$, that is $\lambda_t\in[0,m]$; otherwise, the servers would not be able to process the given load in time.
@@ -35,7 +35,7 @@ We will subsequently call a pair $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$ a \t
 
 Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies the following optimisation:
 \begin{align}
-	&\text{minimize}&&\costs(\Sigma)\coloneqq\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t}) s_{i,t}\bigr)}_{\text{operating costs}}+\underbrace{\beta\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\min\{0,s_{i,t}-s_{i,t-1}\}}_{\text{switching costs}}\label{eq_schedule_costs}\\ 
-	&\text{subject to}&&\sum\limits_{i=1}^{m}(\lambda_{i,t} s_{i,t})=\lambda_t,\quad \forall t\in[T]\label{eq_feasible_constraint}
+	&\text{minimize}&&\costs(\Sigma)\coloneqq\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t}) s_{i,t}\bigr)}_{\text{operating costs}}+\underbrace{\beta\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\min\{0,s_{i,t}-s_{i,t-1}\}}_{\text{switching costs}}\label{eq:schedule_costs}\\ 
+	&\text{subject to}&&\sum\limits_{i=1}^{m}(\lambda_{i,t} s_{i,t})=\lambda_t,\quad \forall t\in[T]\label{eq:feasible_constraint}
 \end{align}
-We call a schedule \textit{feasible} if it satisfies~\eqref{eq_feasible_constraint} and \textit{optimal} if it satisfies~\eqref{eq_schedule_costs} and~\eqref{eq_feasible_constraint}.
+We call a schedule \textit{feasible} if it satisfies~\eqref{eq:feasible_constraint} and \textit{optimal} if it satisfies~\eqref{eq:schedule_costs} and~\eqref{eq:feasible_constraint}.
