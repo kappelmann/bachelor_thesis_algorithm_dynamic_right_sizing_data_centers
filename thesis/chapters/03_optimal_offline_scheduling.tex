@@ -140,7 +140,8 @@ We split our procedure into two subroutines.
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\Blet{$C[m,T+1]$ and $P[m,T+1]$}{new arrays}\Comment{Nodes' costs and predecessors}
+	\LineComment{Nodes' costs and predecessors}
+	\Blet{$C[m+1,T+2]$ and $P[m+1,T+2]$}{new arrays}
 	\Let{$C[0,0]$}{$P[0,0]\gets 0$}
 	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialization steps}
 		\Let{$C[x,1]$}{$\costs(0,x,\lambda_1)$}
@@ -593,7 +594,7 @@ In the following, we give an algorithm based on our just verified constructions.
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\Blet{$C[2T,m]$ and $P[2T,m]$}{new arrays}\Comment{Costs and predecessors of nodes}
+	\Blet{$C[2T,m+1]$ and $P[2T,m+1]$}{new arrays}\Comment{Nodes' costs and predecessors}
 	\Let{$C[0,0]$}{$P[0,0]\gets 0$}
 	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialization steps}
 		\Let{$C[1,x]$}{$\costs(0,x,\lambda_1)$}
@@ -601,13 +602,23 @@ In the following, we give an algorithm based on our just verified constructions.
 	\EndFor
 	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculation of costs and predecessors}
 		\For{$x \gets m-1 \textrm{ to } 0$}
-			\If {$i\geq maxval$}
-			    \State $i\gets 0$
-			\Else
-			    \If {$i+k\leq maxval$}
-				\State $i\gets i+k$
-			    \EndIf
+			\If {$C[x+1,2t-1]<C[x,2t-1]$}
+			    \Let{$C[x,2t-1]$}{$C[x+1,2t-1]$}
+			    \Let{$P[x,2t-1]$}{$P[x+1,2t-1]$}
 			\EndIf
+		\EndFor
+		\Let{$C[0,2t]$}{$C[0,2t-1]$}
+		\Let{$P[0,2t]$}{$P[0,2t-1]$}
+		\For{$x \gets 1 \textrm{ to } m$}
+			\If {$C[x-1,t]<C[x,t-1]$}
+			    \Let{$C[x,t]$}{$C[x-1,t]$}
+			    \Let{$P[x,t]$}{$P[x-1,t]$}
+			\Else
+			    \Let{$C[x,t]$}{$C[x,t-1]$}
+			    \Let{$P[x,t]$}{$P[x,t-1]$}
+			\EndIf
+		    	\Let{$C[x,t+1]$}{$C[x,t]+\opcosts(x,\lambda_x)$}
+			\Let{$P[x,t+1]$}{$P[x,t]$}
 		\EndFor
 	\EndFor
 	\Let{$P[T+1,0]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[T,x]\bigr\}$}\Comment{Find best choice for last time slot}
