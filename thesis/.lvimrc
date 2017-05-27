@@ -1,2 +1,0 @@
-let g:syntastic_tex_chktex_quiet_messages = { "level": "warnings"}
-autocmd BufWritePost Algorithms_Right-Sizing_Data_Centers_Kappelmann.tex silent exec "!make &> /dev/null &"
