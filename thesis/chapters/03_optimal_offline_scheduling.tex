@@ -6,7 +6,7 @@ In this section, we derive two optimal offline algorithms based on our prelimina
 First, we reduce our problem specified by $\inp$ to a shortest path problem of a level structured graph $G$. We then proceed to find a shortest path in $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time $\Theta(Tm^2)$.
 After that, we refine our initial approach to derive an improved algorithm with pseudo-linear complexity $\Theta(Tm)$.
 
-\section{A pseudo-polynomial algorithm}\label{sec_opt_offline_pseudo_poly}
+\section{A pseudo-polynomial algorithm}\label{sec:opt_offline_pseudo_poly}
 Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
 \begin{align*}
 	&V\coloneqq\bigl\{v_{x,t}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
@@ -127,7 +127,7 @@ and the claim follows.
 In the following, we give an algorithm based on our just verified construction. 
 We split our procedure into two subroutines. 
 
-\textproc{shortest\_paths} layerwise calculates the minimum costs to the nodes of our graph; that is, it calculates the shortest paths following the topological sorting of the graph. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
+\textproc{shortest\_paths} layerwise calculates the minimum costs of the nodes of our graph; that is, it calculates the shortest paths following the topological sorting of the graph. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
 
 \textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path and thereby a schedule for our problem instance.
 \begin{algorithm}[H]
@@ -140,27 +140,28 @@ We split our procedure into two subroutines.
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\Blet{$C[T+1,m]$ and $P[T+1,m]$}{new arrays}\Comment{Nodes' costs and predecessors}
-	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialisation}
-		\Let{$C[1,x]$}{$\costs(0,x,\lambda_1)$}
-		\Let{$P[1,x]$}{$0$}
+	\Blet{$C[m,T+1]$ and $P[m,T+1]$}{new arrays}\Comment{Nodes' costs and predecessors}
+	\Let{$C[0,0]$}{$P[0,0]\gets 0$}
+	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialization steps}
+		\Let{$C[x,1]$}{$\costs(0,x,\lambda_1)$}
+		\Let{$P[x,1]$}{$0$}
 	\EndFor
 	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and predecessors}
 		\For{$x' \gets 0 \textrm{ to } m$}
-			\Let{$P[t,x']$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[t-1,x]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Get best preceding choice}
-			\Let{$C[t,x']$}{$C\bigl[t-1,P[t,x']\bigr]+c\bigl(P[t,x'],x',\lambda_t\bigr)$}
+			\Let{$P[x',t]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[x,t-1]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Get best preceding choice}
+			\Let{$C[x',t]$}{$C\bigl[P[x',t],t-1\bigr]+c\bigl(P[x',t],x',\lambda_t\bigr)$}
 		\EndFor
 	\EndFor
-	\Let{$P[T+1,0]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[T,x]\bigr\}$}\Comment{Find best choice for last time slot}
-	\Let{$C[T+1,0]$}{$C\bigl[T,P[T+1,0]\bigr]$}
+	\Let{$P[0,T+1]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[x,T]\bigr\}$}\Comment{Find best choice for last time slot}
+	\Let{$C[0,T+1]$}{$C\bigl[P[0,T+1],T\bigr]$}
 	\State \Return{$(C,P)$}
   \EndFunction
   \Statex
   \Function{extract\_schedule}{$P,T$}
 	\Blet{$\mx[T]$}{a new array}
-    	\Let{$\mx[T]$}{$P[T+1,0]$}\Comment{Get best choice for last time slot}
+    	\Let{$\mx[T]$}{$P[0,T+1]$}\Comment{Get best choice for last time slot}
         \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
-		\Let{$\mx[t]$}{$P\bigl[t+1,\mx[t+1]\bigr]$}
+		\Let{$\mx[t]$}{$P\bigl[\mx[t+1],t+1\bigr]$}
 	\EndFor
 	\State \Return{$\mx$}
   \EndFunction
@@ -180,7 +181,7 @@ For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\be
 	&\in\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)\label{eq:inp_size}
 \end{align}
 
-Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialisation, $\Theta(Tm^2)$ steps for the iterative calculation, and $\Theta(m)$ steps for its final minimization search. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
+Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialization, $\Theta(Tm^2)$ steps for the iterative calculation, and $\Theta(m)$ steps for its final minimization search. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
 \begin{equation*}
 	\Theta(m+Tm^2+m+T)=\Theta(Tm^2)
 \end{equation*}
@@ -188,12 +189,12 @@ The runtime is polynomial in the numeric value of $m$ and $T$; however, it is ex
 
 Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$\unsure{Is this enough?}
 
-\section{A pseudo-linear algorithm}\label{sec_opt_offline_pseudo_lin}
-The algorithm developed in section~\ref{sec_opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
+\section{A pseudo-linear algorithm}\label{sec:opt_offline_pseudo_lin}
+The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
 
 Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any node $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following example:
 \begin{exmpl}
-Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances with $f(x)=x^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the graphs for the two problem instances and the corresponding calculations done by the algorithm derived in section~\ref{sec_opt_offline_pseudo_poly}.
+Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances with $f(x)=x^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the graphs for the two problem instances and the corresponding calculations done by the algorithm derived in Section~\ref{sec:opt_offline_pseudo_poly}.
 \begin{figure}[H]
 \captionsetup{farskip=-1em} 
 \captionsetup[subfigure]{labelformat=empty}
@@ -245,7 +246,7 @@ Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instanc
 \caption{Two examples depicting a shortcoming of our initial approach. The calculated nodes' costs are highlighted in red. Dashed edges are not part of the initial algorithm.}
 \end{figure}
 \end{exmpl}
-Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. We want our states to capture a more general notion than given in section~\ref{sec_opt_offline_pseudo_poly}; preferably, we would like a node $v_{x,t}$ to denote the state of having $x$ active servers at the end of time slot $t$. In practice, we may reach a state $v_{x,t}$ by moving down from a state $v_{y^\downarrow,t}$ where $y^\downarrow>x$ with cost $0$ or by moving up from a state $v_{y^\uparrow,t}$ where $y^\uparrow<x$ with cost $\beta(x-y^\uparrow)$.
+Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. We want our states to capture a more general notion than given in Section~\ref{sec:opt_offline_pseudo_poly}; preferably, we would like a node $v_{x,t}$ to denote the state of having $x$ active servers at the end of time slot $t$. In practice, we may reach a state $v_{x,t}$ by moving down from a state $v_{y^\downarrow,t}$ where $y^\downarrow>x$ with cost $0$ or by moving up from a state $v_{y^\uparrow,t}$ where $y^\uparrow<x$ with cost $\beta(x-y^\uparrow)$.
 
 In order to allow for these new possibilities, given a problem instance $\inp$, we define a directed, weighted graph as follows:
 \begin{align*}
@@ -381,16 +382,16 @@ A more appealing, graphical representation can be found in the following figure.
 \end{figure}
 For any possible amount of active servers $x$ and any time slot $t$, we add a node $v_{x,t\downarrow}$. Semantically, the cost of $v_{x,t\downarrow}$ will denote the minimum cost up to time slot $t$ when processing $\lambda_t$ with $x$ or more servers. Further, for any time slot $t\in[T-1]$ we add a node $v_{x,t\uparrow}$. The cost of $v_{x,t\uparrow}$ will denote the minimum cost of having $x$ active servers at the end of time slot $t$. Moreover, we add a start node $v_{0,0}$. Our end node will be $v_{0,T\downarrow}$.
 
-The set of edges $E_s$ denotes the start initialisation step. An edge $(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$ accounts for the operating costs that incur when processing the arrival rate $\lambda_{t+1}$ with $x$ active servers.
+The set of edges $E_s$ denotes the start initialization step. An edge $(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$ accounts for the operating costs that incur when processing the arrival rate $\lambda_{t+1}$ with $x$ active servers.
 
 After any time step from $t-1$ to $t$ that incurs operating costs, we have a minimization step in our graph. For this, we first move down the chain $v_{m,t\downarrow},v_{m-1,t\downarrow},\ldots,v_{0,t\downarrow}$ using edges from $E_\downarrow$ with cost $0$. Then we proceed to move to the right from $v_{0,t\downarrow}$ to $v_{0,t\uparrow}$. Lastly, we move up the chain $v_{0,t\uparrow},v_{1,t\uparrow},\ldots,v_{m,t\uparrow}$ using edges from $E_\uparrow$ with cost $\beta$. In order to have the possibility to keep the calculated costs of $v_{x,t\downarrow}$ during the upward movement, we add edges $(v_{x,t\downarrow},v_{x,t\uparrow})\in E_{\downarrow\uparrow}$ with cost $0$.
 
 This minimization step is the key to our runtime improvement. It facilitates the determination of the best predecessor of a state $v_{x,t\downarrow}$ because we already know that the minimum cost of having $x$ servers at the end of time slot $t-1$ is stored in $v_{x,t-1\uparrow}$. Thus, the cheapest possibility to process the next arrival rate $\lambda_t$ using $x$ servers can simply be calculated by adding $\opcosts(x,\lambda_t)$ to the cost of $v_{x,t-1\uparrow}$. Consequently, the cost of $v_{x,t\downarrow}$ is given by the minimum of $v_{x,t-1\uparrow}+\opcosts(x,\lambda_t)$ and $v_{x+1,\downarrow}$.
 
-As one can see in Figure~\ref{fig:graph_pseudo_lin}, we stretched our graph but at the same time also greatly reduced the amount of edges compared to our initial approach in section~\ref{sec_opt_offline_pseudo_poly}. By following the coloured path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. The cost of our destination $v_{0,T\downarrow}$ will denote the minimum cost up to time slot $T$ when processing $\lambda_T$ with 0 or more servers. Hence, it will contain our desired end result --- the minimum cost of all possible schedules.
+As one can see in Figure~\ref{fig:graph_pseudo_lin}, we stretched our graph but at the same time also greatly reduced the amount of edges compared to our initial approach in Section~\ref{sec:opt_offline_pseudo_poly}. By following the coloured path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. The cost of our destination $v_{0,T\downarrow}$ will denote the minimum cost up to time slot $T$ when processing $\lambda_T$ with 0 or more servers. Hence, it will contain our desired end result --- the minimum cost of all possible schedules.
 
 Our next task shall be the verification of our new construction. For this, we first examine the possible paths from $v_{0,0}$ to $v_{0,T\downarrow}$ in our graph.
-In contrast to our approach in section~\ref{sec_opt_offline_pseudo_poly}, our new graph contains paths that do not directly correspond to a schedule $\mx$. For example, consider the following path:
+In contrast to our approach in Section~\ref{sec:opt_offline_pseudo_poly}, our new graph contains paths that do not directly correspond to a schedule $\mx$. For example, consider the following path:
 \begin{equation*}
 	P\coloneqq(v_{0,0},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T\downarrow})
 \end{equation*}
@@ -578,10 +579,8 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By Proposition~\ref{prop:path_to_reasn_path}, the path $P$ can be transformed to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to an optimal schedule $\mx$ with $\costs(\mx)=\costs(P')$ by Theorem~\ref{thm:opt_sched_reasn_path}. Thus, we have $c(\mx)=c(P)$, and the claim follows.
 \end{proof}
-In the following, we give an algorithm based on our just verified constructions. 
-We split our procedure into two subroutines. 
-
-\textproc{shortest\_paths} uses an approach similar to the well-known Bellman-Ford algorithm. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
+In the following, we give an algorithm based on our just verified constructions. Like in Section~\ref{sec:opt_offline_pseudo_poly}, we split our procedure into two subroutines. 
+\textproc{shortest\_paths} calculates the minimum costs of the nodes of our graph by following the topological sorting of the graph. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
 
 \textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path and thereby a schedule for our problem instance.
 \begin{algorithm}[H]
@@ -594,15 +593,21 @@ We split our procedure into two subroutines.
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\Blet{$C[T+1,m]$ and $P[T+1,m]$}{new arrays}\Comment{Costs and predecessors of nodes}
-	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialisation}
+	\Blet{$C[2T,m]$ and $P[2T,m]$}{new arrays}\Comment{Costs and predecessors of nodes}
+	\Let{$C[0,0]$}{$P[0,0]\gets 0$}
+	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialization steps}
 		\Let{$C[1,x]$}{$\costs(0,x,\lambda_1)$}
 		\Let{$P[1,x]$}{$0$}
 	\EndFor
-	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and predecessors}
-		\For{$x' \gets 0 \textrm{ to } m$}
-			\Let{$P[t,x']$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[t-1,x]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Find best preceding choice}
-			\Let{$C[t,x']$}{$C\bigl[t-1,P[t,x']\bigr]+c\bigl(P[t,x'],x',\lambda_t\bigr)$}
+	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculation of costs and predecessors}
+		\For{$x \gets m-1 \textrm{ to } 0$}
+			\If {$i\geq maxval$}
+			    \State $i\gets 0$
+			\Else
+			    \If {$i+k\leq maxval$}
+				\State $i\gets i+k$
+			    \EndIf
+			\EndIf
 		\EndFor
 	\EndFor
 	\Let{$P[T+1,0]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[T,x]\bigr\}$}\Comment{Find best choice for last time slot}
