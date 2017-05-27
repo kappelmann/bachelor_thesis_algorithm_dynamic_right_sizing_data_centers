@@ -4,7 +4,7 @@
 \chapter{Preliminaries}
 In this section, we conduct the preparatory work that will lay the foundations for our algorithms. For this, we analyse the structure of feasible schedules concerning their cost efficiency in order to find characteristics of optimal schedules; these characteristics will then allow us to greatly simplify our optimisation conditions.
 
-We begin by examining the state sequences of feasible schedules. As we are considering homogeneous servers, we do not care which exact servers process the given work loads. Rather we only care about the amount of active servers and the distribution of loads between them. It is in particular unreasonable to power down a machine and to power on a different machine in return; we could just keep the first machine powered on, saving switching costs.
+We begin by examining the state sequences of feasible schedules. As we are considering homogeneous servers, we do not care which exact servers process the given work loads. Rather, we only care about the amount of active servers and the distribution of loads between them. It is in particular unreasonable to power down a machine and to power on a different machine in return; we could just keep the first machine powered on, saving switching costs.
 This investigation is captured by our first proposition.
 \begin{prop}[Reasonable switching]\label{prop_reasonable_switching}
 Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
@@ -50,7 +50,7 @@ Finally, we construct a new schedule $\Sigma'\coloneqq(\mathcal{S}',\mathcal{L}'
 \end{align*}
 We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq_feasible_constraint}. For time slots $<t$, the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$, we only changed the order of summation in~\eqref{eq_feasible_constraint}. Thus, $\Sigma'$ is feasible.
 
-Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however $\mathcal{S}'$ minimises the switching costs at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$.
+Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however $\mathcal{S}'$ minimizes the switching costs at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$.
 
 Moreover, we decreased the number of servers violating~\eqref{eq_reasonable_switching} at time $t$. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
@@ -61,7 +61,7 @@ Next, we want to consider the sequence of active servers. For this, let $\mx$ de
 \end{equation*}
 As we assume all machines sleeping at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$.
 
-Our next proposition will require the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906.
+Our next proposition will require the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is smaller or equal than the convex-combination of the function values at the sampling points.
 \begin{lem}[Jensen's inequality]
 Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\ldots,\lambda_n\in\mathbb{R}$}, and $\mu_1,\ldots,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
 \begin{equation*}
@@ -71,7 +71,7 @@ Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, 
 \begin{proof}
 We proof the claim by induction on $n\in\mathbb{N}$.
 \begin{itemize}
-\item\underline{Basis:} For $n=1$ we have $\mu_1=1$ and thus
+\item\underline{Basis:} For $n=1$, we have $\mu_1=1$ and thus
 \begin{equation*}
 	f\Bigl(\sum\limits_{i=1}^1\mu_i\lambda_i\Bigr)=f(\lambda_1)=\sum\limits_{i=1}^1\mu_if(\lambda_i)
 \end{equation*}
@@ -79,9 +79,9 @@ We proof the claim by induction on $n\in\mathbb{N}$.
 \begin{itemize}
 	\item\underline{I.H.:} The assertion holds for $n$.
 	\item\underline{Claim:} The assertion holds for $n+1$.
-	\item\underline{Proof:} Since $\sum\limits_{i=1}^{n+1}\mu_i=1$, at least one $\mu_i$ must be positive. Without loss of generality, we may assume $\mu_1>0$.
+	\item\underline{Proof:} Since $\sum\limits_{i=1}^{n+1}\mu_i=1$, $\mu_i\in[0,1]$, and $n+1\ge 2$, at least one $\mu_i$ must be smaller than 1. Without loss of generality, we may assume $\mu_1<1$.
 	\begin{equation*}
-		f\Bigl(\sum\limits_{i=1}^{n+1}\mu_i\lambda_i\Bigr)=f\Bigl(\mu_1\lambda_1+\sum\limits_{i=2}^{n+1}\mu_i\lambda_i\Bigr)\stackrel{\mu_1\neq 0}{=}f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
+		f\Bigl(\sum\limits_{i=1}^{n+1}\mu_i\lambda_i\Bigr)=f\Bigl(\mu_1\lambda_1+\sum\limits_{i=2}^{n+1}\mu_i\lambda_i\Bigr)\stackrel{\mu_1\neq1}{=}f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
 	\end{equation*}
 	As $f$ is convex, we have
 	\begin{equation*}
