@@ -1,0 +1,171 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Preliminaries}
+In this section, we conduct the preparatory work that will lay the foundations for our algorithms. For this, we analyse the structure of feasible schedules concerning their cost efficiency in order to find characteristics of optimal schedules; these characteristics will then allow us to greatly simplify our optimisation conditions.
+
+We begin by examining the state sequences of feasible schedules. As we are considering homogeneous servers, we do not care which exact servers process the given work loads. Rather we only care about the amount of active servers and the distribution of loads between them. It is in particular unreasonable to power down a machine and to power on a different machine in return; we could just keep the first machine powered on, saving switching costs.
+This investigation is captured by our first proposition.
+\begin{prop}[Reasonable switching]\label{prop_reasonable_switching}
+Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
+\begin{enumerate}[(i)]
+		\item $\costs(\Sigma')\le \costs(\Sigma)$ and 
+		\item $\Sigma'$ never powers on and shuts down servers at the same time slot, i.e.\ $\Sigma'$ satisfies the following formula:
+\begin{equation}
+	\forall t\in[T]\Bigl[\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\ge0)\bigr)\lor\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\le 0)\bigr)\Bigr]\label{eq_reasonable_switching}
+\end{equation}
+\end{enumerate}
+\end{prop}
+\begin{proof}
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies~\eqref{eq_reasonable_switching} and reduces or retains its costs. 
+	
+Let $t\in[T]$ be the first time slot falsifying~\eqref{eq_reasonable_switching}. If there does not exist such a time slot, we are done. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, i.e.\ server $i$ powers on at time $t$ and server $j$ powers off. Without loss of generality, we may assume $i<j$. 
+	
+First, since all servers are sleeping at time $t=0$, we have
+\begin{equation*}
+	s_{k,1}-s_{k,0}=s_{k,1}-0=s_{k,1}\ge 0,\quad\forall k\in[m]
+\end{equation*}
+which satisfies formula~\eqref{eq_reasonable_switching} for $t=1$.
+Thus, we may assume $t>1$. 
+	
+Now consider the state sequences of server $i$ and $j$:
+\begin{align*}
+	S_i&=(s_{i,1},\ldots,s_{i,t-1}=0,s_{i,t}=1,\ldots,s_{i,T})\\
+	S_j&=(s_{j,1},\ldots,s_{j,t-1}=1,s_{j,t}=0,\ldots,s_{j,T})
+\end{align*}
+We modify $S_i$ and $S_j$ by swapping their states for time slots $\ge t$, that is we set
+\begin{align*}
+	S_i'&\coloneqq(s_{i,1},\ldots,s_{i,t-1}=0,s_{j,t}=0,\ldots,s_{j,T})\\
+	S_j'&\coloneqq(s_{j,1},\ldots,s_{j,t-1}=1,s_{i,t}=1,\ldots,s_{i,T})
+\end{align*}
+Similarly, we need to swap the assigned loads for server $i$ and $j$:
+\begin{align*}
+	L_i'&\coloneqq(\lambda_{i,1},\ldots,\lambda_{i,t-1},\lambda_{j,t},\ldots,\lambda_{j,T})\\
+	L_j'&\coloneqq(\lambda_{j,1},\ldots,\lambda_{j,t-1},\lambda_{i,t},\ldots,\lambda_{i,T})
+\end{align*}
+Finally, we construct a new schedule $\Sigma'\coloneqq(\mathcal{S}',\mathcal{L}')$ given by 
+\begin{align*}
+	\mathcal{S}'&\coloneqq(S_1,\ldots,S_{i-1},S_i',S_{i+1},\ldots,S_{j-1},S_j',S_{j+1},\ldots,S_T)\\
+	\mathcal{L}'&\coloneqq(L_1,\ldots,L_{i-1},L_i',L_{i+1},\ldots,L_{j-1},L_j',L_{j+1},\ldots,L_T)
+\end{align*}
+We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq_feasible_constraint}. For time slots $<t$, the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$, we only changed the order of summation in~\eqref{eq_feasible_constraint}. Thus, $\Sigma'$ is feasible.
+
+Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however $\mathcal{S}'$ minimises the switching costs at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$.
+
+Moreover, we decreased the number of servers violating~\eqref{eq_reasonable_switching} at time $t$. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
+\end{proof}
+
+Next, we want to consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, that is
+\begin{equation*}
+	\mx\coloneqq\bigl(x_1=\sum\limits_{i=1}^{m}s_{i,1},\ldots,x_T=\sum\limits_{i=1}^{m}s_{i,T}\bigr)\in\fromto{0}{m}^T
+\end{equation*}
+As we assume all machines sleeping at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$.
+
+Our next proposition will require the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906.
+\begin{lem}[Jensen's inequality]
+Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\ldots,\lambda_n\in\mathbb{R}$}, and $\mu_1,\ldots,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
+\begin{equation*}
+	f\Bigl(\sum_{i=1}^n \mu_i \lambda_i\Bigr) \leq \sum_{i=1}^n \mu_i f(\lambda_i)
+\end{equation*}
+\end{lem}
+\begin{proof}
+We proof the claim by induction on $n\in\mathbb{N}$.
+\begin{itemize}
+\item\underline{Basis:} For $n=1$ we have $\mu_1=1$ and thus
+\begin{equation*}
+	f\Bigl(\sum\limits_{i=1}^1\mu_i\lambda_i\Bigr)=f(\lambda_1)=\sum\limits_{i=1}^1\mu_if(\lambda_i)
+\end{equation*}
+\item\underline{Step:} Let $n\in\mathbb{N}$ be arbitrary and fixed.
+\begin{itemize}
+	\item\underline{I.H.:} The assertion holds for $n$.
+	\item\underline{Claim:} The assertion holds for $n+1$.
+	\item\underline{Proof:} Since $\sum\limits_{i=1}^{n+1}\mu_i=1$, at least one $\mu_i$ must be positive. Without loss of generality, we may assume $\mu_1>0$.
+	\begin{equation*}
+		f\Bigl(\sum\limits_{i=1}^{n+1}\mu_i\lambda_i\Bigr)=f\Bigl(\mu_1\lambda_1+\sum\limits_{i=2}^{n+1}\mu_i\lambda_i\Bigr)\stackrel{\mu_1\neq 0}{=}f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
+	\end{equation*}
+	As $f$ is convex, we have
+	\begin{equation*}
+		f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)\stackrel{\text{f convex}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
+	\end{equation*}
+	Since $\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}=1$, we can apply our induction hypothesis.
+	\begin{equation*}
+		\mu_1f(\lambda_1)+(1-\mu_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)\stackrel{\text{I.H.}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}f(\lambda_i)
+	\end{equation*}
+	We combine our steps and obtain
+	\begin{align*}
+		f\Bigl(\sum\limits_{i=1}^{n+1}\mu_i\lambda_i\Bigr)&\le \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}f(\lambda_i)\\
+		&=\mu_1f(\lambda_1)+\sum\limits_{i=2}^{n+1}\mu_if(\lambda_i)=\sum_{i=1}^{n+1} \mu_i f(\lambda_i)\qedhere
+	\end{align*}
+\end{itemize}
+\end{itemize}
+\end{proof}
+
+The following proposition poses the cornerstone of our subsequent works. We want to establish an optimal scheduling strategy given a fixed amount of active servers. It turns out that an even load distribution seems a very desirable strategy.
+\begin{prop}[Even load distribution]\label{prop_even_load_distribution}
+Given $x_t\in\mathbb{N}$ active servers in time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.
+\end{prop}
+\begin{proof}
+Let $\Sigma$ be an arbitrary, feasible schedule using $x_t$ servers in time slot $t$, and let $A$ be its set of active servers in time slot $t$, that is $A\coloneqq\{i\in[m]\mid s_{i,t}=1\}$.
+Consider the operating costs of $\Sigma$ at time $t$ given by
+\begin{equation*}
+	\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})\cdot s_{i,t}\bigr)=\sum\limits_{i\in A}\bigl(f(\lambda_{i,t})\cdot1\bigr)+\sum\limits_{i\in [m]\setminus A}\bigl(f(\lambda_{i,t})\cdot0\bigr)=\sum\limits_{i\in A}f(\lambda_{i,t})
+\end{equation*}
+Since $\Sigma$ is feasible (see constraint~\eqref{eq_feasible_constraint}), we have 
+\begin{equation*}
+	\sum\limits_{i\in A}\lambda_{i,t}=\lambda_t
+\end{equation*}
+Hence, we can obtain weights $\mu_1,\ldots,\mu_{x_t}\in[0,1]$ that relate $\lambda_{i,t}$ and $\lambda_t$ for $i\in A$ such that
+\begin{align}
+	\sum\limits_{i=1}^{x_t}\mu_i=1\quad\text{and}\quad \sum\limits_{i\in A}f(\lambda_{i,t})=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\label{eq_mu_lambda_costs}
+\end{align}
+In particular, we have 
+\begin{equation}
+	\sum_{i=1}^{x_t}\mu_i\lambda_t=\lambda_t\label{eq_mu_convex_comb}
+\end{equation}
+Using these weights, we now consider the operating costs of a schedule $\Sigma^*$ that evenly distributes $\lambda_t$ to its $x_t$ active servers:
+\begin{align*}
+	\sum\limits_{i=1}^{x_t}f\Bigl(\frac{\lambda_t}{x_t}\Bigr)=x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\eqref{eq_mu_convex_comb}}{=}x_tf\Bigl(\sum\limits_{i=1}^{x_t}{\frac{\mu_i\lambda_t}{x_t}}\Bigr)
+\end{align*}
+With the use of Jensen's inequality and the fact that $\sum_{i=1}^{x_t}(1/x_t)=1$, we can give an upper bound for the costs:
+\begin{align*}
+	x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\le x_t\sum\limits_{i=1}^{x_t}\frac{1}{x_t}f(\mu_i\lambda_t)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\stackrel{\eqref{eq_mu_lambda_costs}}{=}\sum\limits_{i\in A}f(\lambda_{i,t})
+\end{align*}
+Thus, the operating costs of $\Sigma^*$ give a lower bound for the operating costs of $\Sigma$, and the claim follows.
+\end{proof}
+As a special case, we can apply our just derived proposition to optimal schedules.
+\begin{cor}\label{cor_even_load_distribution}
+Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates to its active servers in each time slot.
+\end{cor}
+\begin{proof}
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy $\mathcal{L}^*$ that evenly distributes the arrival rates to all active servers of $\Sigma$ in each time slot. Setting $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$ we have $\costs(\Sigma^*)=\costs(\Sigma)$ by Proposition~\ref{prop_even_load_distribution}. The claim follows.
+\end{proof}
+As a result of Corollary~\ref{cor_even_load_distribution}, we can restrict ourselves to finding an optimal schedule that evenly distributes its arrival rates to its active servers. We now combine our results to derive the main theorem of our preliminary work.
+\begin{thm}\label{thm_even_load_distribution_reasonable_switching}
+Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates to its active servers in each time slot and further satisfies~\eqref{eq_reasonable_switching}.
+\end{thm}
+\begin{proof}
+By Corollary~\ref{cor_even_load_distribution}, we obtain an optimal schedule $\Sigma$ that evenly distributes its arrival rates to its active servers. Applying the procedure given in Proposition~\ref{prop_reasonable_switching} to $\Sigma$ yields $\Sigma^*$ that further satisfies~\eqref{eq_reasonable_switching}.
+\end{proof}
+
+Theorem~\ref{thm_even_load_distribution_reasonable_switching} allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$ and thereby to simplify our optimisation conditions~\eqref{eq_schedule_costs} and \eqref{eq_feasible_constraint}. 
+For this, given a problem instance $\inp$, we define the operating costs function $\opcosts(x,\lambda)$ that describes the costs incurred by evenly distributing $\lambda$ on $x$ active servers using $f$:
+\begin{equation*}
+	\opcosts:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R}\cup\{\infty\},\quad \opcosts(x,\lambda)=\begin{cases}
+          0, & \text{if $x=0$}\\
+	  x f(\lambda/x), & \text{if $x\ne 0\land\lambda\le x$}\\
+	  \infty, & \text{if $x\ne 0\land\lambda>x$}
+	  \end{cases} \label{fct:c}
+\end{equation*}
+We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate, i.e.\ the schedule would not be feasible. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$ that describes the incurred costs when changing the amount of active server from $x_{t-1}$ to $x_t$:
+\begin{equation}\label{eq_mx_schedule_sw_costs}
+	\swcosts(x_{t-1},x_t)\coloneqq\beta\max\{0,x_t-x_{t-1}\}
+\end{equation}
+Lastly, we can define the costs function $\costs(x_{t-1},x_t,\lambda_t)$ that describes the incurring costs for a single time step using an even distribution of loads:
+\begin{equation}\label{eq_mx_schedule_costs}
+	\costs(x_{t-1},x_{t},\lambda_t)\coloneqq\opcosts(x_t,\lambda_t)+\swcosts(x_{t-1},x_t)
+\end{equation}
+The optimisation conditions for a schedule now simplify to one single minimisation:
+\begin{align}
+	\text{minimise}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq_mx_schedule_total_costs}
+\end{align}
+We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq_mx_schedule_total_costs}.

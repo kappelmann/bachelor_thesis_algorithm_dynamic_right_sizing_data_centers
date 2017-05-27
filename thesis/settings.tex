@@ -1,0 +1,140 @@
+\PassOptionsToPackage{table,svgnames,dvipsnames}{xcolor}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman,english]{babel}
+\usepackage[autostyle]{csquotes}
+\usepackage[%
+  backend=bibtex,
+  url=false,
+  %style=alphabetic,
+  %maxnames=4,
+  %minnames=3,
+  maxbibnames=99,
+  %giveninits,
+  uniquename=init]{biblatex} % TODO: adapt citation style
+\usepackage{graphicx}
+\usepackage{scrhack} % necessary for listings package
+\usepackage{listings}
+\usepackage{lstautogobble}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage{booktabs}
+\usepackage[final]{microtype}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref} % hidelinks removes colored boxes around references and links
+\hypersetup{
+    colorlinks,
+    linkcolor={red!50!black},
+    citecolor={blue!50!black},
+    linktoc=all,
+    urlcolor={blue!80!black}
+}
+
+\bibliography{bibliography}
+
+\setkomafont{disposition}{\normalfont\bfseries} % use serif font for headings
+
+% Add table of contents to PDF bookmarks
+\BeforeTOCHead[toc]{{\cleardoublepage\pdfbookmark[0]{\contentsname}{toc}}}
+
+% Define TUM corporate design colors
+% Taken from http://portal.mytum.de/corporatedesign/index_print/vorlagen/index_farben
+\definecolor{TUMBlue}{HTML}{0065BD}
+\definecolor{TUMSecondaryBlue}{HTML}{005293}
+\definecolor{TUMSecondaryBlue2}{HTML}{003359}
+\definecolor{TUMBlack}{HTML}{000000}
+\definecolor{TUMWhite}{HTML}{FFFFFF}
+\definecolor{TUMDarkGray}{HTML}{333333}
+\definecolor{TUMGray}{HTML}{808080}
+\definecolor{TUMLightGray}{HTML}{CCCCC6}
+\definecolor{TUMAccentGray}{HTML}{DAD7CB}
+\definecolor{TUMAccentOrange}{HTML}{E37222}
+\definecolor{TUMAccentGreen}{HTML}{A2AD00}
+\definecolor{TUMAccentLightBlue}{HTML}{98C6EA}
+\definecolor{TUMAccentBlue}{HTML}{64A0C8}
+
+% Settings for pgfplots
+\pgfplotsset{compat=newest}
+\pgfplotsset{
+  % For available color names, see http://www.latextemplates.com/svgnames-colors
+  cycle list={TUMBlue\\TUMAccentOrange\\TUMAccentGreen\\TUMSecondaryBlue2\\TUMDarkGray\\},
+}
+
+% Settings for lstlistings
+\lstset{%
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  autogobble,
+  keywordstyle=\bfseries\color{TUMBlue},
+  stringstyle=\color{TUMAccentGreen}
+}
+
+% Settings added by Kevin
+\usepackage{enumerate}
+\usepackage{multicol}
+
+% Math packages
+\usepackage{bm}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Proof system
+\usepackage{amsthm}
+% spacing fixes for proof system
+\makeatletter
+\def\thm@space@setup{%
+  \thm@preskip=\parskip \thm@postskip=0pt
+}
+\makeatother
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[chapter]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{cor}[thm]{Corollary}
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{exmpl}[thm]{Example}
+%\newtheoremstyle{rem} % name
+    %{\topsep}                    % Space above
+    %{\topsep}                    % Space below
+    %{}                   % Body font
+    %{}                           % Indent amount
+    %{\bf}                   % Theorem head font
+    %{:}                          % Punctuation after theorem head
+    %{.5em}                       % Space after theorem head
+    %{}  % Theorem head spec (can be left empty, meaning ‘normal’)
+%\theoremstyle{rem}
+%\newtheorem*{remark}{Note}
+
+% Algorithms
+\input{settings_algorithms}
+
+% Graphs
+\usetikzlibrary{calc,arrows.meta,positioning}
+\usepackage{tikz-3dplot}
+\usepackage{subfig}
+
+% Notes
+\usepackage{xargs} % Use more than one optional parameter in a new commands
+\usepackage[colorinlistoftodos,prependcaption,textsize=tiny]{todonotes}
+
+% Custom commands
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\newcommand{\mx}{\mathcal{X}}
+\newcommand{\inp}{\mathcal{I}}
+\newcommand{\costs}{c}
+\newcommand{\opcosts}{c_{op}}
+\newcommand{\swcosts}{c_{sw}}
+\newcommand{\fromto}[2]{\{#1,\ldots,#2\}}
+\newcommand{\dotcup}{\mathbin{\mathaccent\cdot\cup}}
+\newcommandx{\unsure}[2][1=]{\todo[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+%\newcommandx{\unsure}[2][1=]{}
+
+% Line breaks after paragraph
+\usepackage[parfill]{parskip}
+% double line spacing
+%\linespread{1.5}

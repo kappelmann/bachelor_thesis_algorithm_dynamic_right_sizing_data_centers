@@ -1,0 +1,59 @@
+\RequirePackage[l2tabu,orthodox]{nag}
+
+%decide if one-sided/two-sided
+%\documentclass[headsepline,footsepline,footinclude=false,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc,BCOR=12mm,DIV=12]{scrbook} % two-sided
+\documentclass[headsepline,footsepline,footinclude=false,oneside,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc]{scrbook} % one-sided
+
+% TODO: change citation style in settings
+\input{settings}
+
+% TODO: change thesis information
+\newcommand*{\getUniversity}{Technical University of Munich}
+\newcommand*{\getFaculty}{Department of Informatics}
+\newcommand*{\getTitle}{Algorithms for Dynamic Right-Sizing in Data Centers}
+\newcommand*{\getTitleGer}{Algorithmen für dynamische Kapazitätsanpassung in Datenzentren}
+\newcommand*{\getAuthor}{Kevin Kappelmann}
+\newcommand*{\getDoctype}{Bachelor's Thesis in Informatics}
+\newcommand*{\getSupervisor}{Prof. Dr. Susanne Albers}
+\newcommand*{\getAdvisor}{Jens Quedenfeld}
+\newcommand*{\getSubmissionDate}{Submission date}
+\newcommand*{\getSubmissionLocation}{Munich}
+
+\begin{document}
+
+% Set page numbering to avoid "destination with the same identifier has been already used" warning for cover page.
+% (see https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Problems_with_Links_and_Pages).
+\pagenumbering{alph}
+\input{pages/cover}
+
+\frontmatter{}
+
+\input{pages/title}
+\input{pages/disclaimer}
+\input{pages/acknowledgements}
+\input{pages/abstract}
+\microtypesetup{protrusion=false}
+\begingroup\hypersetup{linkcolor=black}
+\tableofcontents
+\endgroup 
+\microtypesetup{protrusion=true}
+
+\mainmatter{}
+
+\input{chapters/01_introduction}
+\input{chapters/02_preliminaries}
+\input{chapters/03_optimal_offline_scheduling}
+% TODO: add more chapters here
+
+\appendix{}
+
+\microtypesetup{protrusion=false}
+\begingroup\hypersetup{linkcolor=black}
+% TODO include?
+%\listoffigures{}
+%\listoftables{}
+\endgroup 
+\microtypesetup{protrusion=true}
+\printbibliography{}
+
+\end{document}
