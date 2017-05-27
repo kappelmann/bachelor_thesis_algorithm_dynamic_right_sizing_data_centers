@@ -1,0 +1,38 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\addchap{Notation}
+Below, we give an overview of the definitions and conventions commonly referred to in our paper.
+\section*{Input}
+\begin{itemize}
+	\item $m\in\mathbb{N}$\ldots number of homogeneous servers
+	\item $T\in\mathbb{N}$\ldots number of time slots
+	\item $\lambda_1,\ldots,\lambda_{T}\in[0,m]$\ldots arrival rates
+	\item $\Lambda\coloneqq(\lambda_1,\ldots,\lambda_T)$\ldots sequence of arrival rates
+	\item $\beta\in\mathbb{R}_{\ge 0}$\ldots switching costs of a server
+	\item $f:[0,1]\rightarrow\mathbb{R}$\ldots convex operating costs function of a server
+	\item $\inp\coloneqq(m,T,\Lambda,\beta,f)$\ldots input of a problem instance
+\end{itemize}
+
+\section*{Problem statement}
+\begin{itemize}
+	\item $s_{i,t}\in\{0,1\}$\ldots state of server $i$ at time $t$, i.e.\ sleeping (0) or active(1)
+	\item $S_i\coloneqq(s_{i,1},\ldots,s_{i,T})$\ldots sequence of states for server $i$
+	\item $\lambda_{i,t}\in[0,1]$\ldots assigned load for server $i$ at time $t$
+	\item $L_i\coloneqq(\lambda_{i,1},\ldots,\lambda_{i,T})$\ldots sequence of assigned loads for server $i$
+	\item $\mathcal{S}\coloneqq(S_1,\ldots,S_m)$\ldots sequence of all state changes
+	\item $\mathcal{L}\coloneqq(L_1,\ldots,L_m)$\ldots sequence of all assigned loads
+	\item $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$\ldots schedule for a problem instance $\inp$
+\end{itemize}
+
+\section*{Miscellaneous}
+\begin{itemize}
+	\item $x_t\in\fromto{0}{m}$\ldots number of active servers at time $t$
+	\item $\mx\coloneqq(x_1,\ldots,x_T)$\ldots sequence of number of active servers
+\end{itemize}
+
+\section*{Conventions}
+\begin{itemize}
+	\item $\lambda_{t}=0$ for all $t\notin[T]$, i.e.\ there is no load before and after the scheduling process
+	\item $s_{i,t}=0$ for all $t\notin[T]$, i.e.\ all servers are powered down before and after the scheduling process
+\end{itemize}

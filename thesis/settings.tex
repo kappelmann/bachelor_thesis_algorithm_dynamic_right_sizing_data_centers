@@ -15,8 +15,6 @@
   uniquename=init]{biblatex} % TODO: adapt citation style
 \usepackage{graphicx}
 \usepackage{scrhack} % necessary for listings package
-\usepackage{listings}
-\usepackage{lstautogobble}
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
@@ -25,51 +23,19 @@
 \usepackage{caption}
 \usepackage[hidelinks]{hyperref} % hidelinks removes colored boxes around references and links
 \hypersetup{
-    colorlinks,
-    linkcolor={red!50!black},
-    citecolor={blue!50!black},
-    linktoc=all,
-    urlcolor={blue!80!black}
+ colorlinks,
+ linktoc=page,
+ linkcolor=blue,
+ citecolor=blue,
+ urlcolor=blue
 }
 
 \bibliography{bibliography}
 
-\setkomafont{disposition}{\normalfont\bfseries} % use serif font for headings
+\setkomafont{disposition}{\normalfont\bfseries} % set font
 
 % Add table of contents to PDF bookmarks
 \BeforeTOCHead[toc]{{\cleardoublepage\pdfbookmark[0]{\contentsname}{toc}}}
-
-% Define TUM corporate design colors
-% Taken from http://portal.mytum.de/corporatedesign/index_print/vorlagen/index_farben
-\definecolor{TUMBlue}{HTML}{0065BD}
-\definecolor{TUMSecondaryBlue}{HTML}{005293}
-\definecolor{TUMSecondaryBlue2}{HTML}{003359}
-\definecolor{TUMBlack}{HTML}{000000}
-\definecolor{TUMWhite}{HTML}{FFFFFF}
-\definecolor{TUMDarkGray}{HTML}{333333}
-\definecolor{TUMGray}{HTML}{808080}
-\definecolor{TUMLightGray}{HTML}{CCCCC6}
-\definecolor{TUMAccentGray}{HTML}{DAD7CB}
-\definecolor{TUMAccentOrange}{HTML}{E37222}
-\definecolor{TUMAccentGreen}{HTML}{A2AD00}
-\definecolor{TUMAccentLightBlue}{HTML}{98C6EA}
-\definecolor{TUMAccentBlue}{HTML}{64A0C8}
-
-% Settings for pgfplots
-\pgfplotsset{compat=newest}
-\pgfplotsset{
-  % For available color names, see http://www.latextemplates.com/svgnames-colors
-  cycle list={TUMBlue\\TUMAccentOrange\\TUMAccentGreen\\TUMSecondaryBlue2\\TUMDarkGray\\},
-}
-
-% Settings for lstlistings
-\lstset{%
-  basicstyle=\ttfamily,
-  columns=fullflexible,
-  autogobble,
-  keywordstyle=\bfseries\color{TUMBlue},
-  stringstyle=\color{TUMAccentGreen}
-}
 
 % Settings added by Kevin
 \usepackage{enumerate}

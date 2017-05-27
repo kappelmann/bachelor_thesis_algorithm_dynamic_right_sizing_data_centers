@@ -1,8 +1,12 @@
 \RequirePackage[l2tabu,orthodox]{nag}
 
 %decide if one-sided/two-sided
-%\documentclass[headsepline,footsepline,footinclude=false,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc,BCOR=12mm,DIV=12]{scrbook} % two-sided
-\documentclass[headsepline,footsepline,footinclude=false,oneside,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc]{scrbook} % one-sided
+\documentclass[headsepline,footsepline,footinclude=false,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc,BCOR=12mm,DIV=12]{scrbook} % two-sided
+%\documentclass[headsepline,footsepline,footinclude=false,oneside,fontsize=11pt,paper=a4,listof=totoc,bibliography=totoc]{scrbook} % one-sided
+
+% Set page numbering to avoid "destination with the same identifier has been already used" warning for cover page.
+% (see https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Problems_with_Links_and_Pages).
+\pagenumbering{alph}
 
 % TODO: change citation style in settings
 \input{settings}
@@ -21,9 +25,6 @@
 
 \begin{document}
 
-% Set page numbering to avoid "destination with the same identifier has been already used" warning for cover page.
-% (see https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Problems_with_Links_and_Pages).
-\pagenumbering{alph}
 \input{pages/cover}
 
 \frontmatter{}
@@ -33,9 +34,7 @@
 \input{pages/acknowledgements}
 \input{pages/abstract}
 \microtypesetup{protrusion=false}
-\begingroup\hypersetup{linkcolor=black}
 \tableofcontents
-\endgroup 
 \microtypesetup{protrusion=true}
 
 \mainmatter{}
@@ -55,5 +54,6 @@
 \endgroup 
 \microtypesetup{protrusion=true}
 \printbibliography{}
+\input{chapters/notation}
 
 \end{document}
