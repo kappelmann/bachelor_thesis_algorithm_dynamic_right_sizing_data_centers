@@ -1,4 +1,4 @@
-\documentclass[hidelinks]{article}
+\documentclass[hidelinks,footsepline=true]{article}
 \usepackage[english]{babel} 
 \usepackage[utf8x]{inputenc}
 %% Hyperlinks 
@@ -451,7 +451,7 @@ We subsequently call a schedule $\mx$ \textit{optimal} if it satisfies~\eqref{eq
 
 \section{Optimal offline scheduling}
 In this section, we derive two optimal offline algorithms based on our preliminary work.
-First, we reduce our problem specified by $\inp$ to a shortest path problem of a level structured graph $G$. We then use a dynamic programming approach to find a shortest path in $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time $\Theta(Tm^2)$.
+First, we reduce our problem specified by $\inp$ to a shortest path problem of a level structured graph $G$. We then proceed to find a shortest path in $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time $\Theta(Tm^2)$.
 After that, we refine our initial approach to derive an improved algorithm with pseudo-linear complexity $\Theta(Tm)$.
 
 \subsection{A pseudo-polynomial algorithm}\label{sec_opt_offline_pseudo_poly}
@@ -575,7 +575,7 @@ and the claim follows.
 In the following, we give an algorithm based on our just verified construction. 
 We split our procedure into two subroutines. 
 
-\textproc{shortest\_paths} uses a dynamic programming approach similar to the well-known Bellman-Ford algorithm. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
+\textproc{shortest\_paths} layerwise calculates the minimum costs to the nodes of our graph; that is, it calculates the shortest paths following the topological sorting of the graph. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
 
 \textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path and thereby a schedule for our problem instance.
 \begin{algorithm}[H]
@@ -616,10 +616,10 @@ We split our procedure into two subroutines.
   \end{algorithmic}
 \label{alg_opt_offline_pseudo_poly}
 \end{algorithm}
-The correctness of Algorithm~\ref{alg_opt_offline_pseudo_poly} directly follows from the correctness of the Bellman-Ford algorithm and Theorem~\ref{thm_opt_sched_short_path_pseudo_poly}.
+The correctness of Algorithm~\ref{alg_opt_offline_pseudo_poly} directly follows from the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\cite{intro_algo}) and from Theorem~\ref{thm_opt_sched_short_path_pseudo_poly}.
 
-Naturally, we are interested in our algorithm's time and memory complexity. 
-For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\beta,f)$. In theory, our function $f:[0,1]\rightarrow \mathbb{R}$ may be, for example, easily defined by saying $f(x)\coloneqq x^2$; however, practically, it is difficult to answer the question what the size of such a function as part of the input may be. For simplicity, we consider the size of $f$ negligible in comparison with the size of the remaining input parts. Further, we assume a real number $r$ to require $\Theta\bigl(\log_2(r)\bigr)$ bits for its encoding.\unsure{Real numbers? How should I write this? What about $\log_2(0)$?} The size of our input is then given by
+Naturally, we are interested in our algorithm's time and memory complexity.
+For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\beta,f)$. In theory, our function $f:[0,1]\rightarrow \mathbb{R}$ may be, for example, easily defined by saying $f(x)\coloneqq x^2$; however, practically, it is difficult to answer the question what the size of such a function as part of the input may be. For simplicity, we consider the size of $f$ negligible in comparison with the size of the remaining input parts. Further, we assume a real number $r$ to require $\Theta\bigl(\log_2(r)\bigr)$ bits for its encoding.\unsure{Real numbers? How should I write this? What about $\log_2(0)$?} The size of our input is then given by\unsure{The following calculation. $\mathcal{O}(m)$?}
 \begin{align}
 	size(\inp)&=size(m)+size(T)+size(\Lambda)+size(\beta)\nonumber\\
 	&=\Theta\bigl(\log_2(m)\bigr)+\Theta\bigl(\log_2(T)\bigr)+\sum\limits_{i=1}^T \Theta\bigl(\log_2(\lambda_i)\bigr)+\Theta\bigl(\log_2(\beta)\bigr)\nonumber\\
@@ -1029,11 +1029,11 @@ In turn, $P'$ corresponds to an optimal schedule $\mx$ with $\costs(\mx)=\costs(
 In the following, we give an algorithm based on our just verified constructions. 
 We split our procedure into two subroutines. 
 
-\textproc{shortest\_paths} uses a dynamic programming approach similar to the well-known Bellman-Ford algorithm. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
+\textproc{shortest\_paths} uses an approach similar to the well-known Bellman-Ford algorithm. It returns the minimum costs to all nodes as well as the predecessor of any node in respect to its shortest path.
 
 \textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path and thereby a schedule for our problem instance.
 \begin{algorithm}[H]
-  \caption{Pseudo-polynomial optimal offline scheduling}
+  \caption{Pseudo-linear optimal offline scheduling}
   \begin{algorithmic}[1]
   \Function{optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
 	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
@@ -1066,11 +1066,9 @@ We split our procedure into two subroutines.
 	\EndFor
 	\State \Return{$\mx$}
   \EndFunction
-
   \end{algorithmic}
-\label{alg_opt_offline_pseudo_poly}
+\label{alg_opt_offline_pseudo_linear}
 \end{algorithm}
-The correctness of Algorithm~\ref{alg_opt_offline_pseudo_poly} directly follows from the correctness of the Bellman-Ford algorithm and Theorem~\ref{thm_opt_sched_reasn_path}.
 
 \section{Approximative offline scheduling}
 \subsection{A polynomial $4$-approximation algorithm}
@@ -1282,9 +1280,9 @@ The correctness of Algorithm~\ref{alg_opt_offline_pseudo_poly} directly follows 
 %\end{enumerate}
 %\end{proof}
 
-%\newpage
-%\bibliographystyle{plain}
-%\bibliography{sources.bib}
+\newpage
+\bibliographystyle{plain}
+\bibliography{sources.bib}
 \newpage
 
 \section*{Appendix}
