@@ -8,10 +8,8 @@
 % (see https://en.wikibooks.org/wiki/LaTeX/Hyperlinks#Problems_with_Links_and_Pages).
 \pagenumbering{alph}
 
-% TODO: change citation style in settings
 \input{settings}
 
-% TODO: change thesis information
 \newcommand*{\getUniversity}{Technical University of Munich}
 \newcommand*{\getFaculty}{Department of Informatics}
 \newcommand*{\getTitle}{Algorithms for Dynamic Right-Sizing in Data Centers}
@@ -19,6 +17,7 @@
 \newcommand*{\getAuthor}{Kevin Kappelmann}
 \newcommand*{\getDoctype}{Bachelor's Thesis in Informatics}
 \newcommand*{\getSupervisor}{Prof. Dr. Susanne Albers}
+% TODO: change thesis information
 \newcommand*{\getAdvisor}{Jens Quedenfeld}
 \newcommand*{\getSubmissionDate}{Submission date}
 \newcommand*{\getSubmissionLocation}{Munich}
@@ -42,7 +41,7 @@
 \input{chapters/01_introduction}
 \input{chapters/02_preliminaries}
 \input{chapters/03_optimal_offline_scheduling}
-% TODO: add more chapters here
+\input{chapters/04_approximative_offline_scheduling}
 
 \appendix{}
 
@@ -51,6 +50,8 @@
 % TODO include?
 %\listoffigures{}
 %\listoftables{}
+\listofalgorithms
+\addtocontents{loa}{\def\string\figurename{Algorithm}}
 \endgroup 
 \microtypesetup{protrusion=true}
 \printbibliography{}
