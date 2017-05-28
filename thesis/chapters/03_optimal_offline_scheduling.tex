@@ -140,17 +140,17 @@ We split our procedure into two subroutines.
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\LineComment{Nodes' costs and predecessors}
-	\Blet{$C[m+1,T+2]$ and $P[m+1,T+2]$}{new arrays}
-	\Let{$C[0,0]$}{$P[0,0]\gets 0$}
-	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialization steps}
+	\LineComment{Nodes' costs and predecessors tables}
+	\Blet{$C[0\ldots m,0\ldots T+1]$ and $P[0\ldots m,0\ldots T+1]$}{new tables}
+	\Let{$C[0,0]$}{$P[0,0]\gets 0$}\Comment{Initialization for first node}
+	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialization for first layer}
 		\Let{$C[x,1]$}{$\costs(0,x,\lambda_1)$}
 		\Let{$P[x,1]$}{$0$}
 	\EndFor
 	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and predecessors}
 		\For{$x' \gets 0 \textrm{ to } m$}
 			\Let{$P[x',t]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[x,t-1]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Get best preceding choice}
-			\Let{$C[x',t]$}{$C\bigl[P[x',t],t-1\bigr]+c\bigl(P[x',t],x',\lambda_t\bigr)$}
+			\Let{$C[x',t]$}{$C\bigl[P[x',t],t-1\bigr]+c\bigl(P[x',t],x',\lambda_t\bigr)$}\Comment{Set the costs}
 		\EndFor
 	\EndFor
 	\Let{$P[0,T+1]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[x,T]\bigr\}$}\Comment{Find best choice for last time slot}
@@ -159,9 +159,9 @@ We split our procedure into two subroutines.
   \EndFunction
   \Statex
   \Function{extract\_schedule}{$P,T$}
-	\Blet{$\mx[T]$}{a new array}
+	\Blet{$\mx[T]$}{a new array}\Comment{Allocate the schedule array}
     	\Let{$\mx[T]$}{$P[0,T+1]$}\Comment{Get best choice for last time slot}
-        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
+        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from predecessors table}
 		\Let{$\mx[t]$}{$P\bigl[\mx[t+1],t+1\bigr]$}
 	\EndFor
 	\State \Return{$\mx$}
@@ -188,7 +188,7 @@ Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initi
 \end{equation*}
 The runtime is polynomial in the numeric value of $m$ and $T$; however, it is exponential in the size of the input because, as we saw in~\eqref{eq:inp_size}, we only need $\log_2(m)$ bits to encode $m$. Hence, the algorithm is pseudo-polynomial.
 
-Our memory demand is defined by the size of the arrays $C$ and $P$. As both arrays are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$\unsure{Is this enough?}
+Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$\unsure{Is this enough?}
 
 \section{A pseudo-linear algorithm}\label{sec:opt_offline_pseudo_lin}
 The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
