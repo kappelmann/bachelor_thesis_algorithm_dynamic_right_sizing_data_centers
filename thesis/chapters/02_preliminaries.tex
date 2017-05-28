@@ -19,7 +19,7 @@ Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a
 \begin{proof}
 Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies~\eqref{eq:reasonable_switching} and reduces or retains its costs. 
 	
-Let $t\in[T]$ be the first time slot falsifying~\eqref{eq:reasonable_switching}. If there does not exist such a time slot, we are finished. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, i.e.\ server $i$ powers on at time $t$ and server $j$ powers off. Without loss of generality, we may assume $i<j$. Since all servers are sleeping at time $t=0$, we have
+Let $t\in[T]$ be the first time slot that falsifies~\eqref{eq:reasonable_switching}. If there does not exist such a time slot, we are finished. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, i.e.\ server $i$ powers on at time $t$ and server $j$ powers off. Without loss of generality, we may assume $i<j$. Since all servers are sleeping at time $t=0$, we have
 \begin{equation*}
 	s_{k,1}-s_{k,0}=s_{k,1}-0=s_{k,1}\ge 0,\quad\forall k\in[m]
 \end{equation*}
