@@ -184,15 +184,14 @@ Our memory demand is defined by the size of the tables $C$ and $P$. As both tabl
 \section{A pseudo-linear algorithm}\label{sec:opt_offline_pseudo_lin}
 The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
 
-Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any node $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tell us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following example:
+Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any such node $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tells us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following example:
 \begin{exmpl}
-Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances with $f(x)=x^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the graphs for the two problem instances and the corresponding calculations done by the algorithm derived in Section~\ref{sec:opt_offline_pseudo_poly}.
+Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances with $f(x)=x^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the graphs of the two problem instances and the corresponding calculations done by the algorithm derived in Section~\ref{sec:opt_offline_pseudo_poly}.
 \begin{figure}[H]
-\captionsetup{farskip=-1em} 
-\captionsetup[subfigure]{labelformat=empty}
 \centering
-\subfloat[\underline{Problem $\inp_1$:} State $v_{0,1}$ could be reached with cost $3$ by moving down from node $v_{1,1}$.]{
-\resizebox{0.46\textwidth}{!}{
+\captionsetup[subfigure]{labelformat=empty}
+\begin{subfigure}[b]{0.49\textwidth}
+\resizebox{1\textwidth}{!}{
   \begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1cm,circle,draw}]
   \node[node, label={[color=red]$0$}] (1) {0,0};
   \node[node, label={[below=1.05cm,color=red]$\infty$}] (2) [below right =of 1] {0,1};
@@ -211,11 +210,12 @@ Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instanc
     (4) edge node[below right] {$0$} (6)
     (5) edge node[above right] {$0$} (6)
     (3) edge[dashed] node[left] {$0$} (2);
-\end{tikzpicture}
-}}
-\qquad
-\subfloat[\underline{Problem $\inp_2$:} State $v_{1,1}$ could be reached with cost $1$ by moving up from $v_{0,1}$.]{
-\resizebox{0.46\textwidth}{!}{
+  \end{tikzpicture}}
+\caption{\underline{Problem $\inp_1$:} State $v_{0,1}$ could be reached with cost $3$ by moving down from node $v_{1,1}$.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.49\textwidth}
+\resizebox{1\textwidth}{!}{
   \begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1cm,circle,draw}]
   \node[node, label={[color=red]$0$}] (1) {0,0};
   \node[node, label={[below=1.05cm,color=red]$0$}] (2) [below right =of 1] {0,1};
@@ -234,7 +234,9 @@ Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instanc
     (4) edge node[below right] {$0$} (6)
     (5) edge node[above right] {$0$} (6)
     (2) edge[dashed] node[left] {$1=\beta$} (3);
-\end{tikzpicture} }}
+  \end{tikzpicture}}
+\caption{\underline{Problem $\inp_2$:} State $v_{1,1}$ could be reached with cost $1$ by moving up from $v_{0,1}$.}
+\end{subfigure}
 \caption{Two examples depicting a shortcoming of our initial approach. The calculated nodes' costs are highlighted in red. Dashed edges are not part of the initial algorithm.}
 \end{figure}
 \end{exmpl}
