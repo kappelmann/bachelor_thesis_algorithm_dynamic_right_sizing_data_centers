@@ -140,14 +140,14 @@ We split our procedure into two subroutines.
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\LineComment{Nodes' costs and predecessors tables}
+	\LineCommentFunc{Nodes' costs and predecessors tables}
 	\Blet{$C[0\ldots m,0\ldots T+1]$ and $P[0\ldots m,0\ldots T+1]$}{new tables}
-	\Let{$C[0,0]$}{$P[0,0]\gets 0$}\Comment{Initialization for first node}
-	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialization for first layer}
+	\Let{$C[0,0]$}{$P[0,0]\gets 0$}\Comment{Initialize first node}
+	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialize first layer}
 		\Let{$C[x,1]$}{$\costs(0,x,\lambda_1)$}
 		\Let{$P[x,1]$}{$0$}
 	\EndFor
-	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculation of costs and predecessors}
+	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculate costs and predecessors}
 		\For{$x' \gets 0 \textrm{ to } m$}
 			\Let{$P[x',t]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[x,t-1]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Get best preceding choice}
 			\Let{$C[x',t]$}{$C\bigl[P[x',t],t-1\bigr]+c\bigl(P[x',t],x',\lambda_t\bigr)$}\Comment{Set the costs}
@@ -594,31 +594,27 @@ In the following, we give an algorithm based on our just verified constructions.
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\Blet{$C[2T,m+1]$ and $P[2T,m+1]$}{new arrays}\Comment{Nodes' costs and predecessors}
-	\Let{$C[0,0]$}{$P[0,0]\gets 0$}
-	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialization steps}
-		\Let{$C[1,x]$}{$\costs(0,x,\lambda_1)$}
-		\Let{$P[1,x]$}{$0$}
+	\LineCommentFunc{Nodes' costs and predecessors tables}
+	\Blet{$C[0\ldots m,0\ldots2T-1]$ and $P[0\ldots m,0\ldots2T-1]$}{new tables}
+	\Let{$C[0,0]$}{$P[0,0]\gets 0$}\Comment{Initialize first node}
+	\Let{$C[m,1]$}{$\costs(0,m,\lambda_1)$ and $P[m,1]\gets 0$}\Comment{Initialize first layer}
+	\For{$x \gets m-1 \textrm{ to } 0$}
+		\Let{$C[x,1]$}{$\costs(0,x,\lambda_1)$ and $P[x,1]\gets 0$}
 	\EndFor
-	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculation of costs and predecessors}
+	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and predecessors}
 		\For{$x \gets m-1 \textrm{ to } 0$}
 			\If {$C[x+1,2t-1]<C[x,2t-1]$}
-			    \Let{$C[x,2t-1]$}{$C[x+1,2t-1]$}
-			    \Let{$P[x,2t-1]$}{$P[x+1,2t-1]$}
+			    \Let{$C[x,2t-1]$}{$C[x+1,2t-1]$ and $P[x,2t-1]\gets P[x+1,2t-1]$}
 			\EndIf
 		\EndFor
-		\Let{$C[0,2t]$}{$C[0,2t-1]$}
-		\Let{$P[0,2t]$}{$P[0,2t-1]$}
+		\Let{$C[0,2t]$}{$C[0,2t-1]$ and $P[0,2t]\gets P[0,2t-1]$}
 		\For{$x \gets 1 \textrm{ to } m$}
-			\If {$C[x-1,t]<C[x,t-1]$}
-			    \Let{$C[x,t]$}{$C[x-1,t]$}
-			    \Let{$P[x,t]$}{$P[x-1,t]$}
+			\If {$C[x-1,2t]<C[x,2t-1]$}
+			    \Let{$C[x,2t]$}{$C[x-1,2t]$ and $P[x,2t]\gets P[x-1,2t]$}
 			\Else
-			    \Let{$C[x,t]$}{$C[x,t-1]$}
-			    \Let{$P[x,t]$}{$P[x,t-1]$}
+			    \Let{$C[x,2t]$}{$C[x,2t-1]$ and $P[x,2t]\gets P[x,2t-1]$}
 			\EndIf
-		    	\Let{$C[x,t+1]$}{$C[x,t]+\opcosts(x,\lambda_x)$}
-			\Let{$P[x,t+1]$}{$P[x,t]$}
+		    	\Let{$C[x,t+1]$}{$C[x,t]+\opcosts(x,\lambda_x)$ and $P[x,t+1]\gets P[x,t]$}
 		\EndFor
 	\EndFor
 	\Let{$P[T+1,0]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[T,x]\bigr\}$}\Comment{Find best choice for last time slot}
