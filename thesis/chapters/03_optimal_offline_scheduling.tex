@@ -242,21 +242,21 @@ Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instanc
 \end{exmpl}
 Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. We want our states to capture a more general notion than given in Section~\ref{sec:opt_offline_pseudo_poly}; preferably, we would like a node $v_{x,t}$ to denote the state of having $x$ active servers at the end of time slot $t$. In practice, we may reach such a state $v_{x,t}$ by moving down from a state $v_{y^\downarrow,t}$ where $y^\downarrow>x$ with cost $0$ or by moving up from a state $v_{y^\uparrow,t}$ where $y^\uparrow<x$ with cost $\beta(x-y^\uparrow)$. In order to allow for these new possibilities, given a problem instance $\inp$, we define a directed, weighted graph as follows:
 \begin{align*}
-	&V\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
-	&E_s\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in\fromto{0}{m}\bigr\}\\
-	&E_\downarrow\coloneqq\bigl\{(v_{x,t\downarrow},v_{x-1,t\downarrow})\mid x\in[m],t\in[T]\bigr\}\\
-	&E_\uparrow\coloneqq\bigl\{(v_{x-1,t\uparrow},v_{x,t\uparrow})\mid x\in[m],t\in[T-1]\bigr\}\\
-	&E_{\downarrow\uparrow}\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\\
-	&E_{\uparrow\downarrow}\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\\
-	&E\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
-	&c_G(e)\coloneqq
+	V&\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
+	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in\fromto{0}{m}\bigr\}\\
+	E_\downarrow&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x-1,t\downarrow})\mid x\in[m],t\in[T]\bigr\}\\
+	E_\uparrow&\coloneqq\bigl\{(v_{x-1,t\uparrow},v_{x,t\uparrow})\mid x\in[m],t\in[T-1]\bigr\}\\
+	E_{\downarrow\uparrow}&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\\
+	E_{\uparrow\downarrow}&\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\\
+	E&\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
+	c_G(e)&\coloneqq
 	\begin{cases}
 		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1\downarrow})\in E_s$}\\
 		\opcosts(x,\lambda_{t+1}), & \text{if $e=(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$}\\
 		\beta, & \text{if $e\in E_\uparrow$}\\
 		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow})$}
 	\end{cases}\\
-	&G\coloneqq(V,E,c_G)
+	G&\coloneqq(V,E,c_G)
 \end{align*}
 %\begin{textblock}{3}(10,4.5)
 %\begin{framed}
