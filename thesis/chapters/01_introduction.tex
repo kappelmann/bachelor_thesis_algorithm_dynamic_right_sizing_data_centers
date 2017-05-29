@@ -3,8 +3,9 @@
 
 \chapter{Introduction}
 TODO: Hardware prices vs.\ energy costs in data centers, related work and purpose of this paper (offline algorithm, approximation algorithm,\ldots).
+TODO: definition of optimal and x-approximation algorithm
 
-\section{Model description}\label{sec:model_descr}
+\section{Model Description}\label{sec:model_descr}
 In order to address the described ever-growing energy consumption, we want to examine a scheduling problem that commonly arises in data centers. More specifically, we consider a model consisting of a fixed number of homogeneous servers denoted by $m\in\mathbb{N}$ and a fixed number of time slots denoted by $T\in\mathbb{N}$. Each server possesses two power states, i.e.\ a machine is either powered on (\textit{active state}) or powered off (\textit{sleep state}).
 	
 For any time slot $t\in[T]$, we have a \textit{mean arrival rate} denoted by $\lambda_t$, i.e.\ the amount of expected load to process in time slot $t$. The arrival rates are expected to be normalized such that each server can handle a load between 0 and 1 in any time slot. We denote the assigned load for server $i$ in time slot $t$ by $\lambda_{i,t}\in[0,1]$. Consequently, for any time slot $t$, we expect an arrival rate between 0 and $m$, that is $\lambda_t\in[0,m]$; otherwise, the servers would not be able to process the given load in time.
@@ -16,7 +17,7 @@ We assume that a sleeping server does not cause any costs. Note that $f(0)$ deno
 
 For convenience, we assume that all machines sleep at time $t=0$ and also force all machines to sleep after the scheduling process, i.e.\ at times $t>T$. Consequently, any server must power down exactly as many times as it powers on. This allows us to consolidate a machine's power-up and power-down costs into $\beta$ and to model both costs as being incurred when powering up a server; that is, a model with power-up costs $\beta_\uparrow$ and power-down costs $\beta_\downarrow$ can be simply transferred to our model by setting $\beta\coloneqq \beta_\uparrow'\coloneqq\beta_\uparrow+\beta_\downarrow$ and $\beta_\downarrow'\coloneqq0$. As a consequence, we expect that there are no loads at times $t\notin[T]$, that is $\lambda_t=\lambda_{i,t}=0$ for $t\notin[T]$.
 
-\section{Problem statement}
+\section{Problem Statement}
 Using the above definitions, we can define the input of our model by setting $\inp\coloneqq(m,T,\Lambda,\beta,f)$ where $\Lambda=(\lambda_1,\ldots,\lambda_T)$ is the sequence of arrival rates. We will subsequently identify a problem instance by its input $\inp$. Naturally, given a problem instance $\inp$, we want to schedule our servers in such a way that we minimize the sum of incurred costs while ensuring that we process the given loads in time. For this, consider for each server $i\in[m]$ the sequence of its states $S_i$ and the sequence of its assigned loads $L_i$; that is
 \begin{align*}
 	S_i&\coloneqq(s_{i,1},\ldots,s_{i,T})\in\{0,1\}^T\\

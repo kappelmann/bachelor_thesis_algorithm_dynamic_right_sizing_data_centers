@@ -1,12 +1,12 @@
 % !TeX root = ../main.tex
 % Add the above to each chapter to make compiling the PDF easier in some editors.
 
-\chapter{Optimal offline scheduling}
-In this section, we derive two optimal offline algorithms based on our preliminary work.
-First, we reduce our problem specified by $\inp$ to a shortest path problem of a level structured graph $G$. We then proceed to find a shortest path in $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time $\Theta(Tm^2)$.
+\chapter{Optimal Offline Scheduling}
+Now, as we have finished our preliminary work, we are able to derive our first two algorithms; more precisely, we will derive two optimal offline algorithms in this chapter.
+We will start by reducing our problem specified by $\inp$ to a shortest path problem of a level structured graph $G$. We then proceed to find a shortest path in $G$ and thereby an optimal schedule for $\inp$ in pseudo-polynomial time $\Theta(Tm^2)$.
 After that, we refine our initial approach to derive an improved algorithm with pseudo-linear time complexity $\Theta(Tm)$.
 
-\section{A pseudo-polynomial algorithm}\label{sec:opt_offline_pseudo_poly}
+\section{A Pseudo-Polynomial Algorithm}\label{sec:opt_offline_pseudo_poly}
 Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
 \begin{align*}
 	&V\coloneqq\bigl\{v_{x,t}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
@@ -181,8 +181,8 @@ The runtime is polynomial in the numeric value of $m$ and $T$; however, it is ex
 
 Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$\unsure{Is this enough?}
 
-\section{A pseudo-linear algorithm}\label{sec:opt_offline_pseudo_lin}
-The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to thin out our graph. 
+\section{A Pseudo-Linear Algorithm}\label{sec:opt_offline_pseudo_lin}
+The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost; the density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to ``thin out'' our graph. 
 
 Let us revise our initial algorithm. Our graph consists of nodes $v_{x,t}$. Any such node $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all nodes. The cost of a node $v_{x,t}$ thus corresponds to the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tells us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following example:
 \begin{exmpl}
@@ -632,6 +632,8 @@ For our runtime analysis, we take the same assumptions as done for Algorithm~\re
 \begin{equation*}
 	\Theta(m+2Tm+T)=\Theta(Tm)
 \end{equation*}
-The runtime is linear in the numeric value of $m$ and $T$; however, it is exponential in the size of the input since, as we saw in~\eqref{eq:inp_size}, we only need $\log_2(m)$ bits to encode $m$. Hence, the algorithm is pseudo-linear, which is a clear improvement to the pseudo-polynomial runtime $\Theta(Tm^2)$ of Algorithm~\ref{alg:opt_offline_pseudo_poly}.
+The runtime is linear in the numeric value of $m$ and $T$; however, it is exponential in the size of the input since, as we saw in~\eqref{eq:inp_size}, we only need $\log_2(m)$ bits to encode $m$. Hence, the algorithm is pseudo-linear, which is an improvement over the pseudo-polynomial runtime $\Theta(Tm^2)$ of Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 
 Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$; thus, our memory complexity does not change in comparison to Algorithm~\ref{alg:opt_offline_pseudo_poly}.
+
+Although we have achieved a notable improvement compared to our initial approach, we shall not stop here. Our runtime is, strictly speaking, still exponential; thus, a large value of $m$ may cause undesired long execution times. Our next goal is therefore the reduction of our runtime to subexponential complexity.
