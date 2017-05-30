@@ -2,15 +2,15 @@
 % Add the above to each chapter to make compiling the PDF easier in some editors.
 
 \chapter{Preliminaries}
-In this chapter, we conduct the preparatory work that will lay the foundations for our algorithms. For this, we will analyze the structure of feasible schedules concerning their cost efficiency in order to find characteristics of optimal schedules; these characteristics will then allow us to greatly simplify our optimization conditions.
+In this chapter, we conduct the preparatory work that will lay the foundations for our algorithms. For this, we will analyze the structure of feasible schedules to find characteristics of optimal strategies. These characteristics will then allow us to greatly simplify our optimization conditions.
 
-We begin by examining the state sequences of feasible schedules. As we consider homogeneous servers, we do not care which exact machines process the given work loads. Rather, we only care about the number of active servers and the distribution of loads between them. It is in particular unreasonable to power down a machine and to power on a different one in return; we could just keep the first server powered on, thereby saving switching costs.
+We begin by examining the state sequences of feasible schedules. As we consider homogeneous servers, we do not care which exact machines process the given work loads. Rather we only care about the number of active servers and the distribution of loads between them. It is in particular unreasonable to power down a machine and to power on a different one in return; we could just keep the first server powered on, thereby saving switching costs.
 This investigation is captured by our first proposition.
 \begin{prop}[Reasonable switching]\label{prop:reasonable_switching}
 Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
 \begin{enumerate}[(i)]
 		\item $\costs(\Sigma')\le \costs(\Sigma)$ and 
-		\item $\Sigma'$ never powers on and shuts down servers at the same time slot, i.e.\ $\Sigma'$ satisfies the formula
+		\item $\Sigma'$ never powers on and shuts down servers at the same time slot, that is $\Sigma'$ satisfies the formula
 \begin{equation}
 	\forall t\in[T]\Bigl[\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\ge0)\bigr)\lor\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\le 0)\bigr)\Bigr]\label{eq:reasonable_switching}
 \end{equation}
@@ -19,7 +19,7 @@ Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a
 \begin{proof}
 Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies~\eqref{eq:reasonable_switching} and reduces or retains its costs. 
 	
-Let $t\in[T]$ be the first time slot that falsifies~\eqref{eq:reasonable_switching}. If there does not exist such a time slot, we are finished. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, i.e.\ server $i$ powers on at time $t$ and server $j$ powers off. Without loss of generality, we may assume $i<j$. Since all servers are sleeping at time $t=0$, we have
+Let $t\in[T]$ be the first time slot that falsifies~\eqref{eq:reasonable_switching}. If there does not exist such a time slot, we are finished. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, that is server $i$ powers on at time $t$ and server $j$ powers off. Without loss of generality, we may assume $i<j$. Since all servers are sleeping at time $t=0$, we have
 \begin{equation*}
 	s_{k,1}-s_{k,0}=s_{k,1}-0=s_{k,1}\ge 0,\quad\forall k\in[m]
 \end{equation*}
@@ -43,14 +43,14 @@ Finally, we construct a new schedule $\Sigma'\coloneqq(\mathcal{S}',\mathcal{L}'
 	\mathcal{S}'&\coloneqq(S_1,\ldots,S_{i-1},S_i',S_{i+1},\ldots,S_{j-1},S_j',S_{j+1},\ldots,S_T)\\
 	\mathcal{L}'&\coloneqq(L_1,\ldots,L_{i-1},L_i',L_{i+1},\ldots,L_{j-1},L_j',L_{j+1},\ldots,L_T)
 \end{align*}
-We want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq:feasible_constraint}. For time slots $<t$, the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$, we only changed the order of summation in~\eqref{eq:feasible_constraint}. Thus, $\Sigma'$ is feasible.
+We now want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq:feasible_constraint}. For time slots $<t$, the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$, we only changed the order of summation in~\eqref{eq:feasible_constraint}. Thus, $\Sigma'$ is feasible.
 
-Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however $\mathcal{S}'$ minimizes the switching costs at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$.
+Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, $\mathcal{S}'$ reduced the switching costs at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$.
 
 Moreover, we decreased the number of servers violating~\eqref{eq:reasonable_switching} at time $t$. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
-Our next proposition --- which will pose the cornerstone of our subsequent works --- requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is smaller or equal than the convex-combination of the function values at the sampling points.
+Our next proposition -- which will pose the cornerstone of our subsequent works -- requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is less than or equal to the convex-combination of the function values at the sampling points.
 \begin{lem}[Jensen's inequality]\label{lem:jensens-inequality}
 Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\ldots,\lambda_n\in\mathbb{R}$}, and $\mu_1,\ldots,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
 \begin{equation*}
@@ -147,7 +147,7 @@ For this, given a problem instance $\inp$, we define the operating costs functio
 	  \infty, & \text{if $x\ne 0\land\lambda>x$}
 	  \end{cases}
 \end{equation*}
-We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate, i.e.\ the schedule would not be feasible. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$, which describes the incurred costs when changing the number of active server from $x_{t-1}$ to $x_t$:
+We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate, that is the schedule would not be feasible. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$, which describes the incurred costs when changing the number of active server from $x_{t-1}$ to $x_t$:
 \begin{equation}\label{eq:mx_schedule_sw_costs}
 	\swcosts(x_{t-1},x_t)\coloneqq\beta\max\{0,x_t-x_{t-1}\}
 \end{equation}
