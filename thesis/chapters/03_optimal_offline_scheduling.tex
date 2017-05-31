@@ -589,7 +589,7 @@ For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downar
 	\LineCommentFunc{Allocate nodes' costs and predecessors tables}
 	\Blet{$C[0\ldots m,1\ldots T]$ and $P[0\ldots m,1\ldots T]$}{new tables}
 	\Let{$P[m,1]$}{$m$ and $C[m,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
-	\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization steps)}
+	\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
 		\If {$C[x+1,1]<\costs(0,x,\lambda_1)$}
 			\Let{$P[x,1]$}{$P[x+1,1]$ and $C[x,1]\gets C[x+1,1]$}
 		\Else
@@ -597,13 +597,13 @@ For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downar
 		\EndIf
 	\EndFor
 	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and predecessors}
-		\For{$x \gets 1 \textrm{ to } m$}\Comment{Upward minimization steps}
+		\For{$x \gets 1 \textrm{ to } m$}\Comment{Upward minimization step}
 			\If {$C[x-1,t]+\beta<C[x,t]$}
 			    \Let{$P[x,t]$}{$P[x-1,t]$ and $C[x,t]\gets C[x-1,t]+\beta$}
 			\EndIf
 		\EndFor
 		\Let{$P[m,t+1]$}{$m$ and $C[m,t+1]\gets C[m,t]+\opcosts(m,\lambda_{t+1})$}
-		\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Downward minimization steps}
+		\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Downward minimization step}
 			\If {$C[x+1,t+1]<C[x,t]+\opcosts(x,\lambda_{t+1})$}
 				\Let{$P[x,t+1]$}{$P[x+1,t+1]$ and $C[x,t+1]\gets C[x+1,t+1]$}
 			\Else
@@ -633,6 +633,6 @@ For our runtime analysis, we take the same assumptions as done for Algorithm~\re
 \end{equation*}
 The runtime is linear in the numeric value of $m$ and $T$; however, it is exponential in the size of the input since, as we saw in~\eqref{eq:inp_size}, we only need $\log_2(m)$ bits to encode $m$. Hence, the algorithm is pseudo-linear, which is an improvement over the pseudo-polynomial runtime $\Theta(Tm^2)$ of Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 
-Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$; thus, our memory complexity does not change in comparison to Algorithm~\ref{alg:opt_offline_pseudo_poly}.
+Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$; thus, the memory complexity does not change in comparison to Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 
-Although we have achieved a notable improvement compared to our initial approach, we shall not stop here. Our runtime is, strictly speaking, still exponential; thus, a large value of $m$ may cause undesired long execution times. Our next goal is therefore the reduction of our runtime to subexponential complexity.
+Although we have achieved a notable improvement compared to our initial approach, we shall not stop here. Our runtime is, strictly speaking, still exponential; hence, a large value of $m$ may cause undesired long execution times. Our next goal is therefore the reduction of our runtime to subexponential complexity.
