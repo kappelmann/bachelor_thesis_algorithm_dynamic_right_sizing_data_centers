@@ -516,7 +516,7 @@ Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set
 \end{defn}
 Remember that a schedule $\mx=(x_1,\ldots,x_T)$ also uses the notation $x_t$ to identify the number of active severs at time $t$. Needless to say, this clash of names is intentional and justified by the next lemma.
 \begin{lem}\label{lem:sched_reasn_path_pseudo_lin}
-Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all reasonable paths. The map
+Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
 \begin{equation*}\label{prop:reasn_paths_identify}
 	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\ldots,x_T)
 \end{equation*}
@@ -525,7 +525,7 @@ is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
 \begin{proof}
 First, we check that $\Phi$ is bijective, that is $\Phi$ is injective and surjective. 
 
-Let $P$ and $P'$ be reasonable paths with $\Phi(P)=\Phi(P')$. Then $P$ as well as $P'$ must start with the edge $(v_{0,0},v_{x_1,1\downarrow})$. As $P$ and $P'$ are reasonable, they both satisfy $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for each time slot $t$. Due to this restriction, their paths between $v_{x_t,t\downarrow}$ and $v_{x_{t+1},t+1\downarrow}$ must coincide for $t\in[T-1]$. Further, the path from $v_{x_T,T}$ to $v_{0,T}$ is unique in our graph. Thus, we have $P=P'$, which shows the injectivity of $\Phi$.
+Let $P$ and $P'$ be reasonable paths with $\Phi(P)=\Phi(P')$. Then $P$ as well as $P'$ must start with the edge $(v_{0,0},v_{x_1,1\downarrow})$. As $P$ and $P'$ are reasonable, they both satisfy $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for each time slot $t$. Due to this restriction, their paths between $v_{x_t,t\downarrow}$ and $v_{x_{t+1},t+1\downarrow}$ must coincide for $t\in[T-1]$. Further, the path from $v_{x_T,T}$ to $v_{0,T}$ is unique in our graph. Thus, we conclude $P=P'$, which shows the injectivity of $\Phi$.
 
 Next, let $(x_1,\ldots,x_T)\in\bm{\mx}$ be a schedule for $\inp$. For any $t\in[T-1]$, we set
 \begin{equation*}
@@ -572,8 +572,8 @@ In turn, $P'$ corresponds to an optimal schedule $\mx$ with $\costs(\mx)=\costs(
 \end{proof}
 In the following, we give an algorithm based on our just verified constructions. Like in Section~\ref{sec:opt_offline_pseudo_poly}, we split our procedure into two subroutines.
 
-\textproc{shortest\_paths} calculates the minimum costs of the nodes of our graph by following the topological sorting of the graph. Although we could search for an arbitrary shortest path in our graph and transform it to an optimal schedule, as shown in Corollary~\ref{cor:opt_sched_short_path_pseudo_lin}, our algorithm only considers reasonable paths. 
-For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downarrow}$ and $v_{x,t\uparrow}$ in each time slot $t\in[T-1]$. Ultimately, it only keeps the relevant information for each node $v_{x,t\uparrow}$, namely the node's cost and best scheduling choice at time $t$. The information that would tell us the path between $v_{x,t\uparrow}$ and its best scheduling choice at time $t$ in our graph is lost; however, this information is of no concern since we only want to consider reasonable paths which are already uniquely identified by their scheduling choices (see Lemma~\ref{lem:sched_reasn_path_pseudo_lin}). This restriction to reasonable paths additionally improves the memory complexity of our algorithm as we can keep the size of the tables $C$ and $P$ down to $mT$ instead of $2mT$. The function returns the minimum costs to all nodes $v_{x,t\uparrow}$ for $t\in[T-1]$ and $v_{x,T\downarrow}$. Moreover, it returns the predecessors of these nodes in respect to the best scheduling choice.
+\textproc{shortest\_paths} calculates the minimum costs of the graph's nodes by following the graph's topological sorting. Although we could search for an arbitrary shortest path in our graph and transform it to an optimal schedule, as shown in Corollary~\ref{cor:opt_sched_short_path_pseudo_lin}, our algorithm only considers reasonable paths. 
+For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downarrow}$ and $v_{x,t\uparrow}$ in each time slot $t\in[T-1]$. Ultimately, it only keeps the relevant information for each node $v_{x,t\uparrow}$, namely the node's cost and best scheduling choice at time $t$. The information that would tell us the path between $v_{x,t\uparrow}$ and its best scheduling choice at time $t$ in our graph is lost; however, this information is of no concern since we only want to consider reasonable paths, which are already uniquely identified by their scheduling choices (see Lemma~\ref{lem:sched_reasn_path_pseudo_lin}). This restriction to reasonable paths additionally improves the memory complexity of our algorithm as we can keep the size of the tables $C$ and $P$ down to $mT$ instead of $2mT$. The function returns the minimum cost $v_{x,T\downarrow}$ as well as the minimum costs to all nodes $v_{x,t\uparrow}$ for $t\in[T-1]$. Moreover, it returns the predecessors of these nodes in respect to the best scheduling choice.
 
 \textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path; thereby, it calculates an optimal schedule for our problem instance.
 \begin{algorithm}[H]
