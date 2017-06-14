@@ -111,7 +111,7 @@ Which shows that $\Psi$ and, as a consequence, $\Phi$ are cost-preserving maps.
 \end{proof}
 We can now use this bijection to obtain our desired result: the correspondence between optimal schedules and shortest paths.
 \begin{thm}\label{thm:opt_sched_short_path_pseudo_poly}
-There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest paths from $v_{0,0}$ to $v_{0,T+1}$.
+There exists a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest paths from $v_{0,0}$ to $v_{0,T+1}$.
 \end{thm} 
 \begin{proof}
 By Lemma~\ref{lem:sched_path_pseudo_poly}, we have a bijection $\Psi$ between schedules $\mx$ and paths from $v_{0,0}$ to $v_{0,T+1}$ obeying $\costs(\mx)=\costs\bigl(\Psi(\mx)\bigr)$. Thus, we have 
@@ -258,12 +258,7 @@ Although our algorithm delivers the correct end results, its immediate steps are
 	\end{cases}\\
 	G&\coloneqq(V,E,c_G)
 \end{align*}
-%\begin{textblock}{3}(10,4.5)
-%\begin{framed}
 A more appealing, graphical representation can be found in the following figure.
-%As the phrase goes, \textit{``A picture is worth a thousand words.''} See Figure~\ref{fig:graph_pseudo_lin} for a more appealing illustration.%TODO set position!!
-%\end{framed}
-%\end{textblock}
 \begin{figure}[H]
 \centering
 \resizebox{\textwidth}{!}{
@@ -503,21 +498,21 @@ A schedule corresponding to $P$ would use three active server in its first time 
     (19) edge[red] node[black,right] {$0$} (20)
     (21) edge node[right] {$0$} (19);
 \end{tikzpicture}}
-\caption{Illustration of the path $P$. The path is highlighted in red. The maximum nodes $v_{x,t\downarrow}$ taken by $P$ are highlighted in blue.}
+\caption{Illustration of the path $P$. The path is highlighted in red. The ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$ are highlighted in blue.}
 \end{figure}
 Conversely, given the schedule $\mx=(3,0,1)$, is can easily be seen that there exists only one reasonable path corresponding to $\mx$, namely $P$.
 \end{exmpl}
 Before we approach our next lemma, which formalizes these ideas, we need to give a precise definition of what we understand as \textit{``maximum'' nodes $v_{x,t\downarrow}$} used by a reasonable path.
-\begin{defn}
+\begin{defn}\label{defn:max_path_node}
 Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set of nodes $v_{x,t\downarrow}$ visited by $P$. The ``maximum'' node $v_{x,t\downarrow}$ at each time slot $t\in[T]$ can then be identified by
 \begin{equation*}
-	x_t\coloneqq\max\bigl\{x\in\fromto{0}{m}\mid v_{x,t\downarrow}\in V_\downarrow^t\bigr\}
+	x_t\coloneqq\max\bigl\{x\mid v_{x,t\downarrow}\in V_\downarrow^t\bigr\}
 \end{equation*}
 \end{defn}
 Remember that a schedule $\mx=(x_1,\ldots,x_T)$ also uses the notation $x_t$ to identify the number of active severs at time $t$. Needless to say, this clash of names is intentional and justified by the next lemma.
 \begin{lem}\label{lem:sched_reasn_path_pseudo_lin}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
-\begin{equation*}\label{prop:reasn_paths_identify}
+\begin{equation*}
 	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\ldots,x_T)
 \end{equation*}
 is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
@@ -527,7 +522,7 @@ First, we check that $\Phi$ is bijective, that is $\Phi$ is injective and surjec
 
 Let $P$ and $P'$ be reasonable paths with $\Phi(P)=\Phi(P')$. Then $P$ as well as $P'$ must start with the edge $(v_{0,0},v_{x_1,1\downarrow})$. As $P$ and $P'$ are reasonable, they both satisfy $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for each time slot $t$. Due to this restriction, their paths between $v_{x_t,t\downarrow}$ and $v_{x_{t+1},t+1\downarrow}$ must coincide for $t\in[T-1]$. Further, the path from $v_{x_T,T}$ to $v_{0,T}$ is unique in our graph. Thus, we conclude $P=P'$, which shows the injectivity of $\Phi$.
 
-Next, let $(x_1,\ldots,x_T)\in\bm{\mx}$ be a schedule for $\inp$. For any $t\in[T-1]$, we set
+Next, let $\mx=(x_1,\ldots,x_T)\in\bm{\mx}$ be a schedule for $\inp$. For any $t\in[T-1]$, we set
 \begin{equation*}
 	S_t\coloneqq
 	\begin{cases}
@@ -553,7 +548,7 @@ Which shows that $\Phi$ is a cost-preserving map.
 \end{proof}
 Again, we can use this bijection to obtain our desired result: the correspondence between optimal schedules and shortest, reasonable paths.
 \begin{thm}\label{thm:opt_sched_reasn_path}
-There is a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest, reasonable paths.
+There exists a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest, reasonable paths.
 \end{thm} 
 \begin{proof}
 By Lemma~\ref{lem:sched_reasn_path_pseudo_lin}, we have a bijection $\Phi$ between reasonable paths $P$ and schedules $\mx$ obeying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$. Thus, we have 

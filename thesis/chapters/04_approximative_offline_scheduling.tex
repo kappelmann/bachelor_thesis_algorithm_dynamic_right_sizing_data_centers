@@ -2,31 +2,34 @@
 % Add the above to each chapter to make compiling the PDF easier in some editors.
 
 \chapter{Approximative Offline Scheduling}
-Heretofore, we have derived two optimal offline algorithms for our scheduling problem; unfortunately, the runtime complexities of both algorithms are exponential in the input size of the number of servers $m$. Needless to say, we want to reduce this exponential runtime. For this, we must slightly loosen our aspirations, that is we move to approximative methods. Further, as we will see in the following sections, we need to assume that our convex operating costs function $f$ is monotonically increasing; however, this restriction is of no great significance since in practice most operating costs functions fulfill this requirement.\unsure{Any reference?} 
+Heretofore, we have derived two optimal offline algorithms for our scheduling problem. Unfortunately, the algorithm's runtime complexities are exponential in the input size of the number of servers $m$. Needless to say, we want to reduce this exponential runtime. For this, we must slightly loosen our aspirations, that is we move to approximative methods. Further, as we will see in the following sections, we need to assume that our convex operating costs function $f$ is monotonically increasing; however, this restriction is of no great significance since in practice most operating costs functions fulfill this requirement.\unsure{Any reference?} 
 
-In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 4-optimal offline algorithm with linear runtime complexity. As a next step, we will generalize our first approach to allow for arbitrary $1+\beps$-approximations with TODO complexity.
+In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 3-optimal offline algorithm with linear runtime complexity. As a next step, we will generalize our first approach to allow for arbitrary $1+\beps$-approximations with TODO complexity.
 
-\section{A 4-Optimal Algorithm}
+\section{A 3-Optimal Algorithm}
 Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's runtime complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Hence, as we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, that is the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
 
-As we saw in Equation~\eqref{eq:inp_size}, the size of our input $\inp$ is given by $\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)$. Consequently, in order to obtain a linear runtime complexity, we may reduce the graph's height from $m+1$ to a logarithmic one of $\log(m)$. Given this observation, it seems intuitive for a computer scientist to choose a logarithmic scale for the number of servers in each layer. More formally, given a problem instance $\inp$, we consider the following graph:
+As we saw in Equation~\eqref{eq:inp_size}, the size of our input $\inp$ is given by $\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)$. Consequently, in order to obtain a linear runtime complexity, we want to reduce the graph's height from $m+1$ to a logarithmic one of $\mathcal{O}\bigl(\log(m)\bigr)$. Given this observation, it seems intuitive for a computer scientist to choose a logarithmic scale for the number of servers in each layer; that is, instead of adding a node for each possible number of active servers (i.e.\ $0,1,\ldots,m$), we only add nodes for logarithmic choices (i.e.\ $0,2^0,2^1,\ldots,2^{\lfloor\log_2(m)\rfloor},m$). More formally, given a problem instance $\inp$, we first set
 \begin{align*}
 	b&\coloneqq\lfloor\log_2(m)\rfloor\\
-	B&\coloneqq\{0,2^0,2^1,\ldots,2^b,m\}\\
+	B&\coloneqq\{0,2^0,2^1,\ldots,2^b,m\}
+\end{align*}
+where $B$ will subsequently represent the set of possible scheduling choices at each time slot. Using this set of possible choices, we can then consider the following adaption of our former graph:
+\begin{align*}
 	V&\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in B,t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in B, t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
 	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in B\bigr\}\\
 	E_\downarrow&\coloneqq\bigl\{(v_{2^i,t\downarrow},v_{2^{i-1},t\downarrow})\mid i\in[b],t\in[T]\bigr\}\dotcup\bigl\{(v_{2^0,t\downarrow},v_{0,t\downarrow})\mid t\in[T]\bigr\}\dotcup\\
 	&\phantom{{}\coloneqq{}}\bigl\{(v_{m,t\downarrow},v_{2^b,t\downarrow})\mid t\in[T]\bigr\}\\
 	E_\uparrow&\coloneqq\bigl\{(v_{2^{i-1},t\uparrow},v_{2^i,t\uparrow})\mid i\in[b],t\in[T-1]\bigr\}\dotcup\bigl\{(v_{0,t\uparrow},v_{2^0,t\uparrow})\mid t\in[T-1]\bigr\}\dotcup\\
 	&\phantom{{}\coloneqq{}}\bigl\{(v_{2^b,t\uparrow},v_{m,t\uparrow})\mid t\in[T-1]\bigr\}\\
-E_{\downarrow\uparrow}&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in N,t\in[T-1]\bigr\}\\
-	E_{\uparrow\downarrow}&\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in N,t\in[T-1]\bigr\}\\
+	E_{\downarrow\uparrow}&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in B,t\in[T-1]\bigr\}\\
+	E_{\uparrow\downarrow}&\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in B,t\in[T-1]\bigr\}\\
 	E&\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
 	c_G(e)&\coloneqq
 	\begin{cases}
 		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1\downarrow})\in E_s$}\\
 		\opcosts(x,\lambda_{t+1}), & \text{if $e=(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$}\\
-		(x'-x)\beta, & \text{if $e=(v_{x,t\uparrow,v_{x',t\uparrow}})\in E_\uparrow$}\\
+		(x'-x)\beta, & \text{if $e=(v_{x,t\uparrow},v_{x',t\uparrow})\in E_\uparrow$}\\
 		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow})$}
 	\end{cases}\\
 	G&\coloneqq(V,E,c_G)
@@ -137,8 +140,57 @@ A more appealing, graphical representation can be found in the following figure.
     ($(21)!.65!(19)$) edge[red] node[black,right] {$0$} (19);
 \end{tikzpicture}
 }
-\caption{Graph for a linear, 4-optimal offline algorithm; the path of the topological sorting is highlighted in red.}
+\caption{Graph for a linear, 3-optimal offline algorithm; the path of the topological sorting is highlighted in red. Note that $(2^i-2^{i-1})\beta =2^{i-1}\beta$.}
 \label{fig:graph_pseudo_lin}
 \end{figure}
+The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Since some possible scheduling choices, however, are not representable in this new graph, we may just obtain approximative costs for our nodes. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. 
+
+TODO: examples for idea + monotonically increasing f.
+
+Our next task shall be the verification of our new construction. Naturally, since we are not able to represent every schedule in our graph $G$ anymore, we will have to restrict ourselves to the set of schedules respresentable in $G$. For this, we first make a convenient definition.
+\begin{defn}[Restricted schedules]
+Given an input $\inp$ and a set $A\subseteq\fromto{0}{m}$, we say that a schedule $\mx=(x_1,\ldots,x_T)$ is \textit{$A$-restricted} if $\mx$ only uses scheduling coices contained in $A$, that is $\mx$ satisfies $\forall t\in[T](x_t\in A)$.
+\end{defn}
+For the next lemma, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$ described in Definition~\ref{defn:max_path_node} as well as that $B=\{0,2^0,2^1,\ldots,2^b,m\}$. Like in Section~\ref{sec:opt_offline_pseudo_lin}, we want to first establish a bijection between $B$-restricted schedules and reasonable paths.
+\begin{lem}\label{lem:sched_reasn_path_approx_3}
+Let $\bm{\mx}$ be the set of all $B$-restricted schedules for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
+\begin{equation*}
+	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\ldots,x_T)
+\end{equation*}
+is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
+\end{lem}
+\begin{proof}
+The proof is analogous to the proof of Lemma~\ref{lem:sched_reasn_path_pseudo_lin} considering that we conduct logarithmic instead of incremental switching steps.\unsure{Is this okay?}
+\end{proof}
+Since we did not change the graph's principle structure, the proof of Lemma~\ref{lem:sched_reasn_path_approx_3} required no new efforts. The next lemma, however, demands more ingenuity. We want to prove that we are able to transform any arbitrary schedule to a $B$-restricted one with a cost factor of at most 3. This will then allow us to verify that our graph is indeed able to produce 3-optimale schedules.
+\begin{lem}\label{lem:transform_schedule_approx_3}
+Let $\mx$ be a schedule for $\inp$. There exists a 3-approximative $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le3\costs(\mx)$}.
+\end{lem}
+\begin{proof}
+\end{proof}
+Finally, we arrive at the main result of this section.
+\begin{thm}\label{thm:approx_3}
+Any shortest, reasonable path corresponds to a 3-optimal, $B$-restricted schedule for $\inp$.
+\end{thm} 
+\begin{proof}
+By Lemma~\ref{lem:sched_reasn_path_approx_3}, we have a bijection $\Phi$ between reasonable paths $P$ and $B$-restricted schedules obeying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$. Thus, we have 
+\begin{equation*}
+	\costs(P)\text{ minimal}\iff \costs\bigl(\Phi(P)\big)\text{ minimal}
+\end{equation*}
+Now let $P$ be a shortest, reasonable path, and let $\mx$ be an optimal schedule for $\inp$. We have to verify that $\costs\bigl(\Phi(P)\bigr)\le 3\costs(\mx)$. By Lemma~\ref{lem:transform_schedule_approx_3}, we know that there exists a $B$-restricted schedule $\mx'$ such that $\costs(\mx')\le 3\costs(\mx)$. Thus, we can infer that
+\begin{equation*}
+	\costs(P)=\costs(\Phi(P))\le\costs(\mx')\le 3\costs(\mx)
+\end{equation*}
+and the claim follows.
+\end{proof}
+Again, it is not difficult to show that also shortest paths which are not reasonable can easily be transformed to a desired schedule.
+\begin{cor}\label{cor:opt_sched_short_path_pseudo_lin}
+Any shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to a 3-optimal, $B$-restricted schedule for $\inp$.
+\end{cor}
+\begin{proof}
+Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. Using a small adaption of Proposition~\ref{prop:path_to_reasn_path} that uses logarithmic instead of incremental switching steps, we can transform $P$ to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
+In turn, $P'$ corresponds to a 3-optimal, $B$-restricted schedule $\mx$ with $\costs(\mx)=\costs(P')$ by Theorem~\ref{thm:approx_3}. Thus, we have $c(\mx)=c(P)$, and the claim follows.
+\end{proof}
+
 
 \section{A $1+\beps$-Optimal Algorithm}

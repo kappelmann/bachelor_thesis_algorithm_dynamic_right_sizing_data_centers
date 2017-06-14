@@ -6,7 +6,7 @@ TODO: Hardware prices vs.\ energy costs in data centers, related work and purpos
 TODO: definition of optimal and x-approximation algorithm
 
 \section{Model Description}\label{sec:model_descr}
-In order to address the described ever-growing energy consumption, we want to examine a scheduling problem that commonly arises in data centers. More specifically, we consider a model consisting of a fixed number of homogeneous servers denoted by $m\in\mathbb{N}$ and a fixed number of time slots denoted by $T\in\mathbb{N}$. Each server possesses two power states, that is a machine is either powered on (\textit{active state}) or powered off (\textit{sleep state}).
+In order to address the described rise of energy consumption, we want to examine a scheduling problem that commonly arises in data centers. More specifically, we consider a model consisting of a fixed number of homogeneous servers denoted by $m\in\mathbb{N}$ and a fixed number of time slots denoted by $T\in\mathbb{N}$. Each server possesses two power states, that is a machine is either powered on (\textit{active state}) or powered off (\textit{sleep state}).
 	
 For any time slot $t\in[T]$, we have a \textit{mean arrival rate} denoted by $\lambda_t$, describing the amount of expected load to process in time slot $t$. The arrival rates are expected to be normalized such that each server can handle a load between 0 and 1 in any time slot. We denote the assigned load for server $i$ in time slot $t$ by $\lambda_{i,t}\in[0,1]$. Consequently, for any time slot $t$, we expect an arrival rate between 0 and $m$, that is $\lambda_t\in[0,m]$; otherwise, the servers would not be able to process the given load in time.
 
