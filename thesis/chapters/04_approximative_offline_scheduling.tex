@@ -2,14 +2,14 @@
 % Add the above to each chapter to make compiling the PDF easier in some editors.
 
 \chapter{Approximative Offline Scheduling}
-Heretofore, we have derived two optimal offline algorithms for our scheduling problem. Unfortunately, the algorithm's runtime complexities are exponential in the input size of the number of servers $m$. Needless to say, we want to reduce this exponential runtime. For this, we must slightly loosen our aspirations, that is we move to approximative methods. Further, as we will see in the following sections, we need to assume that our convex operating costs function $f$ is monotonically increasing; however, this restriction is of no great significance since in practice most operating costs functions fulfill this requirement.\unsure{Any reference?} 
+Heretofore, we have derived two optimal offline algorithms for our scheduling problem. Unfortunately, the algorithm's runtime complexities are exponential in the input size of the number of servers $m$. Needless to say, we want to reduce this exponential runtime. For this, we must slightly loosen our aspirations, that is we move to approximative methods. Further, as we will see in the next section, we need to assume that our convex operating costs function $f$ is monotonically increasing; however, this restriction is of no great significance since in practice most operating costs functions fulfill this requirement.\unsure{Any reference?} 
 
 In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 3-optimal offline algorithm with linear runtime complexity. As a next step, we will generalize our first approach to allow for arbitrary $1+\beps$-approximations with TODO complexity.
 
 \section{A 3-Optimal Algorithm}
-Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's runtime complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Hence, as we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, that is the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
+Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's runtime complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Since we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, that is the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
 
-As we saw in Equation~\eqref{eq:inp_size}, the size of our input $\inp$ is given by $\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)$. Consequently, in order to obtain a linear runtime complexity, we want to reduce the graph's height from $m+1$ to a logarithmic one of $\mathcal{O}\bigl(\log(m)\bigr)$. Given this observation, it seems intuitive for a computer scientist to choose a logarithmic scale for the number of servers in each layer; that is, instead of adding a node for each possible number of active servers (i.e.\ $0,1,\ldots,m$), we only add nodes for logarithmic choices (i.e.\ $0,2^0,2^1,\ldots,2^{\lfloor\log_2(m)\rfloor},m$). More formally, given a problem instance $\inp$, we first set
+As we saw in Equation~\eqref{eq:inp_size}, the size of our input $\inp$ is given by $\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)$. Consequently, in order to obtain a linear runtime complexity, we want to reduce the graph's height from $m+1$ to a logarithmic height of $\mathcal{O}\bigl(\log(m)\bigr)$. Given this observation, it seems natural for a computer scientist to choose a logarithmic scale for the number of servers in each layer; that is, instead of adding a node for each possible number of active servers (i.e.\ $0,1,\ldots,m$), we only add nodes for logarithmic choices (i.e.\ $0,2^0,2^1,\ldots,2^{\lfloor\log_2(m)\rfloor},m$). More formally, given a problem instance $\inp$, we set
 \begin{align*}
 	b&\coloneqq\lfloor\log_2(m)\rfloor\\
 	B&\coloneqq\{0,2^0,2^1,\ldots,2^b,m\}
@@ -143,7 +143,22 @@ A more appealing, graphical representation can be found in the following figure.
 \caption{Graph for a linear, 3-optimal offline algorithm; the path of the topological sorting is highlighted in red. Note that $(2^i-2^{i-1})\beta =2^{i-1}\beta$.}
 \label{fig:graph_pseudo_lin}
 \end{figure}
-The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Since some possible scheduling choices, however, are not representable in this new graph, we may just obtain approximative costs for our nodes. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. 
+The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. Since some possible scheduling choices, however, are not representable in this new graph, we may just obtain approximative costs for our nodes. In order to establish the graph's approxmation guarantee, we first have to conduct some observations.
+
+First, we shall take a look on the incurring operating costs of an approxmative schedule $\mx'$ representable in $G$. Since we are forced to schedule a number of servers contained in $B$, we may not be able to choose an optimal scheduling choice that minimizes the schedule's operating costs. Consider the following example:
+\begin{exmpl}
+Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a problem instance where $f(x)=(x-1)^2$. Since we need at least 3 active servers at any timeslot, any approximative schedule $\mx'=(x_1',\ldots,x_5')$ forces us to constantly use 4 active machines. An optimal schedule $\mx=(x_1,\ldots,x_5)$, on the other hand, is able to minimize the costs by constantly scheduling 3 servers. Let us compare the approximation guarantee of $\mx'$. The schedules' costs are given by
+\begin{align*}
+	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(x_t'(\lambda_t/x_t'-1)^2+\beta\max\{0,x_t'-x_{t-1}'\}\bigr)=5\cdot4\Bigl(\frac{3}{4}-1\Bigr)^2=\frac{20}{16}\\
+	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(x_t(\lambda_t/x_t-1)^2+\beta\max\{0,x_t-x_{t-1}\}\bigr)=5\cdot4\Bigl(\frac{3}{3}-1\Bigr)^2=0
+\end{align*}
+Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation routine. Naturally, we may ask ourselves how this explosion of operating costs is even possible. 
+\end{exmpl}
+
+One might suspect that we are able to obtain 2-optimal costs using our new graph. Sadly, this is not the case, as the next example will show us.
+\begin{exmpl}
+Let $\inp=\bigl(m=8,T=5,\Lambda=(5,3,5,3,5),\beta=1,f\bigr)$ be the input for a problem instance where $f(x)=1$. Our possible scheduling choices are then given by $B=\{0,1,2,4,8\}$. Since we need at least 5 active servers at timeslots $t\in\{1,3,5\}$, our approximation forces us to use 8 active servers at these slots. If we try to obtain a 2-optimal schedule, we are further forced to use 4 active servers at timeslots $t\in\{2,4\}$ since 
+\end{exmpl}
 
 TODO: examples for idea + monotonically increasing f.
 
@@ -167,6 +182,41 @@ Since we did not change the graph's principle structure, the proof of Lemma~\ref
 Let $\mx$ be a schedule for $\inp$. There exists a 3-approximative $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le3\costs(\mx)$}.
 \end{lem}
 \begin{proof}
+For $t\in[T]$, we inductively define our new schedule $\mx'\coloneqq(x_1',\ldots,x_T')$ by
+\begin{align}
+		x'_0&\coloneqq 0\nonumber\\
+		x'_t&\coloneqq 
+		\begin{cases}
+			\min\Bigl\{m,\max\bigl\{x_{t-1}',2^{\lceil \log_2(x_t)\rceil}\bigr\}\Bigr\}, & \text{if }0\le x_{t-1}<x_t\\
+			x'_{t-1}, & \text{if $0<x_t\le x_{t-1}$ and }x'_{t-1}\le 3x_t\\
+			2^{\lceil \log_2(x_t)\rceil}, & \text{if $0<x_t\le x_{t-1}$ and }x'_{t-1}>3x_t\\
+			0, & \text{if }x_t=0
+		\end{cases} \label{eq:xprime_approx_3}
+\end{align}
+We have to define a token payment function. Since we want to be to spare up the unused potential. Thus, we define our token payment function as
+\begin{equation}
+	\Delta(t)=\begin{cases}
+		3\beta(x_t-x_{t-1})-\beta(x_t'-x_{t-1}'), & \text{if }x_{t-1}<x_t\\
+		0, & \text{if }x_t\le x_{t-1}\label{eq:delta_approx_3}
+	\end{cases}
+\end{equation}
+Using this definition, we can calculate our amortized switching costs for $\mx'$: 
+\begin{equation}
+	\aswcosts(x_{t-1}',x_t')=\swcosts(x_{t-1}',x_t')+\Delta(t)\stackrel{\eqref{eq:mx_schedule_sw_costs}}{=}\beta\max\{0,x_t'-x_{t-1}'\}+\Delta(t)\label{eq:aswcosts_approx_3}
+\end{equation}
+We need to consider two cases, namely $x_{t-1}<x_t$ and $x_t\le x_{t-1}$.
+\begin{enumerate}[align=left]
+	\item[\underline{$x_{t-1}<x_t$:}] By definition~\eqref{eq:xprime_approx_3} of $x_t'$, we can infer that $x_{t-1}'\le x_t'$. Consequently, we know that $\max\{0,x_t'-x_{t-1}'\}=x_t'-x_{t-1}'$. Hence, we can simplify~\eqref{eq:aswcosts_approx_3} to
+		\begin{align*}
+			\aswcosts(x_{t-1}',x_t')&\stackrel{\eqref{eq:delta_approx_3}}{=}\beta(x_t'-x_{t-1}')+3\beta(x_t-x_{t-1})-\beta(x_t'-x_{t-1}')\\
+			&\stackrel{\phantom{\eqref{eq:delta_approx_3}}}{=}3\beta(x_t-x_{t-1})\stackrel{\eqref{eq:mx_schedule_sw_costs}}{=}3\swcosts(x_{t-1},x_t)
+		\end{align*}
+	\item[\underline{$x_t\le x_{t-1}$:}] By definition~\eqref{eq:xprime_approx_3} of $x_t'$, we can infer that $x_t'\le x_{t-1}'$. Consequently, we know that $\max\{0,x_t'-x_{t-1}'\}=0$. Hence, we can simplify~\eqref{eq:aswcosts_approx_3} to
+		\begin{align*}
+			\beta\cdot0+0=0=3\beta\max\{0,x_t-x_{t-1}\}\stackrel{\eqref{eq:mx_schedule_sw_costs}}{=}3\swcosts(x_{t-1},x_t)
+		\end{align*}
+\end{enumerate}
+Thus, the amortized switching costs of $\mx'$ are 3-optimal compared to $\mx$. Next, we need to check that our total credit never becomes negative. Since we only change conduct payments if $x_{t-1}<x_t$, we only need to consider power up switching operations. For this, let $t$ be an arbitrary timeslot where $x_{t-1}<x_t$.
 \end{proof}
 Finally, we arrive at the main result of this section.
 \begin{thm}\label{thm:approx_3}
@@ -179,16 +229,16 @@ By Lemma~\ref{lem:sched_reasn_path_approx_3}, we have a bijection $\Phi$ between
 \end{equation*}
 Now let $P$ be a shortest, reasonable path, and let $\mx$ be an optimal schedule for $\inp$. We have to verify that $\costs\bigl(\Phi(P)\bigr)\le 3\costs(\mx)$. By Lemma~\ref{lem:transform_schedule_approx_3}, we know that there exists a $B$-restricted schedule $\mx'$ such that $\costs(\mx')\le 3\costs(\mx)$. Thus, we can infer that
 \begin{equation*}
-	\costs(P)=\costs(\Phi(P))\le\costs(\mx')\le 3\costs(\mx)
+	\costs(P)=\costs\bigl(\Phi(P)\bigr)\le\costs(\mx')\le 3\costs(\mx)
 \end{equation*}
 and the claim follows.
 \end{proof}
-Again, it is not difficult to show that also shortest paths which are not reasonable can easily be transformed to a desired schedule.
+Again, it is not difficult to show that also shortest paths which are not reasonable can be easily transformed to a desired 3-optimal schedule.
 \begin{cor}\label{cor:opt_sched_short_path_pseudo_lin}
 Any shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to a 3-optimal, $B$-restricted schedule for $\inp$.
 \end{cor}
 \begin{proof}
-Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. Using a small adaption of Proposition~\ref{prop:path_to_reasn_path} that uses logarithmic instead of incremental switching steps, we can transform $P$ to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
+Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. Using a small adaption of Proposition~\ref{prop:path_to_reasn_path} that uses logarithmic instead of incremental switching steps\unsure{Is this okay?}, we can transform $P$ to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to a 3-optimal, $B$-restricted schedule $\mx$ with $\costs(\mx)=\costs(P')$ by Theorem~\ref{thm:approx_3}. Thus, we have $c(\mx)=c(P)$, and the claim follows.
 \end{proof}
 

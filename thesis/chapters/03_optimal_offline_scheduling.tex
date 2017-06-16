@@ -186,7 +186,7 @@ The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a qui
 
 Let us revise our initial approach. Our graph consists of nodes $v_{x,t}$, any of which represents the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all those nodes. Thus, for any node $v_{x,t}$, it returns the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tells us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following example:
 \begin{exmpl}
-Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances with $f(x)=x^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the graphs of the two problem instances and the corresponding calculations done by Algorithm~\ref{alg:opt_offline_pseudo_poly}.
+Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances where $f(x)=x^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the graphs of the two problem instances and the corresponding calculations done by Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 \begin{figure}[H]
 \centering
 \captionsetup[subfigure]{labelformat=empty}
