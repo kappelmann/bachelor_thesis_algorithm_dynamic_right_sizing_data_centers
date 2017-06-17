@@ -147,17 +147,33 @@ The nodes' and edges' semantical meaning and the graph's working principle stays
 
 First, we shall take a look on the incurring operating costs of an approxmative schedule $\mx'$ representable in $G$. Since we are forced to schedule a number of servers contained in $B$, we may not be able to choose an optimal scheduling choice that minimizes the schedule's operating costs. Consider the following example:
 \begin{exmpl}
-Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a problem instance where $f(x)=(x-1)^2$. Since we need at least 3 active servers at any timeslot, any approximative schedule $\mx'=(x_1',\ldots,x_5')$ forces us to constantly use 4 active machines. An optimal schedule $\mx=(x_1,\ldots,x_5)$, on the other hand, is able to minimize the costs by constantly scheduling 3 servers. Let us compare the approximation guarantee of $\mx'$. The schedules' costs are given by
+Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a problem instance where $f(\lambda)=(\lambda-1)^2$. Since we need at least 3 active servers at any timeslot, any approximative schedule $\mx'=(x_1',\ldots,x_5')$ forces us to constantly use 4 active machines. An optimal schedule $\mx=(x_1,\ldots,x_5)$, on the other hand, is able to minimize the costs by constantly scheduling 3 servers. Let us compare the approximation guarantee of $\mx'$. The schedules' costs are given by
 \begin{align*}
 	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(x_t'(\lambda_t/x_t'-1)^2+\beta\max\{0,x_t'-x_{t-1}'\}\bigr)=5\cdot4\Bigl(\frac{3}{4}-1\Bigr)^2=\frac{20}{16}\\
 	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(x_t(\lambda_t/x_t-1)^2+\beta\max\{0,x_t-x_{t-1}\}\bigr)=5\cdot4\Bigl(\frac{3}{3}-1\Bigr)^2=0
 \end{align*}
-Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation routine. Naturally, we may ask ourselves how this explosion of operating costs is even possible. 
+Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation routine. Naturally, we may ask ourselves how this explosion of operating costs is even possible. Let us take a look on the used operating costs function.
+\begin{figure}[H]
+\begin{tikzpicture}
+	\begin{axis}[every axis plot post/.append style={
+	    mark=none,domain=0:1,samples=15,smooth}, 
+	    xlabel=$\lambda$,
+	    ylabel=$f(\lambda)$,
+	    axis x line*=bottom,
+	    axis y line*=left,
+	    enlargelimits=upper,
+	    legend pos=outer north east
+	    ]
+	\addplot[thick, color=blue]{(x-1)^2}; 
+	\addlegendentry{$(\lambda-1)^2$}
+	\end{axis}
+\end{tikzpicture}
+\end{figure}
 \end{exmpl}
 
 One might suspect that we are able to obtain 2-optimal costs using our new graph. Sadly, this is not the case, as the next example will show us.
 \begin{exmpl}
-Let $\inp=\bigl(m=8,T=5,\Lambda=(5,3,5,3,5),\beta=1,f\bigr)$ be the input for a problem instance where $f(x)=1$. Our possible scheduling choices are then given by $B=\{0,1,2,4,8\}$. Since we need at least 5 active servers at timeslots $t\in\{1,3,5\}$, our approximation forces us to use 8 active servers at these slots. If we try to obtain a 2-optimal schedule, we are further forced to use 4 active servers at timeslots $t\in\{2,4\}$ since 
+Let $\inp=\bigl(m=8,T=5,\Lambda=(5,3,5,3,5),\beta=1,f\bigr)$ be the input for a problem instance where $f(\lambda)=1$. Our possible scheduling choices are then given by $B=\{0,1,2,4,8\}$. Since we need at least 5 active servers at timeslots $t\in\{1,3,5\}$, our approximation forces us to use 8 active servers at these slots. If we try to obtain a 2-optimal schedule, we are further forced to use 4 active servers at timeslots $t\in\{2,4\}$ since 
 \end{exmpl}
 
 TODO: examples for idea + monotonically increasing f.
