@@ -145,31 +145,42 @@ A more appealing, graphical representation can be found in the following figure.
 \end{figure}
 The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. Since some possible scheduling choices, however, are not representable in this new graph, we may just obtain approximative costs for our nodes. In order to establish the graph's approxmation guarantee, we first have to conduct some observations.
 
-First, we shall take a look on the incurring operating costs of an approxmative schedule $\mx'$ representable in $G$. Since we are forced to schedule a number of servers contained in $B$, we may not be able to choose an optimal scheduling choice that minimizes the schedule's operating costs. Consider the following example:
+First, we shall take a look on the incurring operating costs of an approxmative schedule $\mx'$ representable in $G$. Since we are forced to schedule a number of servers contained in $B$, we may not be able to choose an optimal scheduling choice that minimizes the schedule's operating costs. Instead, we may choose the nearest scheduling choice which is contained in $B$. For instance, if the optimal scheduling choice at some timeslot $t$ would be to choose $x_t=3$ servers (which is not a power of two), we may instead have to choose $x_t'=4\in B$ servers in our approximative schedule. One might suspect that this strategy would incur at most twice as much operating costs as the optimal schedule. This, however, is sadly not the case as one can see in the following example.
 \begin{exmpl}
-Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a problem instance where $f(\lambda)=(\lambda-1)^2$. Since we need at least 3 active servers at any timeslot, any approximative schedule $\mx'=(x_1',\ldots,x_5')$ forces us to constantly use 4 active machines. An optimal schedule $\mx=(x_1,\ldots,x_5)$, on the other hand, is able to minimize the costs by constantly scheduling 3 servers. Let us compare the approximation guarantee of $\mx'$. The schedules' costs are given by
+Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a problem instance where $f(\lambda)=(\lambda-1)^2$. Since we need at least 3 active servers at any timeslot, any approximative schedule $\mx'=(x_1',\ldots,x_5')$ forces us to constantly use $x_t'=4$ active machines. An optimal schedule $\mx=(x_1,\ldots,x_5)$, on the other hand, is able to minimize its costs by constantly scheduling $x_t=3$ servers. Let us compare the costs between $\mx'$ and $\mx$. The schedules' costs are given by
 \begin{align*}
-	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(x_t'(\lambda_t/x_t'-1)^2+\beta\max\{0,x_t'-x_{t-1}'\}\bigr)=5\cdot4\Bigl(\frac{3}{4}-1\Bigr)^2=\frac{20}{16}\\
-	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(x_t(\lambda_t/x_t-1)^2+\beta\max\{0,x_t-x_{t-1}\}\bigr)=5\cdot4\Bigl(\frac{3}{3}-1\Bigr)^2=0
+	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_t(\lambda_t/x_t-1)^2}^{3(3/3-1)^2}+\overbrace{\beta}^{0}\max\{0,x_t-x_{t-1}\}\bigr)=5\cdot3\Bigl(\frac{3}{3}-1\Bigr)^2=0\\
+	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_t'(\lambda_t/x_t'-1)^2}^{4(3/4-1)^2}+\overbrace{\beta}^{0}\max\{0,x_t'-x_{t-1}'\}\bigr)=5\cdot4\Bigl(\frac{3}{4}-1\Bigr)^2=\frac{20}{16} 
 \end{align*}
-Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation routine. Naturally, we may ask ourselves how this explosion of operating costs is even possible. Let us take a look on the used operating costs function.
+Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation estimation. Naturally, we may ask ourselves how this explosion of costs is even possible. Evidently, the switching costs are not the root of this explosion since $\beta=0$. Thus, we shall take a closer look on the used operating costs function. The optimal schedule $\mx$ evenly distributes every load $\lambda_t=3$ to $x_t=3$ servers. Hence, every active server has to process a load of $\frac{\lambda_t}{x_t}=1$ at every time step, incurring costs of $f(1)=0$. On the other hand, the approximative schedule $\mx'$ is able to distribute every load to 4 active machines. Thus, every machine incurs costs of $f(\frac{3}{4})=\frac{1}{16}$. This observation seems rather surprsing: Although every server has to process a smaller load using $\mx'$, the incurred operating costs of each server turn out to be higher. Intuitevly, however, we would expect that a less stressed machine would incur less costs. This surprising behavior is due to the fact that our operating costs function $f$ is not monotonically increasing, as one can see in the following figure.
 \begin{figure}[H]
+\centering
 \begin{tikzpicture}
-	\begin{axis}[every axis plot post/.append style={
-	    mark=none,domain=0:1,samples=15,smooth}, 
-	    xlabel=$\lambda$,
-	    ylabel=$f(\lambda)$,
-	    axis x line*=bottom,
-	    axis y line*=left,
+	\begin{axis}[grid=both,tick style={draw=none},every axis plot/.style={
+	    domain=0:1,samples=15,smooth,thick}, 
+	    xlabel=Load $\lambda$,
+	    ylabel=Operating costs,
 	    enlargelimits=upper,
 	    legend pos=outer north east
 	    ]
-	\addplot[thick, color=blue]{(x-1)^2}; 
-	\addlegendentry{$(\lambda-1)^2$}
+	\addplot[mark=none,color=black]{(x-1)^2}; 
+	\addlegendentry{$f(\lambda)$};
+	\addplot [only marks, mark=*,color=blue] coordinates {(0.75,0.0625)};
+	\addlegendentry{$f(\frac{3}{4})$};
+	\addplot [only marks, mark=*,color=red] coordinates {(1,0)};
+	\addlegendentry{$f(1)$};
 	\end{axis}
 \end{tikzpicture}
+\caption{Example of a non-monotonically increasing cost function $f(\lambda)=(\lambda-1)^2$, where smaller loads incur higher costs.}
+\label{fig:non_mono_incr_f}
 \end{figure}
 \end{exmpl}
+The above example shows us that our graph may not able to deliver a sensible approximation when dealing with general convex cost functions. However, this inconvenience can solved by using monotonically increasing convex cost functions $f$. To see this, assume that at some timeslot $t$ the scheduling choice $x_t$ minimizes the operating costs to process the load $\lambda_t$. Then let $x_t'\in B$ the next scheduling choice representable in $G$. Since $B$ contains all powers of 2, we have $x_t\le x_t'\le 2x_t$.
+\begin{equation*}
+	f(\lambda_t/x_t)\stackrel{\text{f monotone increasing}}{\le}f(\lambda_t/x_t')\
+\end{equation*}
+
+We thus subsequently restrict ourselves to monotonically increasing convex cost functions.
 
 One might suspect that we are able to obtain 2-optimal costs using our new graph. Sadly, this is not the case, as the next example will show us.
 \begin{exmpl}
