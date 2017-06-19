@@ -1,0 +1,22 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}
+	\begin{axis}[%
+	    xlabel=Time $t$,
+	    ylabel=Active servers,
+	    axis x line = bottom,axis y line = left,
+	    ytick={1,2,4,8,16},
+	    ymax=17, % or enlarge y limits=upper
+	    xmax=6.9,
+	    legend pos=outer north east
+	    ]
+	\addplot+[const plot, no marks, thick, color=blue] coordinates {(0,0) (1,16) (2,8) (3,16) (4,8) (5,16) (6,0) (6.5,0)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,1) (6.5,1)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,2) (6.5,2)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,4) (6.5,4)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,8) (6.5,8)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,16) (6.5,16)};
+	\end{axis}
+\end{tikzpicture}
+\end{document}

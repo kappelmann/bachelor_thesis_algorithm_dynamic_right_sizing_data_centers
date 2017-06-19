@@ -18,15 +18,15 @@ We assume that a sleeping server does not cause any costs. Note that $f(0)$ deno
 For convenience, we assume that all machines sleep at time $t=0$ and also force all machines to sleep after the scheduling process, that is at times $t>T$. Consequently, any server must power down exactly as many times as it powers on. This allows us to consolidate a machine's power-up and power-down costs into $\beta$ and to model both costs as being incurred when powering up a server; that is, a model with power-up costs $\beta_\uparrow$ and power-down costs $\beta_\downarrow$ can be simply transferred to our model by setting $\beta\coloneqq \beta_\uparrow'\coloneqq\beta_\uparrow+\beta_\downarrow$ and $\beta_\downarrow'\coloneqq0$. As a consequence, we expect that there are no loads at times $t\notin[T]$, that is $\lambda_t=\lambda_{i,t}=0$ for $t\notin[T]$.
 
 \section{Problem Statement}
-Using the above definitions, we can define the input of our model by setting $\inp\coloneqq(m,T,\Lambda,\beta,f)$ where $\Lambda=(\lambda_1,\ldots,\lambda_T)$ is the sequence of arrival rates. We will subsequently identify a problem instance by its input $\inp$. Naturally, given a problem instance $\inp$, we want to schedule our servers in such a way that we minimize the sum of incurred costs while ensuring that we process the given loads in time. For this, consider for each server $i\in[m]$ the sequence of its states $S_i$ and the sequence of its assigned loads $L_i$:
+Using the above definitions, we can define the input of our model by setting $\inp\coloneqq(m,T,\Lambda,\beta,f)$ where $\Lambda=(\lambda_1,\dotsc,\lambda_T)$ is the sequence of arrival rates. We will subsequently identify a problem instance by its input $\inp$. Naturally, given a problem instance $\inp$, we want to schedule our servers in such a way that we minimize the sum of incurred costs while ensuring that we process the given loads in time. For this, consider for each server $i\in[m]$ the sequence of its states $S_i$ and the sequence of its assigned loads $L_i$:
 \begin{align*}
-	S_i&\coloneqq(s_{i,1},\ldots,s_{i,T})\in\{0,1\}^T\\
-	L_i&\coloneqq(\lambda_{i,1},\ldots,\lambda_{i,T})\in[0,1]^T
+	S_i&\coloneqq(s_{i,1},\dotsc,s_{i,T})\in\{0,1\}^T\\
+	L_i&\coloneqq(\lambda_{i,1},\dotsc,\lambda_{i,T})\in[0,1]^T
 \end{align*}
 where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0) or active (1). Recall that we assume all machines are sleeping at times $t\notin[T]$; thus, for $t\notin[T]$ and $i\in[m]$, we have $s_{i,t}=0$. We can now define the sequence of all state changes and the sequence of all assigned loads:
 \begin{align*}
-	\mathcal{S}&\coloneqq(S_1,\ldots,S_m)\\
-	\mathcal{L}&\coloneqq(L_1,\ldots,L_m)
+	\mathcal{S}&\coloneqq(S_1,\dotsc,S_m)\\
+	\mathcal{L}&\coloneqq(L_1,\dotsc,L_m)
 \end{align*}
 We will subsequently call a pair $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$ a \textit{schedule}. Finally, we are ready to define our problem statement. Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies the following optimization:
 \begin{align}

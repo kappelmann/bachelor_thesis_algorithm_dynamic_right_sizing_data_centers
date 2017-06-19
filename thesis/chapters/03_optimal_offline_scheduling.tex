@@ -16,72 +16,11 @@ Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that t
 \end{align*}
 For any possible number of active servers $x$ and any time slot $t$, we add a node $v_{x,t}$. Moreover, we add a start node $v_{0,0}$ as well as an end node $v_{0,T+1}$. Next, we connect all nodes to their successors with respect to time. Semantically, $v_{x,t}$ denotes the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. For any edge connecting $v_{x,t}$ with $v_{x',t+1}$, we assign costs $\costs(x,x',\lambda_{t+1})$, that is the edge's cost corresponds to switching from $x$ to $x'$ machines and processing the load $\lambda_{t+1}$ with $x'$ machines. A graphical representation can be found in the following figure.
 \begin{figure}[H]
-\centering
-\resizebox{\textwidth}{!}{
-\begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
-
-  \node[node] (1) {0,0};
-  \node[node] (4) [below right =of 1] {0,1};
-  \node[node] (3) [above =0.5cm of 4] {1,1};
-  \node[node] (2) [above right=of 1] {m,1};
-  \node[node] (6) [right =of 3] {1,2};
-  \node[node] (5) [right =of 2] {m,2};
-  \node[node] (7) [right =of 4] {0,2};
-  \node[node] (9) [right =of 6] {1,T};
-  \node[node] (8) [right =of 5] {m,T};
-  \node[node] (10) [right =of 7] {0,T};
-  \node[node] (11) [above right =of 10] {0,T+1};
-
-  \node at ($(5)!.4!(8)$) {\ldots};
-  \node (12) at ($(6)!.4!(9)$) {\ldots};
-  \node at ($(7)!.4!(10)$) {\ldots};
-  \node [above=1.72cm of 12]{\ldots};
-
-  \node at ($(2)!.5!(3)$) {\vdots};
-  \node at ($(2)!.5!(6)$) {\vdots};
-  \node at ($(5)!.5!(6)$) {\vdots};
-  \node at ($(8)!.5!(9)$) {\vdots};
-
-  \path[every node/.style={font=\sffamily\small}]
-    (1) edge node[above left] {$\costs(0,m,\lambda_1)$} (2)
-	edge node[above right=-0.15cm] {$\costs(0,1,\lambda_1)$} (3)
-	edge node[below left] {$\costs(0,0,\lambda_1)$} (4)
-    (2) edge node[above] {$\costs(m,m,\lambda_2)$} (5)
-    (3) edge (6)
-	edge (7)
-    (4) edge (6)
-	edge node[below] {$\costs(0,0,\lambda_2)$} (7)
-    (8) edge node[above right=-0.15cm] {$0=\costs(m,0,\overbrace{\lambda_{T+1}}^{0})$} (11)
-    (9) edge node[above] {$0$} (11)
-    (10) edge node[above] {$0$} (11)
-
-    (1) edge ($(1)!.2!(8)$)
-    (2) edge ($(2)!.4!(6)$)
-    (4) edge ($(4)!.4!(5)$)
-    (3) edge ($(3)!.4!(5)$)
-    ($(3)!.6!(5)$) edge (5)
-    ($(2)!.6!(6)$) edge (6)
-    ($(2)!.6!(7)$) edge (7)
-
-    ($(6)!.6!(8)$) edge (8)
-    ($(5)!.6!(8)$) edge (8)
-
-    ($(5)!.6!(9)$) edge (9)
-    ($(6)!.6!(9)$) edge (9)
-    ($(7)!.6!(9)$) edge (9)
-
-    ($(5)!.6!(10)$) edge (10)
-    ($(6)!.6!(10)$) edge (10)
-    ($(7)!.6!(10)$) edge (10)
-
-    ($(2)!.8!(11)$) edge node[above] {$0$} (11);
-
-\end{tikzpicture}
-}
+\includestandalone[width=\textwidth]{../figures/graph_pseudo_poly}
 \caption{Level structured graph for a pseudo-polynomial, optimal offline algorithm}
 \label{fig:graph_pseudo_poly}
 \end{figure}
-As we can see in Figure~\ref{fig:graph_pseudo_poly}, the cost of a path $P=(v_{0,0},v_{x_1,1},\ldots,v_{x_T,T},v_{0,T+1})$ from our start node $v_{0,0}$ to our end node $v_{0,T+1}$ is given by 
+As we can see in Figure~\ref{fig:graph_pseudo_poly}, the cost of a path $P=(v_{0,0},v_{x_1,1},\dotsc,v_{x_T,T},v_{0,T+1})$ from our start node $v_{0,0}$ to our end node $v_{0,T+1}$ is given by 
 \begin{equation}
 	\costs(P)=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})+\overbrace{\costs(x_T,0,0)}^{0}=\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_{t})\label{eq:v0_VT1_path_costs}
 \end{equation}
@@ -90,18 +29,18 @@ Any shortest path from $v_{0,0}$ to $v_{0,T+1}$ is thus forced to minimize the c
 \begin{lem}\label{lem:sched_path_pseudo_poly}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ the set of all paths from $v_{0,0}$ to $v_{0,T+1}$. The map
 \begin{equation*}
-	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad (v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})\mapsto (x_1,\ldots,x_T)
+	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad (v_{0,0},v_{x_1,1},v_{x_2,2},\dotsc,v_{x_T,T},v_{0,T+1})\mapsto (x_1,\dotsc,x_T)
 \end{equation*}
 is a bijection with inverse map
 \begin{equation*}
-	\Psi:\bm{\mx}\rightarrow\bm{\mathcal{P}},\quad(x_1,\ldots,x_T)\mapsto (v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})
+	\Psi:\bm{\mx}\rightarrow\bm{\mathcal{P}},\quad(x_1,\dotsc,x_T)\mapsto (v_{0,0},v_{x_1,1},v_{x_2,2},\dotsc,v_{x_T,T},v_{0,T+1})
 \end{equation*}
 satisfying $\costs(\mx)=\costs\bigl(\Psi(\mx)\bigr)$.
 \end{lem}
 \begin{proof}
-It is easy to check that $\Psi\circ\Phi=id_{\bm{\mathcal{P}}}$ and $\Phi\circ\Psi=id_{\bm{\mx}}$ (the functions merely extract and embed the states $x_t$). Thus, $\Phi$ is indeed bijective with inverse map $\Psi$. Next, let $\mx=(x_1,\ldots,x_T)$ be a schedule for $\inp$. We have
+It is easy to check that $\Psi\circ\Phi=id_{\bm{\mathcal{P}}}$ and $\Phi\circ\Psi=id_{\bm{\mx}}$ (the functions merely extract and embed the states $x_t$). Thus, $\Phi$ is indeed bijective with inverse map $\Psi$. Next, let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We have
 \begin{equation*}
-	P\coloneqq\Psi(\mx)=(v_{0,0},v_{x_1,1},v_{x_2,2},\ldots,v_{x_T,T},v_{0,T+1})
+	P\coloneqq\Psi(\mx)=(v_{0,0},v_{x_1,1},v_{x_2,2},\dotsc,v_{x_T,T},v_{0,T+1})
 \end{equation*}
 We examine the cost of $\mx$ and conclude
 \begin{equation*}
@@ -137,7 +76,7 @@ We split our procedure into two subroutines.
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
 	\LineCommentFunc{Allocate nodes' costs and predecessors tables}
-	\Blet{$C[0\ldots m,1\ldots T]$ and $P[0\ldots m,1\ldots T]$}{new tables}
+	\Blet{$C[0\dotso m,1\dotso T]$ and $P[0\dotso m,1\dotso T]$}{new tables}
 	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialize first layer}
 		\Let{$P[x,1]$}{$0$ and $C[x,1]\gets\costs(0,x,\lambda_1)$}
 	\EndFor
@@ -158,7 +97,6 @@ We split our procedure into two subroutines.
 	\EndFor
 	\State \Return{$\mx$}
   \EndFunction
-
   \end{algorithmic}
 \label{alg:opt_offline_pseudo_poly}
 \end{algorithm}
@@ -173,7 +111,7 @@ For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\be
 	&\in\Theta\bigl(\log_2(m)+\log_2(T)+\log_2(\beta)\bigr)+\mathcal{O}\bigl(T\log_2(m)\bigr)\nonumber\\
 	&\in\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)\label{eq:inp_size}
 \end{align}
-For our runtime analysis, we assume that calling the costs function $\costs(\cdot,\cdot,\cdot)$ has constant cost. Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialization and $\Theta(Tm^2)$ steps for the iterative calculation. In addition, \textproc{extract\_schedule} needs $\Theta(m)$ steps for its initial minimization search and $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
+For our runtime analysis, we assume that calling the costs function $\costs(\cdot,\cdot,\cdot)$ incurs constant cost. Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialization and $\Theta(Tm^2)$ steps for the iterative calculation. In addition, \textproc{extract\_schedule} needs $\Theta(m)$ steps for its initial minimization search and $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
 \begin{equation*}
 	\Theta(m+Tm^2+m+T)=\Theta(Tm^2)
 \end{equation*}
@@ -188,53 +126,14 @@ Let us revise our initial approach. Our graph consists of nodes $v_{x,t}$, any o
 \begin{exmpl}
 Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instances where $f(\lambda)=\lambda^2+1$, $\Lambda_1=(1,0)$, and $\Lambda_2=(0,1)$. Below we illustrate the graphs of the two problem instances and the corresponding calculations done by Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 \begin{figure}[H]
-\centering
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.49\textwidth}
-\resizebox{1\textwidth}{!}{
-  \begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1cm,circle,draw}]
-  \node[node, label={[color=red]$0$}] (1) {0,0};
-  \node[node, label={[below=1.05cm,color=red]$\infty$}] (2) [below right =of 1] {0,1};
-  \node[node, label={[color=red]$3$}] (3) [above right=of 1] {1,1};
-  \node[node, label={[below=1.05cm,color=red]$3$}] (4) [right =of 2] {0,2};
-  \node[node, label={[color=red]$4$}] (5) [right =of 3] {1,2};
-  \node[node, label={[color=red]$3$}] (6) [below right =of 5] {0,3};
-
-  \path[every node/.style={font=\sffamily\small}]
-    (1) edge node[below left] {$\infty$} (2)
-	edge node[above left] {$3$} (3)
-    (2) edge node[below] {$0$} (4)
-    (2) edge node[label={[xshift=0.88cm, yshift=0.9cm]$2$}] {} (5)
-    (3) edge node[label={[xshift=0.55cm, yshift=-1.82cm]$0$}] {} (4)
-    (3) edge node[above] {$1$} (5)
-    (4) edge node[below right] {$0$} (6)
-    (5) edge node[above right] {$0$} (6)
-    (3) edge[dashed] node[left] {$0$} (2);
-  \end{tikzpicture}}
+\includestandalone[width=\textwidth]{../figures/graph_pseudo_poly_shortcome_1}
 \caption{\underline{Problem $\inp_1$:} State $v_{0,1}$ could be reached with cost $3$ by moving down from node $v_{1,1}$.}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.49\textwidth}
-\resizebox{1\textwidth}{!}{
-  \begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1cm,circle,draw}]
-  \node[node, label={[color=red]$0$}] (1) {0,0};
-  \node[node, label={[below=1.05cm,color=red]$0$}] (2) [below right =of 1] {0,1};
-  \node[node, label={[color=red]$2$}] (3) [above right=of 1] {1,1};
-  \node[node, label={[below=1.05cm,color=red]$\infty$}] (4) [right =of 2] {0,2};
-  \node[node, label={[color=red]$3$}] (5) [right =of 3] {1,2};
-  \node[node, label={[color=red]$3$}] (6) [below right =of 5] {0,3};
-
-  \path[every node/.style={font=\sffamily\small}]
-    (1) edge node[below left] {$0$} (2)
-	edge node[above left] {$2$} (3)
-    (2) edge node[below] {$\infty$} (4)
-    (2) edge node[label={[xshift=0.88cm, yshift=0.9cm]$3$}] {} (5)
-    (3) edge node[label={[xshift=0.55cm, yshift=-1.82cm]$\infty$}] {} (4)
-    (3) edge node[above] {$2$} (5)
-    (4) edge node[below right] {$0$} (6)
-    (5) edge node[above right] {$0$} (6)
-    (2) edge[dashed] node[left] {$1=\beta$} (3);
-  \end{tikzpicture}}
+\includestandalone[width=\textwidth]{../figures/graph_pseudo_poly_shortcome_2}
 \caption{\underline{Problem $\inp_2$:} State $v_{1,1}$ could be reached with cost $1$ by moving up from $v_{0,1}$.}
 \end{subfigure}
 \caption{Two examples depicting a shortcoming of our initial approach. The calculated nodes' costs are highlighted in red. Dashed edges are not part of Algorithm~\ref{alg:opt_offline_pseudo_poly}.}
@@ -260,110 +159,7 @@ Although our algorithm delivers the correct end results, its immediate steps are
 \end{align*}
 A more appealing, graphical representation can be found in the following figure.
 \begin{figure}[H]
-\centering
-\resizebox{\textwidth}{!}{
-\begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.5cm,circle,draw}]
-  \node[node] (1) {0,0};
-  \node[node] (4) [below right=4cm of 1] {0,1$\downarrow$};
-  \node[node] (3) [above =0.5cm of 4] {1,1$\downarrow$};
-  \node[node] (2) [above right=4cm of 1] {m,1$\downarrow$};
-  \node[node] (5) [below =0.5cm of 2] {m-1,1$\downarrow$};
-  \node[node] (7) [right =of 3] {1,1$\uparrow$};
-  \node[node] (6) [right =of 2] {m,1$\uparrow$};
-  \node[node] (8) [right =of 4] {0,1$\uparrow$};
-  \node[node] (9) [right =of 5] {m-1,1$\uparrow$};
-  \node[node] (11) [right =of 7] {1,2$\downarrow$};
-  \node[node] (10) [right =of 6] {m,2$\downarrow$};
-  \node[node] (12) [right =of 8] {0,2$\downarrow$};
-  \node[node] (13) [right =of 9] {m-1,2$\downarrow$};
-  \node[node] (15) [right =of 11] {1,2$\uparrow$};
-  \node[node] (14) [right =of 10] {m,2$\uparrow$};
-  \node[node] (16) [right =of 12] {0,2$\uparrow$};
-  \node[node] (17) [right =of 13] {m-1,2$\uparrow$};
-  \node[node] (19) [right =5cm of 15] {1,T$\downarrow$};
-  \node[node] (18) [right =5cm of 14] {m,T$\downarrow$};
-  \node[node] (20) [right =5cm of 16] {0,T$\downarrow$};
-  \node[node] (21) [right =5cm of 17] {m-1,T$\downarrow$};
-
-  \node (22) at ($(2)!.5!(4)$) {};
-  \node (23) at ($(2)!.487!(4)$) {\vdots};
-  \node (24) at ($(6)!.487!(8)$) {\vdots};
-  \node (25) at ($(10)!.487!(12)$) {\vdots};
-  \node (26) at ($(14)!.487!(16)$) {\vdots};
-  \node at ($(18)!.487!(20)$) {\vdots};
-  \node at ($(23)!.487!(24)$) {\vdots};
-  \node at ($(24)!.487!(25)$) {\vdots};
-  \node at ($(25)!.487!(26)$) {\vdots};
-
-  \node (27) at ($(14)!.5!(18)$) {\ldots};
-  \node at ($(15)!.5!(19)$) {\ldots};
-  \node (28) at ($(16)!.5!(20)$) {\ldots};
-  \node at ($(17)!.5!(21)$) {\ldots};
-  \node at ($(27)!.5!(28)$) {\ldots};
-
-  \path[every node/.style={font=\sffamily\small}]
-    (1) edge[red] node[black,above left] {$\costs(0,m,\lambda_1)$} (2)
-	edge node[label={[xshift=0.8cm, yshift=-0.9cm]$\costs(0,m-1,\lambda_1)$}] {} (5)
-	edge node[above right=-0.13cm] {$\costs(0,1,\lambda_1)$} (3)
-	edge node[below left] {$\costs(0,0,\lambda_1)$} (4)
-    (1) edge ($(1)!.82!(22)$)
-
-    (2) edge node[above] {$0$} (6)
-    (3) edge node[above] {$0$} (7)
-    (4) edge[red] node[black,above] {$0$} (8)
-    (5) edge node[above] {$0$} (9)
-
-    (2) edge[red] node[black,right] {$0$} (5)
-    (3) edge[red] node[black,right] {$0$} (4)
-
-    (9) edge[red] node[black,right] {$\beta$} (6)
-    (8) edge[red] node[black,right] {$\beta$} (7)
-
-    (6) edge[red] node[black,above] {$\opcosts(m,\lambda_2)$} (10)
-    (7) edge node[above] {$\opcosts(1,\lambda_2)$} (11)
-    (8) edge node[above] {$\opcosts(0,\lambda_2)$} (12)
-    (9) edge node[above] {$\opcosts(m-1,\lambda_2)$} (13)
-
-    (10) edge node[above] {$0$} (14)
-    (11) edge node[above] {$0$} (15)
-    (12) edge[red] node[black,above] {$0$} (16)
-    (13) edge node[above] {$0$} (17)
-
-    (10) edge[red] node[black,right] {$0$} (13)
-    (11) edge[red] node[black,right] {$0$} (12)
-
-    (17) edge[red] node[black,right] {$\beta$} (14)
-    (16) edge[red] node[black,right] {$\beta$} (15)
-
-    (5) edge[red] node[black,right] {$0$} ($(5)!.35!(3)$)
-    ($(5)!.65!(3)$) edge[red] node[black,right] {$0$} (3)
-
-    ($(7)!.65!(9)$) edge[red] node[black,right] {$\beta$} (9)
-    (7) edge[red] node[black,right] {$\beta$} ($(7)!.35!(9)$)
- 
-    (13) edge[red] node[black,right] {$0$} ($(13)!.35!(11)$)
-    ($(13)!.65!(11)$) edge[red] node[black,right] {$0$} (11)
-
-    ($(15)!.65!(17)$) edge[red] node[black,right] {$\beta$} (17)
-    (15) edge[red] node[black,right] {$\beta$} ($(15)!.35!(17)$)
-
-
-    (14) edge[red] node[label={[black,xshift=0cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
-    (15) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(1,\lambda_3)$}] {} ($(15)!.4!(19)$)
-    (16) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
-    (17) edge node[label={[xshift=0.3cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_3)$}] {} ($(17)!.4!(21)$)
-
-    ($(14)!.6!(18)$) edge[red] node[black,above] {$\opcosts(m,\lambda_T)$} (18)
-    ($(15)!.6!(19)$) edge node[above] {$\opcosts(1,\lambda_T)$} (19)
-    ($(16)!.6!(20)$) edge node[above] {$\opcosts(0,\lambda_T)$} (20)
-    ($(17)!.6!(21)$) edge node[label={[xshift=-0.2cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_T)$}] {} (21)
-
-    (18) edge[red] node[black,right] {$0$} (21)
-    (19) edge[red] node[black,right] {$0$} (20)
-    (21) edge[red] node[black,right] {$0$} ($(21)!.35!(19)$)
-    ($(21)!.65!(19)$) edge[red] node[black,right] {$0$} (19);
-\end{tikzpicture}
-}
+\includestandalone[width=\textwidth]{../figures/graph_pseudo_lin}
 \caption{Graph for a pseudo-linear, optimal offline algorithm; the path of the topological sorting is highlighted in red.}
 \label{fig:graph_pseudo_lin}
 \end{figure}
@@ -371,7 +167,7 @@ For any possible number of active servers $x$ and any time slot $t$, we add a no
 
 The set of edges $E_s$ denotes the start initialization step. An edge $(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$ accounts for the operating costs that incur when processing the arrival rate $\lambda_{t+1}$ with $x$ active servers.
 
-After any time step from $t-1$ to $t$ that incurs operating costs, we have a minimization step in our graph. For this, we first move down the chain $v_{m,t\downarrow},v_{m-1,t\downarrow},\ldots,v_{0,t\downarrow}$ using edges from $E_\downarrow$ with cost $0$. Then we proceed to move to the right from $v_{0,t\downarrow}$ to $v_{0,t\uparrow}$. Lastly, we move up the chain $v_{0,t\uparrow},v_{1,t\uparrow},\ldots,v_{m,t\uparrow}$ using edges from $E_\uparrow$ with cost $\beta$. In order to have the possibility to keep the calculated costs of $v_{x,t\downarrow}$ while moving up, we add edges $(v_{x,t\downarrow},v_{x,t\uparrow})\in E_{\downarrow\uparrow}$ with cost $0$.  
+After any time step from $t-1$ to $t$ that incurs operating costs, we have a minimization step in our graph. For this, we first move down the chain $v_{m,t\downarrow},v_{m-1,t\downarrow},\dotsc,v_{0,t\downarrow}$ using edges from $E_\downarrow$ with cost $0$. Then we proceed to move to the right from $v_{0,t\downarrow}$ to $v_{0,t\uparrow}$. Lastly, we move up the chain $v_{0,t\uparrow},v_{1,t\uparrow},\dotsc,v_{m,t\uparrow}$ using edges from $E_\uparrow$ with cost $\beta$. In order to have the possibility to keep the calculated costs of $v_{x,t\downarrow}$ while moving up, we add edges $(v_{x,t\downarrow},v_{x,t\uparrow})\in E_{\downarrow\uparrow}$ with cost $0$.  
 This minimization step is the key to our runtime improvement. It facilitates the determination of the best predecessor of a state $v_{x,t\downarrow}$ since we already know that the minimum cost of having $x$ servers at the end of time slot $t-1$ is stored in $v_{x,t-1\uparrow}$. Thus, the cheapest possibility to process the next arrival rate $\lambda_t$ using $x$ servers can simply be calculated by adding $\opcosts(x,\lambda_t)$ to the cost of $v_{x,t-1\uparrow}$. Consequently, the cost of $v_{x,t\downarrow}$ is given by the minimum of $v_{x,t-1\uparrow}+\opcosts(x,\lambda_t)$ and $v_{x+1,\downarrow}$.
 
 As one can see in Figure~\ref{fig:graph_pseudo_lin}, we stretched our graph but at the same time also greatly reduced the number of edges compared to our initial approach in Section~\ref{sec:opt_offline_pseudo_poly}. By following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. The cost of our destination $v_{0,T\downarrow}$ will denote the minimum cost up to time slot $T$ when processing $\lambda_T$ with 0 or more servers. Hence, it will contain our desired end result -- the minimum cost of all possible schedules.
@@ -379,11 +175,11 @@ As one can see in Figure~\ref{fig:graph_pseudo_lin}, we stretched our graph but 
 Our next task shall be the verification of our new construction. We first examine the possible paths from $v_{0,0}$ to $v_{0,T\downarrow}$ in our graph.
 In contrast to our approach in Section~\ref{sec:opt_offline_pseudo_poly}, our new graph contains paths that do not directly correspond to a schedule $\mx$. For example, consider the following path:
 \begin{equation*}
-	P\coloneqq(v_{0,0},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T\downarrow})
+	P\coloneqq(v_{0,0},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\dotsc,v_{0,T\downarrow})
 \end{equation*}
 A schedule corresponding to $P$ would use one active server in its first time slot, then power down this server, and subsequently turn on two servers to process the next arrival rate. This seems unreasonable. We could just keep the initial server on to save switching costs (note the correspondence to Proposition~\ref{prop:reasonable_switching}). In fact, this behavior cannot even be represented using our schedule notation $\mx$ and optimization condition~\eqref{eq:mx_schedule_total_costs}. We can, however, modify $P$ to represent a more reasonable sequence, that is we set
 \begin{equation*}
-	P'\coloneqq(v_{0,0},v_{1,1\downarrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\ldots,v_{0,T\downarrow})
+	P'\coloneqq(v_{0,0},v_{1,1\downarrow},v_{1,1\uparrow},v_{2,1\uparrow},v_{2,2\downarrow},\dotsc,v_{0,T\downarrow})
 \end{equation*}
 This revised path pleasantly translates to a schedule $\mx$, in this case $\mx=(1,2,\ldots)$. We now want to give a more formal definition of our observation.
 \begin{defn}[Reasonable paths]\label{defn_reasn_paths}
@@ -405,13 +201,13 @@ Let $t\in[T-1]$ be the first time slot that falsifies~\eqref{eq:reasn_path}. If 
 	x_s\coloneqq&\max\bigl\{x\in[m]\mid (v_{x,t\downarrow},v_{x-1,t\downarrow})\in E_\downarrow^t\bigr\}\\
 	x_e\coloneqq&\max\bigl\{x\in[m]\mid (v_{x-1,t\uparrow},v_{x,t\uparrow})\in E_\uparrow^t\bigr\}
 \end{align*}
-Next, consider the subpath $S=(v_{x_s,t\downarrow},\ldots,v_{x_e,t\uparrow})$ of $P$. Note that the subpath in particular uses all edges from $E_\downarrow^t$ and $E_\uparrow^t$.
+Next, consider the subpath $S=(v_{x_s,t\downarrow},\dotsc,v_{x_e,t\uparrow})$ of $P$. Note that the subpath in particular uses all edges from $E_\downarrow^t$ and $E_\uparrow^t$.
 Naturally, a most cost-efficient path $S'$ from node $v_{x_s,t\downarrow}$ to $v_{x_e,t\uparrow}$ minimizes the number of edges $(v_{x,t\uparrow},v_{x+1,t\uparrow})$ since each of these edges incurs cost $\beta\ge 0$. For the construction of $S'$, we observe that we must not shut down servers if $x_s\le x_e$, and that we must not power on servers if $x_s\ge x_e$; we thus consider three cases for $S'$:
 \begin{equation*}
 	S'\coloneqq
 	\begin{cases}
-		(v_{x_s,t\downarrow},v_{x_s,t\uparrow},v_{x_s+1,t\uparrow},\ldots,v_{x_e,t\uparrow}), & \text{if $x_s< x_e$}\\
-		(v_{x_s,t\downarrow},v_{x_s-1,t\downarrow},\ldots,v_{x_e,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s>x_e$}\\
+		(v_{x_s,t\downarrow},v_{x_s,t\uparrow},v_{x_s+1,t\uparrow},\dotsc,v_{x_e,t\uparrow}), & \text{if $x_s< x_e$}\\
+		(v_{x_s,t\downarrow},v_{x_s-1,t\downarrow},\dotsc,v_{x_e,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s>x_e$}\\
 		(v_{x_s,t\downarrow},v_{x_e,t\uparrow}), & \text{if $x_s=x_e$}
 	\end{cases}
 \end{equation*}
@@ -427,77 +223,7 @@ Let $\inp=\bigl(m=3,T=3,\Lambda=(3,0,1),\beta,f\bigr)$ be the input for a proble
 \end{align*}
 A schedule corresponding to $P$ would use three active server in its first time slot, then power down all servers for the second time slot, and ultimately power on one server to process the last arrival rate; that is, the corresponding schedule of $P$ is $\mx=(3,0,1)$. This sequence also corresponds to the sequence of ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$, as can be seen in the following figure.
 \begin{figure}[H]
-\centering
-\resizebox{\textwidth}{!}{
-\begin{tikzpicture}[->,>=stealth',auto,node distance=2cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
-  \node[node] (1) {0,0};
-  \node[node] (4) [below right=3.5cm of 1] {0,1$\downarrow$};
-  \node[node] (3) [above =1cm of 4] {1,1$\downarrow$};
-  \node[node,draw=blue] (2) [above right=3.5cm of 1] {3,1$\downarrow$};
-  \node[node] (5) [below =1cm of 2] {2,1$\downarrow$};
-  \node[node] (7) [right =of 3] {1,1$\uparrow$};
-  \node[node] (6) [right =of 2] {3,1$\uparrow$};
-  \node[node] (8) [right =of 4] {0,1$\uparrow$};
-  \node[node] (9) [right =of 5] {2,1$\uparrow$};
-  \node[node] (11) [right =of 7] {1,2$\downarrow$};
-  \node[node] (10) [right =of 6] {3,2$\downarrow$};
-  \node[node,draw=blue] (12) [right =of 8] {0,2$\downarrow$};
-  \node[node] (13) [right =of 9] {2,2$\downarrow$};
-  \node[node] (15) [right =of 11] {1,2$\uparrow$};
-  \node[node] (14) [right =of 10] {3,2$\uparrow$};
-  \node[node] (16) [right =of 12] {0,2$\uparrow$};
-  \node[node] (17) [right =of 13] {2,2$\uparrow$};
-  \node[node,draw=blue] (19) [right =of 15] {1,3$\downarrow$};
-  \node[node] (18) [right =of 14] {3,3$\downarrow$};
-  \node[node] (20) [right =of 16] {0,3$\downarrow$};
-  \node[node] (21) [right =of 17] {2,3$\downarrow$};
-
-  \path[every node/.style={font=\sffamily\small}]
-    (1) edge[red] node[black, above left] {$\costs(0,3,3)$} (2)
-	edge node[label={[xshift=0.4cm, yshift=-0.1cm]$\costs(0,2,3)$}] {} (5)
-	edge node[label={[xshift=0.14cm, yshift=-0.25cm]$\costs(0,1,3)$}] {} (3)
-	edge node[below left] {$\costs(0,0,3)$} (4)
-
-    (2) edge node[above] {$0$} (6)
-    (3) edge node[above] {$0$} (7)
-    (4) edge[red] node[black,above] {$0$} (8)
-    (5) edge node[above] {$0$} (9)
-
-    (2) edge[red] node[black,right] {$0$} (5)
-    (3) edge[red] node[black,right] {$0$} (4)
-    (5) edge[red] node[black,right] {$0$} (3)
-
-    (9) edge node[right] {$\beta$} (6)
-    (8) edge node[right] {$\beta$} (7)
-    (7) edge node[right] {$\beta$} (9)
-
-    (6) edge node[above] {$\opcosts(3,1)$} (10)
-    (7) edge node[above] {$\opcosts(1,1)$} (11)
-    (8) edge[red] node[black,above] {$\opcosts(0,1)$} (12)
-    (9) edge node[above] {$\opcosts(2,1)$} (13)
-
-    (10) edge node[above] {$0$} (14)
-    (11) edge node[above] {$0$} (15)
-    (12) edge[red] node[black,above] {$0$} (16)
-    (13) edge node[above] {$0$} (17)
-
-    (10) edge node[right] {$0$} (13)
-    (11) edge node[right] {$0$} (12)
-    (13) edge node[right] {$0$} (11)
-
-    (17) edge node[right] {$\beta$} (14)
-    (16) edge[red] node[black,right] {$\beta$} (15)
-    (15) edge node[right] {$\beta$} (17)
-
-    (14) edge node[above] {$\opcosts(3,2)$} (18)
-    (15) edge[red] node[black,above] {$\opcosts(1,2)$} (19)
-    (16) edge node[above] {$\opcosts(0,2)$} (20)
-    (17) edge node[above] {$\opcosts(2,2)$} (21)
-
-    (18) edge node[right] {$0$} (21)
-    (19) edge[red] node[black,right] {$0$} (20)
-    (21) edge node[right] {$0$} (19);
-\end{tikzpicture}}
+\includestandalone[width=\textwidth]{../figures/graph_pseudo_lin_example_max_nodes}
 \caption{Illustration of the path $P$. The path is highlighted in red. The ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$ are highlighted in blue.}
 \end{figure}
 Conversely, given the schedule $\mx=(3,0,1)$, is can easily be seen that there exists only one reasonable path corresponding to $\mx$, namely $P$.
@@ -509,11 +235,11 @@ Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set
 	x_t\coloneqq\max\bigl\{x\mid v_{x,t\downarrow}\in V_\downarrow^t\bigr\}
 \end{equation*}
 \end{defn}
-Remember that a schedule $\mx=(x_1,\ldots,x_T)$ also uses the notation $x_t$ to identify the number of active severs at time $t$. Needless to say, this clash of names is intentional and justified by the next lemma.
+Remember that a schedule $\mx=(x_1,\dotsc,x_T)$ also uses the notation $x_t$ to identify the number of active severs at time $t$. Needless to say, this clash of names is intentional and justified by the next lemma.
 \begin{lem}\label{lem:sched_reasn_path_pseudo_lin}
 Let $\bm{\mx}$ be the set of all schedules $\mx$ for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
 \begin{equation*}
-	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\ldots,x_T)
+	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\dotsc,x_T)
 \end{equation*}
 is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
 \end{lem}
@@ -522,22 +248,22 @@ First, we check that $\Phi$ is bijective, that is $\Phi$ is injective and surjec
 
 Let $P$ and $P'$ be reasonable paths with $\Phi(P)=\Phi(P')$. Then $P$ as well as $P'$ must start with the edge $(v_{0,0},v_{x_1,1\downarrow})$. As $P$ and $P'$ are reasonable, they both satisfy $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for each time slot $t$. Due to this restriction, their paths between $v_{x_t,t\downarrow}$ and $v_{x_{t+1},t+1\downarrow}$ must coincide for $t\in[T-1]$. Further, the path from $v_{x_T,T}$ to $v_{0,T}$ is unique in our graph. Thus, we conclude $P=P'$, which shows the injectivity of $\Phi$.
 
-Next, let $\mx=(x_1,\ldots,x_T)\in\bm{\mx}$ be a schedule for $\inp$. For any $t\in[T-1]$, we set
+Next, let $\mx=(x_1,\dotsc,x_T)\in\bm{\mx}$ be a schedule for $\inp$. For any $t\in[T-1]$, we set
 \begin{equation*}
 	S_t\coloneqq
 	\begin{cases}
-		(v_{x_t,t\downarrow},v_{x_t,t\uparrow},v_{x_t+1,t\uparrow},\ldots,v_{x_{t+1},t\uparrow}), & \text{if $x_t<x_{t+1}$}\\
-		(v_{x_t,t\downarrow},v_{x_t-1,t\downarrow},\ldots,v_{x_{t+1},t\downarrow},v_{x_{t+1},t\uparrow}), & \text{if $x_t>x_{t+1}$}\\
+		(v_{x_t,t\downarrow},v_{x_t,t\uparrow},v_{x_t+1,t\uparrow},\dotsc,v_{x_{t+1},t\uparrow}), & \text{if $x_t<x_{t+1}$}\\
+		(v_{x_t,t\downarrow},v_{x_t-1,t\downarrow},\dotsc,v_{x_{t+1},t\downarrow},v_{x_{t+1},t\uparrow}), & \text{if $x_t>x_{t+1}$}\\
 		(v_{x_t,t\downarrow},v_{x_{t+1},t\uparrow}), & \text{if $x_t=x_{t+1}$}
 	\end{cases}
 \end{equation*}
 We then concatenate these subpaths to construct a reasonable path
 \begin{equation*}
-	P\coloneqq(v_{0,0},S_1,S_2,\ldots,S_{T-1},v_{x_T,T\downarrow},v_{x_T-1,T\downarrow},\ldots,v_{0,T\downarrow})
+	P\coloneqq(v_{0,0},S_1,S_2,\dotsc,S_{T-1},v_{x_T,T\downarrow},v_{x_T-1,T\downarrow},\dotsc,v_{0,T\downarrow})
 \end{equation*}
 Evidently, the constructed path satisfies $\Phi(P)=\mx$, which shows the surjectivity of $\Phi$.
 
-It remains to show that $\Phi$ is cost-preserving. For this, let $P$ be a reasonable path and let $\mx\coloneqq\Phi(P)=(x_1,\ldots,x_T)$ be its image. 
+It remains to show that $\Phi$ is cost-preserving. For this, let $P$ be a reasonable path and let $\mx\coloneqq\Phi(P)=(x_1,\dotsc,x_T)$ be its image. 
 As $P$ is reasonable, we have $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for any time slot $t$. If $E_\uparrow^t$ is empty, we have $x_{t-1}\ge x_t$. The cost between the nodes $v_{x_{t-1},t-1\downarrow}$ and $v_{x_t,t\downarrow}$ is then given by $\opcosts(x_t,\lambda_t)$. If $E_\uparrow^t$ is non-empty, we have $x_{t-1}<x_t$. In this case, the cost is given by $\beta(x_t-x_{t-1})+\opcosts(x_t,\lambda_t)$. Using these observations, the cost of $P$ can be calculated by 
 \begin{align*}
 	\costs(P)&=c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\overbrace{\beta\max\{0,x_t-x_{t-1}\}}^{\swcosts(x_{t-1},x_t)}+\opcosts(x_{t},\lambda_t)\bigr)\\
@@ -582,7 +308,7 @@ For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downar
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
 	\LineCommentFunc{Allocate nodes' costs and predecessors tables}
-	\Blet{$C[0\ldots m,1\ldots T]$ and $P[0\ldots m,1\ldots T]$}{new tables}
+	\Blet{$C[0\dotso m,1\dotso T]$ and $P[0\dotso m,1\dotso T]$}{new tables}
 	\Let{$P[m,1]$}{$m$ and $C[m,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
 	\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
 		\If {$C[x+1,1]<\costs(0,x,\lambda_1)$}

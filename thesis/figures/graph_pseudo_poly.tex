@@ -1,0 +1,62 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}[->,>=stealth',auto,node distance=3cm,thick,node/.style={minimum size=1.2cm,circle,draw}]
+  \node[node] (1) {0,0};
+  \node[node] (4) [below right =of 1] {0,1};
+  \node[node] (3) [above =0.5cm of 4] {1,1};
+  \node[node] (2) [above right=of 1] {m,1};
+  \node[node] (6) [right =of 3] {1,2};
+  \node[node] (5) [right =of 2] {m,2};
+  \node[node] (7) [right =of 4] {0,2};
+  \node[node] (9) [right =of 6] {1,T};
+  \node[node] (8) [right =of 5] {m,T};
+  \node[node] (10) [right =of 7] {0,T};
+  \node[node] (11) [above right =of 10] {0,T+1};
+
+  \node at ($(5)!.4!(8)$) {\ldots};
+  \node (12) at ($(6)!.4!(9)$) {\ldots};
+  \node at ($(7)!.4!(10)$) {\ldots};
+  \node [above=1.72cm of 12]{\ldots};
+
+  \node at ($(2)!.5!(3)$) {\vdots};
+  \node at ($(2)!.5!(6)$) {\vdots};
+  \node at ($(5)!.5!(6)$) {\vdots};
+  \node at ($(8)!.5!(9)$) {\vdots};
+
+  \path[every node/.style={font=\sffamily\small}]
+    (1) edge node[above left] {$\costs(0,m,\lambda_1)$} (2)
+	edge node[above right=-0.15cm] {$\costs(0,1,\lambda_1)$} (3)
+	edge node[below left] {$\costs(0,0,\lambda_1)$} (4)
+    (2) edge node[above] {$\costs(m,m,\lambda_2)$} (5)
+    (3) edge (6)
+	edge (7)
+    (4) edge (6)
+	edge node[below] {$\costs(0,0,\lambda_2)$} (7)
+    (8) edge node[above right=-0.15cm] {$0=\costs(m,0,\overbrace{\lambda_{T+1}}^{0})$} (11)
+    (9) edge node[above] {$0$} (11)
+    (10) edge node[above] {$0$} (11)
+
+    (1) edge ($(1)!.2!(8)$)
+    (2) edge ($(2)!.4!(6)$)
+    (4) edge ($(4)!.4!(5)$)
+    (3) edge ($(3)!.4!(5)$)
+    ($(3)!.6!(5)$) edge (5)
+    ($(2)!.6!(6)$) edge (6)
+    ($(2)!.6!(7)$) edge (7)
+
+    ($(6)!.6!(8)$) edge (8)
+    ($(5)!.6!(8)$) edge (8)
+
+    ($(5)!.6!(9)$) edge (9)
+    ($(6)!.6!(9)$) edge (9)
+    ($(7)!.6!(9)$) edge (9)
+
+    ($(5)!.6!(10)$) edge (10)
+    ($(6)!.6!(10)$) edge (10)
+    ($(7)!.6!(10)$) edge (10)
+
+    ($(2)!.8!(11)$) edge node[above] {$0$} (11);
+
+\end{tikzpicture}
+\end{document}
