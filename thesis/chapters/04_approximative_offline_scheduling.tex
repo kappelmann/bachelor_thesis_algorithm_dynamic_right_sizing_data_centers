@@ -79,7 +79,7 @@ which shows us that our approximative scheduling choice incurs at most twice as 
 
 Next, we shall take a look on the incurring switching costs of a $B$-restricted schedule $\mx'$. Again, given an optimal scheduling choice $x_t$, we use the idea to choose the nearest scheduling choice $x_t'$ that is contained in $B$ to construct $\mx'$. Once more, one might hope that $\mx'$ would incur at most twice as much switching costs as an optimal schedule. Needless to say, the next example dashes this hope.
 \begin{exmpl}
-	Let $\inp=\bigl(m=8,T=5,\Lambda=(9,7,9,7,9),\beta=1,f\bigr)$ be the input for a problem instance where $f(\lambda)=0$. Our possible scheduling choices are then given by $B=\{0,1,2,4,8\}$, and one optimal schedule is given by $\mx=(9,7,9,7,9)$. The $B$-restricted schedule corresponding to $\mx$ is then given by $\mx'=(16,8,16,8,16)$. The schedules' costs amount to
+Let $\inp=\bigl(m=8,T=5,\Lambda=(9,7,9,7,9),\beta=1,f\bigr)$ be the input for a problem instance where $f(\lambda)=0$. Our possible scheduling choices are then given by $B=\{0,1,2,4,8\}$, and one optimal schedule is given by $\mx=(9,7,9,7,9)$. The $B$-restricted schedule corresponding to $\mx$ is then given by $\mx'=(16,8,16,8,16)$. The schedules' costs amount to
 \begin{align*}
 	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_tf(\lambda_t/x_t)}^{x_t\cdot 0}+\overbrace{\swcosts(x_{t-1},x_t)}^{\max\{0,x_t-x_{t-1}\}}\bigr)=9+0+2+0+2=13\\
 	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_t'f(\lambda_t/x_t')}^{x_t'\cdot 0}+\overbrace{\swcosts(x_{t-1}',x_t')}^{\max\{0,x_t'-x_{t-1}'\}}\bigr)=16+0+8+0+8=32
@@ -87,37 +87,38 @@ Next, we shall take a look on the incurring switching costs of a $B$-restricted 
 The approximative schedule's cost is thus not 2-competetive compared to the optimal schedule. Of course, we shall ask ourselves again how this cost explosion is possible. Since we set $f(\lambda)=0$, that is our servers do not incur operating costs, this explosion is evidently due to the increased switching costs of $\mx'$. The problem in this case is the oscillating behavior of $\mx$ around a power of two (namely $8=2^3$), as one can see in the following figure. 
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.45\textwidth}
+\begin{subfigure}[b]{0.47\textwidth}
 \includestandalone[width=\textwidth]{./../figures/switching_costs_not_2_opt_1}
 	\caption{\underline{Optimal schedule $\mx$:} Note how the schedule oscillates around 8 (a power of two).}
 \end{subfigure}
 \hfill
-\begin{subfigure}[b]{0.45\textwidth}
-\includestandalone[width=\textwidth]{./../figures/switching_costs_not_2_opt_2}
+\begin{subfigure}[b]{0.47\textwidth}
+\includestandalone[width=\textwidth]{../figures/switching_costs_not_2_opt_2}
 	\caption{\underline{Approximative schedule $\mx'$:} The approximative schedule is restricted to powers of two.}
 \end{subfigure}
 \caption{Comparison between an optimal and approximative schedule. The approximative schedule incurs more than twice as much switching costs.}
 \label{fig:adaption-schedule}
 \end{figure}
 \end{exmpl}
-So, is this the end of our hunt for a 2-optimal approximation? No, certainly not. We promised a 2-optimal solution, and a promise is a promise. Our next task shall be the verification of our new construction. Naturally, since we are not able to represent every schedule in our graph $G$ anymore, we will have to restrict ourselves to the set of schedules respresentable in $G$. For this, we first make a convenient definition.
-
-For the next lemma, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}, as well as that $B=\{0,2^0,2^1,\dotsc,2^b,m\}$. Like in Section~\ref{sec:opt_offline_pseudo_lin}, we want to first establish a bijection between $B$-restricted schedules and reasonable paths.
-\begin{lem}\label{lem:sched_reasn_path_approx_2}
-Let $\bm{\mx}$ be the set of all $B$-restricted schedules for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
-\begin{equation*}
-	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\dotsc,x_T)
-\end{equation*}
-is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
-\end{lem}
-\begin{proof}
-The proof is analogous to the proof of Lemma~\ref{lem:sched_reasn_path_pseudo_lin} considering that we conduct logarithmic instead of incremental switching steps.\unsure{Is this okay?}
-\end{proof}
-Since we did not change the graph's principle structure, the proof of Lemma~\ref{lem:sched_reasn_path_approx_2} required no new efforts. The next lemma, however, demands more ingenuity. We want to prove that we are able to transform any arbitrary schedule to a $B$-restricted one with a cost factor of at most 2. This will then allow us to verify that our graph is indeed able to produce 2-optimale schedules.
+So, is this the end of our hunt for a 2-optimal approximation? No, certainly not! Although our naive approach was to no avail, there is indeed a better $B$-restricted schedule for our example, namely $\mx'=(16,16,16,16,16)$ with costs $\costs(\mx')=16$. Obviously, this seems like a rather trivial example since we set $f(\lambda)=0$, and hence we do not need to worry about the new schedule's additional operating costs. However, it indeed turns out that a 2-optimal $B$-restricted schedule always exists. Making the right choice between following the oscillation of the optimal schedule $\mx$ and keeping more servers on than required will always allow us to acquire a 2-optimal approximation. This observation is part of the next lemma, which will then allow us to verify that our graph is indeed able to produce 2-optimale schedules.
 \begin{lem}\label{lem:transform_schedule_approx_2}
-Let $\mx$ be a schedule for $\inp$. There exists a 2-approximative $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le2\costs(\mx)$}.
+Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le2\costs(\mx)$}.
 \end{lem}
 \begin{proof}
+Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. Let $t\in[T]$ be the first timeslot such that $x_t>0$. If such a timeslot does not exist, $\mx'=(x_1'=0,\dotsc,x_T'=0)$ satisfies our condition. Otherwise, we shall take a look on the possible behaviors of $\mx$.
+\begin{figure}[H]
+\captionsetup[subfigure]{labelformat=empty}
+\begin{subfigure}[b]{0.47\textwidth}
+\includestandalone[width=\textwidth]{../figures/schedule_behavior_up}	
+\caption{\underline{Rising schedule:} Stays between $2^j$ and $2^{j+1}$ and then rises above $2^{j+1}$.}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.47\textwidth}
+\includestandalone[width=\textwidth]{../figures/schedule_behavior_up}	
+\caption{\underline{Rising schedule:} Stays between $2^j$ and $2^{j+1}$ and then rises above $2^{j+1}$.}
+\end{subfigure}
+\caption{Possible schedule behaviors}
+\end{figure}
 %For $t\in[T]$, we inductively define our new schedule $\mx'\coloneqq(x_1',\dotsc,x_T')$ by
 %\begin{align}
 		%x'_0&\coloneqq 0\nonumber\\
@@ -153,6 +154,17 @@ Let $\mx$ be a schedule for $\inp$. There exists a 2-approximative $B$-restricte
 		%\end{align*}
 %\end{enumerate}
 %Thus, the amortized switching costs of $\mx'$ are 2-optimal compared to $\mx$. Next, we need to check that our total credit never becomes negative. Since we only change conduct payments if $x_{t-1}<x_t$, we only need to consider power up switching operations. For this, let $t$ be an arbitrary timeslot where $x_{t-1}<x_t$.
+\end{proof}
+Safe in the knowledge that there always exists a 2-optimal $B$-restricted schedule, we are just left with the verification of our new graph, that is we want to establish a bijection between $B$-restricted schedules and reasonable paths. Since we did not change the general construction idea of our graph, this verification turns out to be very similar to that done in Section~\ref{sec:opt_offline_pseudo_lin}. For the proof of the next lemma, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}, as well as that $B=\{0,2^0,2^1,\dotsc,2^b,m\}$. 
+\begin{lem}\label{lem:sched_reasn_path_approx_2}
+Let $\bm{\mx}$ be the set of all $B$-restricted schedules for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
+\begin{equation*}
+	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\dotsc,x_T)
+\end{equation*}
+is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
+\end{lem}
+\begin{proof}
+The proof is analogous to the proof of Lemma~\ref{lem:sched_reasn_path_pseudo_lin} considering that we conduct logarithmic instead of incremental switching steps.\unsure{Is this okay?}
 \end{proof}
 Finally, we arrive at the main result of this section.
 \begin{thm}\label{thm:approx_2}
