@@ -42,7 +42,7 @@ A more appealing, graphical representation can be found in the following figure.
 \end{figure}
 The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. Since some possible scheduling choices, however, are not representable in this new graph, we may just obtain approximative costs for our nodes. Thus, the shortest path in our graph might not correspond to an optimal schedule, but it will at least correspond to an approximative one. Before we start to establish the graph's approximation guarantee, we first have to conduct some observations. We start by making a convenient definition that helps us to identify schedules that are representable in our graph.
 \begin{defn}[Restricted schedules]
-Given an input $\inp$ and a set $A\subseteq\fromto{0}{m}$, we say that a schedule $\mx=(x_1,\dotsc,x_T)$ is \textit{$A$-restricted} if $\mx$ only uses scheduling coices contained in $A$, that is $\mx$ satisfies $\forall t\in[T](x_t\in A)$.
+Given an input $\inp$ and a set $A\subseteq\fromto{0}{m}$, we say that a schedule $\mx=(x_1,\dotsc,x_T)$ is \emph{$A$-restricted} if $\mx$ only uses scheduling coices contained in $A$, that is $\mx$ satisfies $\forall t\in[T](x_t\in A)$.
 \end{defn}
 Evidently, our graph is able to represent every $B$-restricted schedule. We shall now take a look on the incurring operating costs of such an $B$-restricted schedule $\mx'$. Since we are forced to schedule a number of servers contained in $B$, we might not be able to choose an optimal scheduling choice that minimizes the schedule's operating costs. Instead, we may choose the nearest scheduling choice which is contained in $B$. For instance, if the optimal scheduling strategy at some timeslot $t$ would be to choose $x_t=3$ servers (which is not a power of two), we may instead have to choose $x_t'=4\in B$ servers for our $B$-restricted schedule. One might suspect that this strategy would incur at most twice as much operating costs as an optimal schedule. This, however, is sadly not the case, as one can see in the following example.
 \begin{exmpl}
@@ -100,12 +100,21 @@ The approximative schedule's cost is thus not 2-competetive compared to the opti
 \label{fig:adaption-schedule}
 \end{figure}
 \end{exmpl}
-So, is this the end of our hunt for a 2-optimal approximation? No, certainly not! Although our naive approach was to no avail, there is indeed a better $B$-restricted schedule for our example, namely $\mx'=(16,16,16,16,16)$ with costs $\costs(\mx')=16$. Obviously, this seems like a rather trivial example since we set $f(\lambda)=0$, and hence we do not need to worry about the new schedule's additional operating costs. However, it indeed turns out that a 2-optimal $B$-restricted schedule always exists. Making the right choice between following the oscillation of the optimal schedule $\mx$ and keeping more servers on than required will always allow us to acquire a 2-optimal approximation. This observation is part of the next lemma, which will then allow us to verify that our graph is indeed able to produce 2-optimale schedules.
+So, is this the end of our hunt for a 2-optimal approximation? No, certainly not! Although our naive approach was to no avail, there is indeed a better $B$-restricted schedule for our example. Instead of following the optimal schedule's oscillation, we can simply use a schedule that stays put during these oscillating steps, that is we can use the schedule $\mx'=(16,16,16,16,16)$ with costs $\costs(\mx')=16$. Obviously, this seems like a rather trivial example since we set $f(\lambda)=0$, and hence we do not need to worry about the new schedule's additional operating costs. However, it indeed turns out that making the right choice between following the optimal schedule's oscillation and staying put will always allow us to acquire a 2-optimal approximation. This observation is part of the next lemma, which will then allow us to verify that our graph is indeed able to produce 2-optimal schedules.
+
+TODO sentence def
+\begin{defn}
+Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T]$ with $x_{t-1}\neq 0$. We say that $\mx$ changes its \emph{2-state} at time $t$ if $x_t$ lies between a different pair of powers of two than its predecessor, that is $x_t$ satisfies
+\begin{equation*}
+	x_t\notin\bigl[2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1})\rceil}\bigr]
+\end{equation*}
+\end{defn}
+TODO sentence lemma
 \begin{lem}\label{lem:transform_schedule_approx_2}
 Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le2\costs(\mx)$}.
 \end{lem}
 \begin{proof}
-Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. Let $t\in[T]$ be the first timeslot such that $x_t>0$. If such a timeslot does not exist, $\mx'=(x_1'=0,\dotsc,x_T'=0)$ satisfies our condition. Otherwise, we shall take a look on the possible behaviors of $\mx$.
+Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We prove that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. Let $t\in[T]$ be the first timeslot such that $x_t>0$. If such a timeslot does not exist, $\mx'=(x_1'=0,\dotsc,x_T'=0)$ satisfies our condition. Otherwise, we shall take a look on the possible behaviors of $\mx$.
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.47\textwidth}

@@ -184,7 +184,7 @@ A schedule corresponding to $P$ would use one active server in its first time sl
 This revised path pleasantly translates to a schedule $\mx$, in this case $\mx=(1,2,\ldots)$. We now want to give a more formal definition of our observation.
 \begin{defn}[Reasonable paths]\label{defn_reasn_paths}
 Let $P$ be a path from $v_{0,0}$ to $v_{0,T\downarrow}$. For any time slot $t\in[T]$, let $E_\downarrow^t$ be the set of edges $(v_{x,t\downarrow},v_{x-1,t\downarrow})\in E_\downarrow$ used by $P$ at time $t$. Similarly, let $E_\uparrow^t$ be the set of edges $(v_{x,t\uparrow},v_{x+1,t\uparrow})\in E_\uparrow$ used by $P$ at time $t\in[T-1]$.
-The path $P$ is called \textit{reasonable} if for any time slot $t\in[T-1]$, the path does not shut down and power on servers simultaneously at $t$. More formally, $P$ must satisfy the formula
+The path $P$ is called \emph{reasonable} if for any time slot $t\in[T-1]$, the path does not shut down and power on servers simultaneously at $t$. More formally, $P$ must satisfy the formula
 \begin{equation}
 	\forall t\in[T-1]\left(E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset\right)\label{eq:reasn_path}
 \end{equation}
@@ -228,7 +228,7 @@ A schedule corresponding to $P$ would use three active server in its first time 
 \end{figure}
 Conversely, given the schedule $\mx=(3,0,1)$, is can easily be seen that there exists only one reasonable path corresponding to $\mx$, namely $P$.
 \end{exmpl}
-Before we approach our next lemma, which formalizes these ideas, we need to give a precise definition of what we understand as \textit{``maximum'' nodes $v_{x,t\downarrow}$} used by a reasonable path.
+Before we approach our next lemma, which formalizes these ideas, we need to give a precise definition of what we understand as \emph{``maximum'' nodes $v_{x,t\downarrow}$} used by a reasonable path.
 \begin{defn}\label{defn:max_path_node}
 Let $P$ be a reasonable path. For any $t\in[T]$, let $V_\downarrow^t$ be the set of nodes $v_{x,t\downarrow}$ visited by $P$. The ``maximum'' node $v_{x,t\downarrow}$ at each time slot $t\in[T]$ can then be identified by
 \begin{equation*}
