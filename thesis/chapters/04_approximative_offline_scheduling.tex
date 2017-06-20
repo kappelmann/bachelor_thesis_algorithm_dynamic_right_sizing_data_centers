@@ -114,7 +114,12 @@ TODO sentence lemma
 Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le2\costs(\mx)$}.
 \end{lem}
 \begin{proof}
-Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We prove that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. Let $t\in[T]$ be the first timeslot such that $x_t>0$. If such a timeslot does not exist, $\mx'=(x_1'=0,\dotsc,x_T'=0)$ satisfies our condition. Otherwise, we shall take a look on the possible behaviors of $\mx$.
+Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}.
+First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T-1]$, i.e.\ $x_t=0$, we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, since we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Next, we show that any of these subschedule
+
+Next, we prove that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. 
+
+Let $t\in[T]$ be the first timeslot such that $x_t>0$. If such a timeslot does not exist, $\mx'=(x_1'=0,\dotsc,x_T'=0)$ satisfies our condition. Otherwise, we shall take a look on the possible behaviors of $\mx$.
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.47\textwidth}
