@@ -54,7 +54,7 @@ Our next proposition -- which will pose the cornerstone of our subsequent works 
 \begin{lem}[Jensen's inequality]\label{lem:jensens-inequality}
 Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\dotsc,\lambda_n\in\mathbb{R}$}, and $\mu_1,\dotsc,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
 \begin{equation*}
-	f\Bigl(\sum_{i=1}^n \mu_i \lambda_i\Bigr) \leq \sum_{i=1}^n \mu_i f(\lambda_i)
+	f\Bigl(\sum_{i=1}^n(\mu_i \lambda_i)\Bigr) \le \sum_{i=1}^n\bigl(\mu_i f(\lambda_i)\bigr)
 \end{equation*}
 \end{lem}
 \begin{proof}
@@ -62,7 +62,7 @@ We proof the claim by induction on $n\in\mathbb{N}$.
 \begin{itemize}
 \item\underline{Basis:} For $n=1$, we have $\mu_1=1$ and thus
 \begin{equation*}
-	f\Bigl(\sum\limits_{i=1}^1\mu_i\lambda_i\Bigr)=f(\lambda_1)=\sum\limits_{i=1}^1\mu_if(\lambda_i)
+	f\Bigl(\sum\limits_{i=1}^1(\mu_i\lambda_i)\Bigr)=f(\lambda_1)=\sum\limits_{i=1}^1\bigl(\mu_if(\lambda_i)\bigr)
 \end{equation*}
 \item\underline{Step:} Let $n\in\mathbb{N}$ be arbitrary and fixed.
 \begin{itemize}
@@ -70,7 +70,7 @@ We proof the claim by induction on $n\in\mathbb{N}$.
 	\item\underline{Claim:} The assertion holds for $n+1$.
 	\item\underline{Proof:} Since $\sum\limits_{i=1}^{n+1}\mu_i=1$, $\mu_i\in[0,1]$, and $n+1\ge 2$, at least one $\mu_i$ must be smaller than 1. Without loss of generality, we may assume $\mu_1<1$.
 	\begin{equation*}
-		f\Bigl(\sum\limits_{i=1}^{n+1}\mu_i\lambda_i\Bigr)=f\Bigl(\mu_1\lambda_1+\sum\limits_{i=2}^{n+1}\mu_i\lambda_i\Bigr)\stackrel{\mu_1\neq1}{=}f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
+		f\Bigl(\sum\limits_{i=1}^{n+1}(\mu_i\lambda_i)\Bigr)=f\Bigl(\mu_1\lambda_1+\sum\limits_{i=2}^{n+1}(\mu_i\lambda_i)\Bigr)\stackrel{\mu_1\neq1}{=}f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
 	\end{equation*}
 	As $f$ is convex, we have
 	\begin{equation*}
@@ -78,12 +78,12 @@ We proof the claim by induction on $n\in\mathbb{N}$.
 	\end{equation*}
 	Since $\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}=1$, we can apply our induction hypothesis.
 	\begin{equation*}
-		\mu_1f(\lambda_1)+(1-\mu_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)\stackrel{\text{I.H.}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}f(\lambda_i)
+		\mu_1f(\lambda_1)+(1-\mu_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)\stackrel{\text{I.H.}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\Bigl(\frac{\mu_i}{1-\mu_1}f(\lambda_i)\Bigr)
 	\end{equation*}
 	We combine our steps and obtain
 	\begin{align*}
-		f\Bigl(\sum\limits_{i=1}^{n+1}\mu_i\lambda_i\Bigr)&\le \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}f(\lambda_i)\\
-		&=\mu_1f(\lambda_1)+\sum\limits_{i=2}^{n+1}\mu_if(\lambda_i)=\sum_{i=1}^{n+1} \mu_i f(\lambda_i)\qedhere
+		f\Bigl(\sum\limits_{i=1}^{n+1}(\mu_i\lambda_i)\Bigr)&\le \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\Bigl(\frac{\mu_i}{1-\mu_1}f(\lambda_i)\Bigr)\\
+		&=\mu_1f(\lambda_1)+\sum\limits_{i=2}^{n+1}\bigl(\mu_if(\lambda_i)\bigr)=\sum_{i=1}^{n+1}\bigl(\mu_i f(\lambda_i)\bigr)\qedhere
 	\end{align*}
 \end{itemize}
 \end{itemize}
@@ -119,7 +119,7 @@ Using these weights, we now consider the operating costs of a schedule $\Sigma^*
 \end{align*}
 With the fact that $\sum_{i=1}^{x_t}(1/x_t)=1$ and the use of Jensen's inequality (Lemma~\ref{lem:jensens-inequality}), we can give an upper bound for the costs:
 \begin{align*}
-	x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\ref{lem:jensens-inequality}}{\le}x_t\sum\limits_{i=1}^{x_t}\frac{1}{x_t}f(\mu_i\lambda_t)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\stackrel{\eqref{eq:mu_lambda_costs}}{=}\sum\limits_{i\in A}f(\lambda_{i,t})
+	x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\ref{lem:jensens-inequality}}{\le}x_t\sum\limits_{i=1}^{x_t}\Bigl(\frac{1}{x_t}f(\mu_i\lambda_t)\Bigr)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\stackrel{\eqref{eq:mu_lambda_costs}}{=}\sum\limits_{i\in A}f(\lambda_{i,t})
 \end{align*}
 Thus, the operating costs of $\Sigma^*$ give a lower bound for the operating costs of $\Sigma$, and the claim follows.
 \end{proof}

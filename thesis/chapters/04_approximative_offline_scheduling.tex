@@ -115,11 +115,61 @@ Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'
 \end{lem}
 \begin{proof}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}.
-First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T-1]$, i.e.\ $x_t=0$, we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, since we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Next, we show that any of these subschedule
+First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T-1]$, i.e.\ $x_t=0$, we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, since we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we may subsequently assume that $\mx$ never powers down all its servers. 
+	
+To finish the proof, we need to show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. The basic idea is to keep on TODO.
 
-Next, we prove that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. 
+TODO f positive!
 
-Let $t\in[T]$ be the first timeslot such that $x_t>0$. If such a timeslot does not exist, $\mx'=(x_1'=0,\dotsc,x_T'=0)$ satisfies our condition. Otherwise, we shall take a look on the possible behaviors of $\mx$.
+If $\mx_{i,j}^{k+1}$ is 2-competitive, we are done. Hence, assume that this is not the case. We then need to show that $\opcosts(\mx_{i,j}^k)+\beta2^k$ must be 2-competitive. First, since $\mx_{i,j}^{k+1}$ is not 2-competitive, we have
+\begin{equation*}
+	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)<\opcosts(\mx_{i,j}^{k+1})
+\end{equation*}
+Rearranging the inequality gives us	
+\begin{equation*}
+	\beta<\frac{\opcosts(\mx_{i,j}^{k+1})-2\opcosts(\mx_{i,j})}{2d}
+\end{equation*}
+Further, we can give an upper bound for the costs of $\mx_{i,j}^{k+1}$ by
+\begin{equation*}
+	\opcosts(\mx_{i,j}^{k+1})\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}\sum_{t=i}^j\Bigl(2^{k+1}f\Bigl(\frac{\lambda_t}{2^{k+1}}\Bigr)\Bigr)\stackrel{\text{f mono.\ incr.}}{\le}2\sum_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}2\opcosts(\mx_{i,j}^k)
+\end{equation*}
+Thus, we can conclude that
+\begin{equation}\label{eq:proof_approx_2_inequ}
+	\beta<\frac{\opcosts(\mx_{i,j}^{k+1})-2\opcosts(\mx_{i,j})}{2d}\le\frac{2\opcosts(\mx_{i,j}^k)-2\opcosts(\mx_{i,j})}{2d}=\frac{\opcosts(\mx_{i,j}^k)-\opcosts(\mx_{i,j})}{d}
+\end{equation}
+Next, since we want to prove that $\opcosts(\mx_{i,j}^k)+\beta2^k$ is 2-competitive, we shall take a look on the cost difference 
+\begin{align*}
+	\opcosts(\mx_{i,j}^k)+\beta2^k-2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)
+\end{align*}
+We have to show that the difference is non-positive. First, we can use our estimation~\eqref{eq:proof_approx_2_inequ}:
+\begin{align*}
+	&\opcosts(\mx_{i,j}^k)+\beta2^k-2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)\\
+	\stackrel{\eqref{eq:proof_approx_2_inequ}}{<}&\opcosts(\mx_{i,j}^k)+\frac{\opcosts(\mx_{i,j}^k)-\opcosts(\mx_{i,j})}{d}2^k-2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)\\
+	\stackrel{\phantom{\eqref{eq:proof_approx_2_inequ}}}{=}&\opcosts(\mx_{i,j}^k)-2\opcosts(\mx_{i,j})+\frac{\opcosts(\mx_{i,j}^k)-\opcosts(\mx_{i,j})}{d}2^k-2\beta d
+\end{align*}
+Then, by using $\beta,d>0$, we can estimate the difference by
+\begin{align*}
+	\stackrel{\phantom{\eqref{eq:proof_approx_2_inequ}}}{=}&\opcosts(\mx_{i,j}^k)-2\opcosts(\mx_{i,j})+\frac{\opcosts(\mx_{i,j}^k)-\opcosts(\mx_{i,j})}{d}2^k-2\beta d\\
+	\stackrel{\phantom{\eqref{eq:proof_approx_2_inequ}}}{\le}&\opcosts(\mx_{i,j}^k)-2\opcosts(\mx_{i,j})+\frac{1}{d}\bigl(\opcosts(\mx_{i,j}^k)-\opcosts(\mx_{i,j})\bigr)2^k
+\end{align*}
+Some further rewritings give us
+\begin{align*}
+	&\opcosts(\mx_{i,j}^k)-2\opcosts(\mx_{i,j})+\frac{1}{d}\bigl(\opcosts(\mx_{i,j}^k)-\opcosts(\mx_{i,j})\bigr)2^k\\
+	=&\frac{1}{d}\Bigl(d\bigl(\opcosts(\mx_{i,j}^k)-2\opcosts(\mx_{i,j})\bigr)+2^k\bigl(\opcosts(\mx_{i,j}^k)-\opcosts(\mx_{i,j})\bigr)\Bigr)\\
+	=&\frac{1}{d}\Bigl(\opcosts(\mx_{i,j}^k)\bigl(d+2^k)-\opcosts(\mx_{i,j})\bigl(2d+2^k\bigr)\Bigr)\\
+	=&\frac{1}{d}\Bigl(\opcosts(\mx_{i,j}^k)\bigl(d+2^k)-\opcosts(\mx_{i,j})\bigl(d+2^k\bigr)-\opcosts(\mx_{i,j})d\Bigr)\\
+	=&\frac{1}{d}\Bigl((d+2^k)\bigl(\opcosts(\mx_{i,j}^k)-\opcosts(\mx_{i,j})\bigr)-\opcosts(\mx_{i,j})d\Bigr)
+\end{align*}
+First, by using the monotonicity of $f$ and the fact that $x_t<2^k$, we infer that
+\begin{align*}
+	&\sum_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)+\beta2^k-2\sum_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2\beta d\\
+	\le&\sum_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)+\beta2^k-2\sum_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-2\beta d\\
+	=&\sum_{t=i}^j\Bigl((2^k-2x_t)f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)+\beta2^k-2\beta d
+\end{align*}
+To proceed, we can use our estimation~\eqref{eq:proof_approx_2_inequ}:
+\begin{align*}
+	\sum_{t=i}^j\Bigl((2^k-2x_t)f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)+\beta2^k-2\beta d<\sum_{t=i}^j\Bigl((2^k-2x_t)f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)+\frac{\opcosts(\mx_{i,j}^k)-\opcosts(\mx_{i,j})}{d}2^k-2\beta d
+\end{align*}
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.47\textwidth}
