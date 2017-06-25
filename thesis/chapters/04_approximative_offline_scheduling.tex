@@ -115,7 +115,11 @@ Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}.
 First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T-1]$, i.e.\ $x_t=0$, we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, as we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we can subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
 	
-For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$, that is we set $x_1'=2^{\lceil\log_2(x_1+1)\rceil}$. Since $x_1\in[m]$, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le2\beta x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive. Next, we show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. For this, let $i,j\in[T]$ with $i<j$ be the first timeslots at which $\mx$ changes its 2-state. Let us have a look on the possible behaviors of $\mx$:
+For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq\min\{2^{\lceil\log_2(x_1+1)\rceil},m\}\in B$. Since $x_1$ is integral, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$. Further, since $f$ is non-negative and monotonically increasing, we have
+\begin{equation*}
+	x_1'f\Bigl(\frac{\lambda_1}{x_1'}\Bigr)\le2x_1f\Bigl(\frac{\lambda_1}{x_1'}\Bigr)\le2x_1f\Bigl(\frac{\lambda_1}{x_1}\Bigr)
+\end{equation*}
+Hence, the start-up costs of $\mx'$ are 2-competitive. Next, we show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. For this, let $i,j\in[T]$ with $i<j$ be the first timeslots at which $\mx$ changes its 2-state. Let us have a look on the possible behaviors of $\mx$:
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.47\textwidth}
@@ -130,63 +134,67 @@ For the initial start-up process, we can simply move to the next power of 2 larg
 \caption{Possible schedule behaviors}
 \end{figure}
 
-Let $l\coloneqq\min\{2^{k+1},m\}$. TODO $2d<l-2^k$
+Let $l\coloneqq 2^k$ and $u\coloneqq\min\{2^{k+1},m\}$. TODO $2d<u-l$
 
-If $\opcosts(\mx_{i,j}^{2^k})+\beta(l-2^k)$ is 2-competitive, we are done; hence, assume that this is not the case. We then need to show that $\opcosts(\mx_{i,j}^l)$ is 2-competitive. First, by assumption, we know that $\opcosts(\mx_{i,j}^k)+\beta 2^k$ is not 2-competitive, that is we have
+If $\opcosts(\mx_{i,j}^l)+\beta(u-l)$ is 2-competitive, we are done; hence, assume that this is not the case. We then need to show that $\opcosts(\mx_{i,j}^u)$ is 2-competitive. First, by assumption, we know that $\opcosts(\mx_{i,j}^l)+\beta(u-l)$ is not 2-competitive, that is we have
 \begin{equation*}
-	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)<\opcosts(\mx_{i,j}^k)+\beta 2^k
+	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)<\opcosts(\mx_{i,j}^l)+\beta(u-l)
 \end{equation*}
-We know that $\mx_{i,j}^k$ uses at most twice as many active servers as $\mx_{i,j}$, and thus $\mx_{i,j}^k$ incurs at most twice as much operating costs as $\mx_{i,j}$. Consequently, the switching costs of $\mx_{i,j}^k$ must significantly outweight those of $\mx_{i,j}$. Hence, it seems interesting to get an estimation for $\beta$. Rearranging the previous inequality gives us
-\begin{equation*}
-	\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^k)}{2^k-2d}<\beta
-\end{equation*}
-This allows us to find a lower bound for the costs using $\mx_{i,j}$:
+We know that $\mx_{i,j}^l$ uses at most twice as many active servers as $\mx_{i,j}$, and thus $\mx_{i,j}^l$ incurs at most twice as much operating costs as $\mx_{i,j}$. Consequently, the switching costs of $\mx_{i,j}^l$ must significantly outweight those of $\mx_{i,j}$. Hence, it seems interesting to get an estimation for $\beta$. Rearranging the previous inequality gives us
 \begin{align*}
-	\opcosts(\mx_{i,j})+\beta d&>\opcosts(\mx_{i,j})+\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^k)}{2^k-2d}d\\
-	&=\frac{\opcosts(\mx_{i,j})(2^k-2d)+2d\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^k)}{2^k-2d}\\
-	&=\frac{2^k\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^k)}{2^k-2d}
+	&&2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)&<\opcosts(\mx_{i,j}^l)+\beta(u-l)\\
+	&\stackrel{\phantom{u-l-2d>0}}{\iff}&2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^l)&<\beta(u-l-2d)\\
+	&\stackrel{u-l-2d>0}{\iff}&\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^l)}{u-l-2d}&<\beta
 \end{align*}
-Next, since we want to prove that $\opcosts(\mx_{i,j}^{k+1})$ is 2-competitive, we have to show that the following cost difference is non-negative:
+This allows us to find a lower bound for the costs of using $\mx_{i,j}$:
 \begin{align*}
-	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^{k+1})
+	\opcosts(\mx_{i,j})+\beta d&>\opcosts(\mx_{i,j})+\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^l)}{u-l-2d}d\\
+	&=\frac{\opcosts(\mx_{i,j})(u-l-2d)+2d\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^l)}{u-l-2d}\\
+	&=\frac{(u-l)\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^l)}{u-l-2d}
+\end{align*}
+Next, since we want to prove that $\opcosts(\mx_{i,j}^u)$ is 2-competitive, we have to show that the following cost difference is non-negative:
+\begin{align*}
+	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^u)
 \end{align*}
 We can use our just derived lower bound for $\opcosts(\mx_{i,j})+\beta d$ to estimate the difference:
 \begin{align*}
-	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^{k+1})&>2\Bigl(\frac{2^k\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^k)}{2^k-2d}\Bigr)-\opcosts(\mx_{i,j}^{k+1})\\
-	&=\frac{2^k\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^k)-(2^{k-1}-d)\opcosts(\mx_{i,j}^{k+1})}{2^{k-1}-d}
+	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^u)&>2\Bigl(\frac{(u-l)\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^l)}{u-l-2d}\Bigr)-\opcosts(\mx_{i,j}^u)\\
+	&=\frac{2(u-l)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^l)-(u-l-2d)\opcosts(\mx_{i,j}^u)}{u-l-2d}
 \end{align*}
 Thus, it suffices to show that
 \begin{align*}
-	&&\frac{2^k\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^k)-(2^{k-1}-d)\opcosts(\mx_{i,j}^{k+1})}{2^{k-1}-d}&\ge 0\\
-	&\stackrel{2^{k-1}>d}{\iff}&2^k\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^k)-(2^{k-1}-d)\opcosts(\mx_{i,j}^{k+1})&\ge 0
+	&&\frac{2(u-l)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^l)-(u-l-2d)\opcosts(\mx_{i,j}^u)}{u-l-2d}&\ge 0\\
+	&\stackrel{u-l-2d>0}{\iff}&2(u-l)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^l)-(u-l-2d)\opcosts(\mx_{i,j}^u)&\ge 0
 \end{align*}
 For this, we have to take a closer look on the the schedules' operating costs:
 \begin{align*}
-	&&&2^k\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^k)-(2^{k-1}-d)\opcosts(\mx_{i,j}^{k+1})\\
-	&\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}&&2^k\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-d\sum\limits_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-(2^{k-1}-d)\sum\limits_{t=i}^j\Bigl(2^{k+1}f\Bigl(\frac{\lambda_t}{2^{k+1}}\Bigr)\Bigr)
+	&&&2(u-l)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^l)-(u-l-2d)\opcosts(\mx_{i,j}^u)\\
+	&\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}&&2(u-l)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)
 \end{align*}
-First, we note that $x_t<2^k$ and $2^k<2^{k+1}$. Together with the fact that $f$ is monotonically increasing, we infer that
+First, we note that $l<u$ and $x_t<l$ for $i\le t\le j$. Together with the fact that $f$ is monotonically increasing, we infer that
 \begin{align*}
-	&&&2^k\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-d\sum\limits_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-(2^{k-1}-d)\sum\limits_{t=i}^j\Bigl(2^{k+1}f\Bigl(\frac{\lambda_t}{2^{k+1}}\Bigr)\Bigr)\\
-	&\ge&&2^k\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-d\sum\limits_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-(2^{k-1}-d)\sum\limits_{t=i}^j\Bigl(2^{k+1}f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)
+	&&&2(u-l)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
+	&\ge&&2(u-l)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)
 \end{align*}
 Next, TODO f pos.\ and no oscillating
 \begin{align*}
-	&&&2^k\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-d\sum\limits_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-(2^{k-1}-d)\sum\limits_{t=i}^j\Bigl(2^{k+1}f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)\\
-	&\ge&&2^k\sum\limits_{t=i}^j\Bigl((2^k-d)f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-d\sum\limits_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-(2^{k-1}-d)\sum\limits_{t=i}^j\Bigl(2^{k+1}f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)
+	&&&2(u-l)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\\
+	&\ge&&2(u-l)\sum\limits_{t=i}^j\Bigl((l-d)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)
 \end{align*}
 Hence, to finish the case, it suffices to show that
 \begin{align*}
-	2^k\sum\limits_{t=i}^j\Bigl((2^k-d)f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-d\sum\limits_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-(2^{k-1}-d)\sum\limits_{t=i}^j\Bigl(2^{k+1}f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)\ge 0
+	2(u-l)\sum\limits_{t=i}^j\Bigl((l-d)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\ge 0
 \end{align*}
-which is no difficulty:
+Further rearranging the left hand side gives us
 \begin{align*}
-	&&&2^k\sum\limits_{t=i}^j\Bigl((2^k-d)f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-d\sum\limits_{t=i}^j\Bigl(2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-(2^{k-1}-d)\sum\limits_{t=i}^j\Bigl(2^{k+1}f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)\\
-	&=&&\sum\limits_{t=i}^j\Bigl((2^{2k}-d2^k)f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl(d2^kf\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl((2^{2k}-d2^{k+1})f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)\\
-	&=&&\sum\limits_{t=i}^j\Bigl((2^{2k}-d2^k-d2^k-2^{2k}+d2^{k+1})f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)\\
-	&=&&\sum\limits_{t=i}^j\Bigl((\underbrace{-2d2^k}_{-d2^{k+1}}+d2^{k+1})f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)=\sum\limits_{t=i}^j\Bigl(0\cdot f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)=0
-\end{align*}	
-By gradually applying the above procedure to $\mx$, beginning with $i=1$ and stopping with $j=T$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
+	&&&2(u-l)\sum\limits_{t=i}^j\Bigl((l-d)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\\
+	&=&&\sum\limits_{t=i}^j\Bigl((2lu-2du-2l^2+2dl)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl(dlf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl((u^2-lu-2du)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\\
+	&=&&\sum\limits_{t=i}^j\Bigl((2lu-2du-2l^2+2dl-2dl-u^2+lu+2du)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\\
+	&=&&\sum\limits_{t=i}^j\Bigl((-u^2+3lu-2l^2)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)=\sum\limits_{t=i}^j\Bigl(\underbrace{-(l-u)(2l-u)}_{g(u)\coloneqq}f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr) 
+\end{align*}
+Now, since $f$ is non-negative, we just have to verify that $g(u)\ge0$ for $l\le u\le 2l$. We note that $g(u)$ is an inverted parabola with roots $l$ and $2l$. Thus, we know that $g(l)=g(2l)=0$ and $g(u)>0$ for $l<u<2l$, which finishes the case.
+
+By gradually applying the above procedure to $\mx$, starting with $i=1$ and stopping with $j=T$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
 \end{proof}
 Safe in the knowledge that there always exists a 2-optimal, $B$-restricted schedule, we are just left with the verification of our new graph. We want to establish a bijection between $B$-restricted schedules and reasonable paths. Since we did not change the general construction idea of our graph, this verification turns out to be very similar to that done in Section~\ref{sec:opt_offline_pseudo_lin}. For the proof of the next lemma, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}, as well as that $B=\{0,2^0,2^1,\dotsc,2^b,m\}$.
 \begin{lem}\label{lem:sched_reasn_path_approx_2}
