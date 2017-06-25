@@ -1,7 +1,7 @@
 % !TeX root = ../main.tex
 % Add the above to each chapter to make compiling the PDF easier in some editors.
 
-\chapter{Approximative Offline Scheduling}
+\chapter{Approximative Offline Scheduling}\label{chap:approx_offline_scheduling}
 Heretofore, we have derived two optimal offline algorithms for our scheduling problem. Unfortunately, the algorithm's runtime complexities are exponential in the input size of the number of servers $m$. Needless to say, we want to reduce this exponential runtime. For this, we must slightly loosen our aspirations, that is we move to approximative methods. Further, as we will see in the next section, we need to assume that our convex operating costs function $f$ is non-negative and monotonically increasing; however, this restriction is of no great significance since in practice most operating costs functions fulfill this requirement.\unsure{Any reference?} 
 
 In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-optimal offline algorithm with linear runtime complexity. As a next step, we will generalize our first approach to allow for arbitrary $1+\beps$-approximations with TODO complexity.
@@ -104,7 +104,7 @@ So, is this the end of our hunt for a 2-optimal approximation? No, certainly not
 \begin{defn}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T]$ with $x_{t-1}\neq 0$. We say that $\mx$ changes its \emph{2-state} at time $t$ if $x_t$ lies between a different pair of powers of two than its predecessor, that is $x_t$ satisfies
 \begin{equation*}
-	x_t\notin\bigl[2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1})\rceil}\bigr]
+	x_t\notin\bigl[2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1}+1)\rceil}\bigr]
 \end{equation*}
 \end{defn}
 Now we are geared up to deal with the main work of this section.
@@ -113,9 +113,9 @@ Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'
 \end{lem}
 \begin{proof}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}.
-First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T-1]$, i.e.\ $x_t=0$, we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, since we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we may subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
+First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T-1]$, i.e.\ $x_t=0$, we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, as we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we can subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
 	
-First, we can simply set $x_1'=2^{\lceil\log_2(x_1+1)\rceil}$. To finish the proof, it suffices to show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. Let us have a look on the possible behaviors of $\mx_{i,j}$:
+For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$, that is we set $x_1'=2^{\lceil\log_2(x_1+1)\rceil}$. Since $x_1\in[m]$, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le2\beta x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive. Next, we show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. For this, let $i,j\in[T]$ with $i<j$ be the first timeslots at which $\mx$ changes its 2-state. Let us have a look on the possible behaviors of $\mx$:
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.47\textwidth}
@@ -129,9 +129,10 @@ First, we can simply set $x_1'=2^{\lceil\log_2(x_1+1)\rceil}$. To finish the pro
 \end{subfigure}
 \caption{Possible schedule behaviors}
 \end{figure}
-TODO $d<2^{k-1}$
 
-If $\opcosts(\mx_{i,j}^k)+\beta 2^k$ is 2-competitive, we are done; hence, assume that this is not the case. We then need to show that $\opcosts(\mx_{i,j}^{k+1})$ is 2-competitive. First, by assumption, we know that $\opcosts(\mx_{i,j}^k)+\beta 2^k$ is not 2-competitive, that is we have
+Let $l\coloneqq\min\{2^{k+1},m\}$. TODO $2d<l-2^k$
+
+If $\opcosts(\mx_{i,j}^{2^k})+\beta(l-2^k)$ is 2-competitive, we are done; hence, assume that this is not the case. We then need to show that $\opcosts(\mx_{i,j}^l)$ is 2-competitive. First, by assumption, we know that $\opcosts(\mx_{i,j}^k)+\beta 2^k$ is not 2-competitive, that is we have
 \begin{equation*}
 	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)<\opcosts(\mx_{i,j}^k)+\beta 2^k
 \end{equation*}
@@ -185,6 +186,7 @@ which is no difficulty:
 	&=&&\sum\limits_{t=i}^j\Bigl((2^{2k}-d2^k-d2^k-2^{2k}+d2^{k+1})f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)\\
 	&=&&\sum\limits_{t=i}^j\Bigl((\underbrace{-2d2^k}_{-d2^{k+1}}+d2^{k+1})f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)=\sum\limits_{t=i}^j\Bigl(0\cdot f\Bigl(\frac{\lambda_t}{2^k}\Bigr)\Bigr)=0
 \end{align*}	
+By gradually applying the above procedure to $\mx$, beginning with $i=1$ and stopping with $j=T$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
 \end{proof}
 Safe in the knowledge that there always exists a 2-optimal, $B$-restricted schedule, we are just left with the verification of our new graph. We want to establish a bijection between $B$-restricted schedules and reasonable paths. Since we did not change the general construction idea of our graph, this verification turns out to be very similar to that done in Section~\ref{sec:opt_offline_pseudo_lin}. For the proof of the next lemma, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}, as well as that $B=\{0,2^0,2^1,\dotsc,2^b,m\}$.
 \begin{lem}\label{lem:sched_reasn_path_approx_2}
