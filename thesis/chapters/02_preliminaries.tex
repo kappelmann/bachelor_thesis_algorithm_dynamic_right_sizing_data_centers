@@ -45,12 +45,12 @@ Finally, we construct a new schedule $\Sigma'\coloneqq(\mathcal{S}',\mathcal{L}'
 \end{align*}
 We now want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq:feasible_constraint}. For time slots $<t$, the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$, we only changed the order of summation in~\eqref{eq:feasible_constraint}. Thus, $\Sigma'$ is feasible.
 
-Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, $\mathcal{S}'$ reduced the switching costs at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$.
+Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, by exchanging $\mathcal{S}$ with $\mathcal{S}'$, we reduced the number of servers powering up at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$.
 
 Moreover, we decreased the number of servers violating~\eqref{eq:reasonable_switching} at time $t$. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
-Our next proposition -- which will pose the cornerstone of our subsequent works -- requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is less than or equal to the convex-combination of the function values at the sampling points.
+Our next proposition---which will pose the cornerstone of our subsequent works---requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is less than or equal to the convex-combination of the function values at the sampling points.
 \begin{lem}[Jensen's inequality]\label{lem:jensens-inequality}
 Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\dotsc,\lambda_n\in\mathbb{R}$}, and $\mu_1,\dotsc,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
 \begin{equation*}
@@ -105,7 +105,7 @@ Since $\Sigma$ is feasible (see constraint~\eqref{eq:feasible_constraint}), we h
 \begin{equation*}
 	\sum\limits_{i\in A}\lambda_{i,t}=\lambda_t
 \end{equation*}
-Hence, we can obtain weights $\mu_1,\dotsc,\mu_{x_t}\in[0,1]$ that relate $\lambda_{i,t}$ and $\lambda_t$ for $i\in A$ such that
+Hence, we can obtain weights $\mu_1,\dotsc,\mu_{x_t}\in[0,1]$ that relate $\lambda_{i,t}$ and $\lambda_t$, for $i\in A$, such that
 \begin{align}
 	\sum\limits_{i=1}^{x_t}\mu_i=1\quad\text{and}\quad \sum\limits_{i\in A}f(\lambda_{i,t})=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\label{eq:mu_lambda_costs}
 \end{align}
@@ -119,7 +119,7 @@ Using these weights, we now consider the operating costs of a schedule $\Sigma^*
 \end{align*}
 With the fact that $\sum_{i=1}^{x_t}(1/x_t)=1$ and the use of Jensen's inequality (Lemma~\ref{lem:jensens-inequality}), we can give an upper bound for the costs:
 \begin{align*}
-	x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\ref{lem:jensens-inequality}}{\le}x_t\sum\limits_{i=1}^{x_t}\Bigl(\frac{1}{x_t}f(\mu_i\lambda_t)\Bigr)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\stackrel{\eqref{eq:mu_lambda_costs}}{=}\sum\limits_{i\in A}f(\lambda_{i,t})
+	x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\text{Lemma~\ref{lem:jensens-inequality}}}{\le}x_t\sum\limits_{i=1}^{x_t}\Bigl(\frac{1}{x_t}f(\mu_i\lambda_t)\Bigr)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\stackrel{\eqref{eq:mu_lambda_costs}}{=}\sum\limits_{i\in A}f(\lambda_{i,t})
 \end{align*}
 Thus, the operating costs of $\Sigma^*$ give a lower bound for the operating costs of $\Sigma$, and the claim follows.
 \end{proof}

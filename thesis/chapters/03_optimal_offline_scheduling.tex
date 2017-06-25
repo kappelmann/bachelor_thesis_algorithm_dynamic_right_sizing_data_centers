@@ -46,11 +46,11 @@ We examine the cost of $\mx$ and conclude
 \begin{equation*}
 \costs(\mx)\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)=\underbrace{\costs(x_0,x_1,\lambda_1)}_{=\costs(0,x_1,\lambda_1)}+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_{t},\lambda_t)\stackrel{\eqref{eq:v0_VT1_path_costs}}{=}\costs(P)
 \end{equation*}
-Which shows that $\Psi$ and, as a consequence, $\Phi$ are cost-preserving maps.
+which shows that $\Psi$ and, as a consequence, $\Phi$ are cost-preserving maps.
 \end{proof}
 We can now use this bijection to obtain our desired result: the correspondence between optimal schedules and shortest paths.
 \begin{thm}\label{thm:opt_sched_short_path_pseudo_poly}
-There exists a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest paths from $v_{0,0}$ to $v_{0,T+1}$.
+There exists a cost-preserving bijection between optimal schedules $\mx^*$ for $\inp$ and shortest paths from $v_{0,0}$ to $v_{0,T+1}$.
 \end{thm} 
 \begin{proof}
 By Lemma~\ref{lem:sched_path_pseudo_poly}, we have a bijection $\Psi$ between schedules $\mx$ and paths from $v_{0,0}$ to $v_{0,T+1}$ obeying $\costs(\mx)=\costs\bigl(\Psi(\mx)\bigr)$. Thus, we have 
@@ -170,7 +170,7 @@ The set of edges $E_s$ denotes the start initialization step. An edge $(v_{x,t\u
 After any time step from $t-1$ to $t$ that incurs operating costs, we have a minimization step in our graph. For this, we first move down the chain $v_{m,t\downarrow},v_{m-1,t\downarrow},\dotsc,v_{0,t\downarrow}$ using edges from $E_\downarrow$ with cost $0$. Then we proceed to move to the right from $v_{0,t\downarrow}$ to $v_{0,t\uparrow}$. Lastly, we move up the chain $v_{0,t\uparrow},v_{1,t\uparrow},\dotsc,v_{m,t\uparrow}$ using edges from $E_\uparrow$ with cost $\beta$. In order to have the possibility to keep the calculated costs of $v_{x,t\downarrow}$ while moving up, we add edges $(v_{x,t\downarrow},v_{x,t\uparrow})\in E_{\downarrow\uparrow}$ with cost $0$.  
 This minimization step is the key to our runtime improvement. It facilitates the determination of the best predecessor of a state $v_{x,t\downarrow}$ since we already know that the minimum cost of having $x$ servers at the end of time slot $t-1$ is stored in $v_{x,t-1\uparrow}$. Thus, the cheapest possibility to process the next arrival rate $\lambda_t$ using $x$ servers can simply be calculated by adding $\opcosts(x,\lambda_t)$ to the cost of $v_{x,t-1\uparrow}$. Consequently, the cost of $v_{x,t\downarrow}$ is given by the minimum of $v_{x,t-1\uparrow}+\opcosts(x,\lambda_t)$ and $v_{x+1,\downarrow}$.
 
-As one can see in Figure~\ref{fig:graph_pseudo_lin}, we stretched our graph but at the same time also greatly reduced the number of edges compared to our initial approach in Section~\ref{sec:opt_offline_pseudo_poly}. By following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. The cost of our destination $v_{0,T\downarrow}$ will denote the minimum cost up to time slot $T$ when processing $\lambda_T$ with 0 or more servers. Hence, it will contain our desired end result -- the minimum cost of all possible schedules.
+As one can see in Figure~\ref{fig:graph_pseudo_lin}, we stretched our graph but at the same time also greatly reduced the number of edges compared to our initial approach in Section~\ref{sec:opt_offline_pseudo_poly}. By following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. The cost of our destination $v_{0,T\downarrow}$ will denote the minimum cost up to time slot $T$ when processing $\lambda_T$ with 0 or more servers. Hence, it will contain our desired end result---the minimum cost of all possible schedules.
 
 Our next task shall be the verification of our new construction. We first examine the possible paths from $v_{0,0}$ to $v_{0,T\downarrow}$ in our graph.
 In contrast to our approach in Section~\ref{sec:opt_offline_pseudo_poly}, our new graph contains paths that do not directly correspond to a schedule $\mx$. For example, consider the following path:
@@ -266,15 +266,15 @@ Evidently, the constructed path satisfies $\Phi(P)=\mx$, which shows the surject
 It remains to show that $\Phi$ is cost-preserving. For this, let $P$ be a reasonable path and let $\mx\coloneqq\Phi(P)=(x_1,\dotsc,x_T)$ be its image. 
 As $P$ is reasonable, we have $E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset$ for any time slot $t$. If $E_\uparrow^t$ is empty, we have $x_{t-1}\ge x_t$. The cost between the nodes $v_{x_{t-1},t-1\downarrow}$ and $v_{x_t,t\downarrow}$ is then given by $\opcosts(x_t,\lambda_t)$. If $E_\uparrow^t$ is non-empty, we have $x_{t-1}<x_t$. In this case, the cost is given by $\beta(x_t-x_{t-1})+\opcosts(x_t,\lambda_t)$. Using these observations, the cost of $P$ can be calculated by 
 \begin{align*}
-	\costs(P)&=c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\overbrace{\beta\max\{0,x_t-x_{t-1}\}}^{\swcosts(x_{t-1},x_t)}+\opcosts(x_{t},\lambda_t)\bigr)\\
+	\costs(P)&\stackrel{\phantom{\eqref{eq:mx_schedule_sw_costs}}}{=}\costs(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\overbrace{\beta\max\{0,x_t-x_{t-1}\}}^{\swcosts(x_{t-1},x_t)}+\opcosts(x_{t},\lambda_t)\bigr)\\
 	&\stackrel{\eqref{eq:mx_schedule_sw_costs}}{=}c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\bigl(\overbrace{\swcosts(x_{t-1},x_t)+\opcosts(x_{t},\lambda_t)}^{\costs(x_{t-1},x_t,\lambda_t)}\bigr)\\
 	&\stackrel{\eqref{eq:mx_schedule_costs}}{=}c(0,x_1,\lambda_1)+\sum\limits_{t=2}^{T}\costs(x_{t-1},x_t,\lambda_t)=\sum\limits_{t=1}^{T}\costs(x_{t-1},x_t,\lambda_t)\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}c(\mx)
 \end{align*}
-Which shows that $\Phi$ is a cost-preserving map.
+which shows that $\Phi$ is a cost-preserving map.
 \end{proof}
 Again, we can use this bijection to obtain our desired result: the correspondence between optimal schedules and shortest, reasonable paths.
 \begin{thm}\label{thm:opt_sched_reasn_path}
-There exists a cost-preserving bijection between optimal schedules $\mx$ for $\inp$ and shortest, reasonable paths.
+There exists a cost-preserving bijection between optimal schedules $\mx^*$ for $\inp$ and shortest, reasonable paths.
 \end{thm} 
 \begin{proof}
 By Lemma~\ref{lem:sched_reasn_path_pseudo_lin}, we have a bijection $\Phi$ between reasonable paths $P$ and schedules $\mx$ obeying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$. Thus, we have 
@@ -285,11 +285,11 @@ and the claim follows.
 \end{proof}
 Naturally, common shortest path algorithms do not have any knowledge about our ``reasonable'' paths. What if we obtain a shortest path that coincidentally is not reasonable? This shall not turn out to be a problem, as the next corollary shows us.
 \begin{cor}\label{cor:opt_sched_short_path_pseudo_lin}
-Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to an optimal schedule $\mx$ for $\inp$ with $\costs(\mx)=\costs(P)$.
+Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to an optimal schedule $\mx^*$ for $\inp$ with $\costs(\mx^*)=\costs(P)$.
 \end{cor}
 \begin{proof}
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By Proposition~\ref{prop:path_to_reasn_path}, the path $P$ can be transformed to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
-In turn, $P'$ corresponds to an optimal schedule $\mx$ with $\costs(\mx)=\costs(P')$ by Theorem~\ref{thm:opt_sched_reasn_path}. Thus, we have $c(\mx)=c(P)$, and the claim follows.
+In turn, $P'$ corresponds to an optimal schedule $\mx^*$ with $\costs(\mx^*)=\costs(P')$ by Theorem~\ref{thm:opt_sched_reasn_path}. Thus, we have $c(\mx^*)=c(P)$, and the claim follows.
 \end{proof}
 In the following, we give an algorithm based on our just verified constructions. Like in Section~\ref{sec:opt_offline_pseudo_poly}, we split our procedure into two subroutines.
 
