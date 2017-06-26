@@ -115,15 +115,21 @@ Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}.
 First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T]$ (i.e.\ $x_t=0$), we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, as we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we can subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
 	
-For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq\min\{2^{\lceil\log_2(x_1+1)\rceil},m\}\in B$. Since $x_1$ is integral, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive. Next, we show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. For this, let $i\in[T]$ and $j+1\in\fromto{2}{T+1}$ with $i<j+1$ be the first unprocessed timeslots at which $\mx$ changes its 2-state. Let us have a look on the possible behaviors of $\mx$ between its 2-state changes. To do so, consider the lower and upper bound of $\mx$ between $i$ and $j$, namely
+Next, we show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. For this, let $i\in[T]$ and $j+1\in\fromto{2}{T+1}$ with $i<j+1$ be the first unprocessed timeslots at which $\mx$ changes its 2-state. In the following steps, we need to refer to the lower and upper bound of $\mx$ between $i$ and $j$, namely
 \begin{flalign*}
 	&&l\coloneqq 2^{\lfloor\log_2(x_i)\rfloor}&&\text{and}&&u\coloneqq\max\bigl\{2^{\lceil\log_2(x_i+1)\rceil},m\bigr\}&&&
 \end{flalign*}
-as well as the lower and upper bound of $\mx$ at time $j+1$:
+as well as to the lower and upper bound of $\mx$ at time $j+1$:
 \begin{flalign*}
 	&&l'\coloneqq 2^{\lfloor\log_2(x_{j+1})\rfloor}&&\text{and}&&u'\coloneqq\max\bigl\{2^{\lceil\log_2(x_{j+1}+1)\rceil},m\bigr\}&&&
 \end{flalign*}
-	We are going to classify the behavior based on how $\mx$ enters and leaves the region $[l,u)$. First, we consider the cases where $\mx$ leaves the region $[l,u)$ by turning off servers, that is $l<l'$ and $u<u'$, as depicted in Figure~\ref{fig:schedule_behavior_down}.
+Note that for any $x\in\mathbb{N}$, the inequality $\max\bigl\{2^{\lceil\log_2(x+1)\rceil},m\bigr\}\le 2x$ holds. As an invariant of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-competitive manner, that is we ensure that we can set $x_i'\coloneqq u'$ with 2-competitive switching costs---whether this step will be taken in the end or not. For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq\min\{2^{\lceil\log_2(x_1+1)\rceil},m\}\in B$. Since $x_1\in\mathbb{N}$, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive and the invariant initially holds.
+
+Now, let us have a closer look on the possible behaviors of $\mx$ between its 2-state changes. We are going to classify the behaviors based on how $\mx$ enters and leaves the interval $[l,u)$. First, we consider the cases where $\mx$ leaves the interval $[l,u)$ by turning off servers, as depicted in Figure~\ref{fig:schedule_behavior_down}. Due to our invariant, we know that we can set $x_i'\coloneqq u$ with 2-competitive switching costs. Consequently, setting $x_i'\coloneqq x_{i+1}\coloneqq\dotsb\coloneqq x_j'\coloneqq u\in B$ gives us a strategy with 2-competitive switching costs between $i$ and $j$. Further, since $u\le2x_t$ and $f$ is positive and monotonically increasing, the operating costs of $\mx'$ between $i$ and $j$ can be estimated by
+\begin{equation*}
+	\sum\limits_{t=i}^juf\Bigl(\frac{\lambda_t}{u}\Bigr)\le\sum\limits_{t=i}^j2x_tf\Bigl(\frac{\lambda_t}{u}\Bigr)\le2\sum\limits_{t=i}^jx_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)
+\end{equation*}
+where the right hand side is exactly twice the operating costs of $\mx$. Thus, the period between $i$ and $j$ in $\mx'$ is 2-competitive. Further, since $u'<u$, our invariant at time $j+1$ can potentially be reached without additional switching costs, but one shall note that we do not know yet whether this step should be taken (c.f. Figure~\ref{fig:schedule_behavior_down_up}).
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.49\textwidth}
@@ -133,9 +139,10 @@ as well as the lower and upper bound of $\mx$ at time $j+1$:
 \begin{subfigure}[b]{0.49\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_up_down}
 \end{subfigure}
-\caption{The original schedule comes from above or below, stays between $[l,u)$, and then falls down to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$}
+\caption{The original schedule comes from above or below, stays between $[l,u)$, and then descends to $[l',u')$. The approximative schedule stays put at $u$ for timeslots $i\le t\le j$.}
 \label{fig:schedule_behavior_down}
 \end{figure}
+Next, we consider the case where $\mx$ rises to $[l,u)$ and then proceeds to ascend to $[l',u')$. In this case, we set $x_i\coloneqq x_{i+1}\coloneqq\dotsb x_j\coloneqq u$ and $x_{j+1}'\coloneqq u'$. Evidently, as in the previous cases, the operating costs of $\mx'$ between $i$ and $j$ is 2-competitive.
 \begin{figure}[H]
 \centering
 \includestandalone[width=0.5\textwidth]{../figures/schedule_behavior_up_up}	
@@ -151,6 +158,7 @@ as well as the lower and upper bound of $\mx$ at time $j+1$:
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_2}
 \end{subfigure}
 \caption{The original schedule comes from above or below, stays between $[l,u)$, and then falls down to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$}
+\label{fig:schedule_behavior_down_up}
 \end{figure}
 Let $l\coloneqq 2^k$ and $u\coloneqq\min\{2^{k+1},m\}$. TODO $2d<u-l$
 
