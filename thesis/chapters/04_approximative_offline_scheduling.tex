@@ -123,7 +123,7 @@ as well as to the lower and upper bound of $\mx$ at time $j+1$:
 \begin{flalign*}
 	&&l'\coloneqq 2^{\lfloor\log_2(x_{j+1})\rfloor}&&\text{and}&&u'\coloneqq\max\bigl\{2^{\lceil\log_2(x_{j+1}+1)\rceil},m\bigr\}&&&
 \end{flalign*}
-Note that for any $x\in\mathbb{N}$, the inequality $\max\bigl\{2^{\lceil\log_2(x+1)\rceil},m\bigr\}\le 2x$ holds. As an invariant of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-competitive manner, that is we ensure that we can set $x_i'\coloneqq u'$ with 2-competitive switching costs---whether this step will be taken in the end or not. For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq\min\{2^{\lceil\log_2(x_1+1)\rceil},m\}\in B$. Since $x_1\in\mathbb{N}$, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive and the invariant initially holds.
+	Note that for any $x\in\mathbb{N}$, the inequality $\max\bigl\{2^{\lceil\log_2(x+1)\rceil},m\bigr\}\le 2x$ holds. As an invariant of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-competitive manner, that is we ensure that we can set $x_i'\coloneqq u'$ with 2-competitive switching costs---whether this step will be taken in the end or not. For the initial start-up process (i.e.\ $i=1$), we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq u\in B$. Since $x_1\in\mathbb{N}$, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive and the invariant initially holds. Note that we can (and indeed will have to) use the difference $\beta(2x_1-x_1')=\beta(2x_1-u)\ge2\beta(x_1-l)$ as a switching cost credit to compensate for subsequent, more expensive steps.
 
 Now, let us have a closer look on the possible behaviors of $\mx$ between its 2-state changes. We are going to classify the behaviors based on how $\mx$ enters and leaves the interval $[l,u)$. First, we consider the cases where $\mx$ leaves the interval $[l,u)$ by turning off servers, as depicted in Figure~\ref{fig:schedule_behavior_down}. Due to our invariant, we know that we can set $x_i'\coloneqq u$ with 2-competitive switching costs. Consequently, setting $x_i'\coloneqq x_{i+1}\coloneqq\dotsb\coloneqq x_j'\coloneqq u\in B$ gives us a strategy with 2-competitive switching costs between $i$ and $j$. Further, since $u\le2x_t$ and $f$ is positive and monotonically increasing, the operating costs of $\mx'$ between $i$ and $j$ can be estimated by
 \begin{equation*}
@@ -142,11 +142,20 @@ where the right hand side is exactly twice the operating costs of $\mx$. Thus, t
 \caption{The original schedule comes from above or below, stays between $[l,u)$, and then descends to $[l',u')$. The approximative schedule stays put at $u$ for timeslots $i\le t\le j$.}
 \label{fig:schedule_behavior_down}
 \end{figure}
-Next, we consider the case where $\mx$ rises to $[l,u)$ and then proceeds to ascend to $[l',u')$. In this case, we set $x_i\coloneqq x_{i+1}\coloneqq\dotsb x_j\coloneqq u$ and $x_{j+1}'\coloneqq u'$. Evidently, as in the previous cases, the operating costs of $\mx'$ between $i$ and $j$ is 2-competitive.
+Next, we consider the case where $\mx$ rises to $[l,u)$ and then proceeds to ascend to $[l',u')$, as illustrated in Figure~\ref{fig:schedule_behavior_up_up}. In this case, we set $x_i\coloneqq x_{i+1}\coloneqq\dotsb\coloneqq x_j\coloneqq u\in B$ and $x_{j+1}'\coloneqq u'\in B$. Evidently, as in the previous case, the operating costs of $\mx'$ between $i$ and $j$ are 2-competitive. Further, due to our invariant, we can again safely move to $u$ with 2-competitve switching costs. Lastly, we need to ensure that our invariant at time $j+1$ holds. Since $\mx$ has to power on at least $x_{j+1}-x_i$ servers, it suffices to show that $\beta(u'-u)\le2\beta(x_{j+1}-x_i)$ holds; however, it is clear that this must not be the case (just take $u'=8,u=4,x_{j+1}=4,x_i=3$). Nevertheless, using an amortized analysis, that is using our switching cost credit, we can see that
+\begin{align*}
+	2\beta(x_{j+1}-x_i)+\overbrace{2\beta(x_i-l)}^{\text{credit}}=2\beta(x_{j+1}-l)\ge\beta(u'-u)
+\end{align*}
+Thus, our invariant at time $j+1$ is satisfied. Note again that the difference 
+\begin{equation*}
+	2\beta(x_{j+1}-l)-\beta(u'-u)
+\end{equation*}
+can be used as a switching cost credit.
 \begin{figure}[H]
 \centering
 \includestandalone[width=0.5\textwidth]{../figures/schedule_behavior_up_up}	
 \caption{The original schedule comes from below, stays between $[l,u)$, and then rises to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$ and rises to $u'$ for timeslot $j+1$.}
+\label{fig:schedule_behavior_up_up}
 \end{figure}
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
