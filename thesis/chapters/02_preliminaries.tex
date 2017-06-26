@@ -147,7 +147,11 @@ For this, given a problem instance $\inp$, we define the operating costs functio
 	  \infty, & \text{if $x\ne 0\land\lambda>x$}
 	  \end{cases}
 \end{equation}
-We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate, that is the schedule would not be feasible. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$, which describes the incurred costs when changing the number of active server from $x_{t-1}$ to $x_t$:
+We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate, that is the schedule would not be feasible. Naturally, this definition can be lifted to whole schedules by setting
+\begin{equation}\label{eq:mx_schedule_op_costs_complete}
+	\opcosts(\mx)\coloneqq\sum\limits_{i=1}^T\opcosts(x_i,\lambda_i)
+\end{equation}
+which will come in handy in later sections. Next, we define the switching costs function $\swcosts(x_{t-1},x_t)$, which describes the incurred costs when changing the number of active server from $x_{t-1}$ to $x_t$:
 \begin{equation}\label{eq:mx_schedule_sw_costs}
 	\swcosts(x_{t-1},x_t)\coloneqq\beta\max\{0,x_t-x_{t-1}\}
 \end{equation}
