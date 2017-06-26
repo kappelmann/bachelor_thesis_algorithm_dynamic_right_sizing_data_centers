@@ -44,7 +44,7 @@ The nodes' and edges' semantical meaning and the graph's working principle stays
 \begin{defn}[Restricted schedules]
 Given an input $\inp$ and a set $A\subseteq\fromto{0}{m}$, we say that a schedule $\mx=(x_1,\dotsc,x_T)$ is \emph{$A$-restricted} if $\mx$ only uses scheduling coices contained in $A$, that is $\mx$ satisfies $\forall t\in[T](x_t\in A)$.
 \end{defn}
-Evidently, our graph is able to represent every $B$-restricted schedule. We shall now take a look on the incurring operating costs of such an $B$-restricted schedule $\mx'$. Since we are forced to schedule a number of servers contained in $B$, we might not be able to choose an optimal scheduling choice that minimizes the schedule's operating costs. Instead, we may choose the nearest scheduling choice which is contained in $B$. For instance, if the optimal scheduling strategy at some timeslot $t$ would be to choose $x_t=3$ servers (which is not a power of two), we may instead have to choose $x_t'=4\in B$ servers for our $B$-restricted schedule. One might suspect that this strategy would incur at most twice as much operating costs as an optimal schedule. This, however, is sadly not the case, as one can see in the following example.
+Evidently, our graph is able to represent every $B$-restricted schedule. We now examine the incurring operating costs of such a $B$-restricted schedule $\mx'$. Since we are forced to schedule a number of servers contained in $B$, we might not be able to choose an optimal scheduling choice that minimizes the schedule's operating costs. Instead, we may choose the nearest scheduling choice which is contained in $B$. For instance, if the optimal scheduling strategy at some timeslot $t$ would be to choose $x_t=3$ servers (which is not a power of two), we may instead have to choose $x_t'=4\in B$ servers for $\mx'$. One might suspect that this strategy would incur at most twice as much operating costs as an optimal schedule. This, however, is sadly not the case, as one can see in the following example.
 \begin{exmpl}
 Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a problem instance where $f(\lambda)=(\lambda-1)^2$. Since we need at least 3 active servers at any timeslot, any $B$-restricted schedule $\mx'=(x_1',\dotsc,x_5')$ forces us to constantly use $x_t'=4$ active machines. An optimal schedule $\mx=(x_1,\dotsc,x_5)$, on the other hand, is able to minimize its costs by constantly scheduling $x_t=3$ servers. Let us compare the costs between $\mx'$ and $\mx$. The schedules' costs are given by
 \begin{align*}
@@ -77,7 +77,7 @@ Ultimately, we can combine our observations and conclude
 \end{equation*}
 which shows us that our approximative scheduling choice incurs at most twice as much operating costs as an optimal scheduling strategy. We thus subsequently restrict ourselves to non-negative, monotonically increasing convex cost functions.
 
-Next, we shall take a look on the incurring switching costs of a $B$-restricted schedule $\mx'$. Again, given an optimal scheduling choice $x_t$, we use the idea to choose the nearest scheduling choice $x_t'$ that is contained in $B$ to construct $\mx'$. Once more, one might hope that $\mx'$ would incur at most twice as much switching costs as an optimal schedule. Needless to say, the next example dashes this hope.
+Next, we examine the incurring switching costs of a $B$-restricted schedule $\mx'$. Again, given an optimal scheduling choice $x_t$, we use the idea to choose the nearest scheduling choice $x_t'$ that is contained in $B$ to construct $\mx'$. Once more, one might hope that $\mx'$ would incur at most twice as much switching costs as an optimal schedule. Needless to say, the next example dashes this hope.
 \begin{exmpl}
 Let $\inp=\bigl(m=8,T=5,\Lambda=(9,7,9,7,9),\beta=1,f\bigr)$ be the input for a problem instance where $f(\lambda)=0$. Our possible scheduling choices are then given by $B=\{0,1,2,4,8\}$, and one optimal schedule is given by $\mx=(9,7,9,7,9)$. The $B$-restricted schedule corresponding to $\mx$ is then given by $\mx'=(16,8,16,8,16)$. The schedules' costs amount to
 \begin{align*}
@@ -102,9 +102,9 @@ The approximative schedule's cost is thus not 2-competetive compared to the opti
 \end{exmpl}
 So, is this the end of our hunt for a 2-optimal approximation? No, certainly not! Although our naive approach was to no avail, there is indeed a better $B$-restricted schedule for our example. Instead of following the optimal schedule's oscillation, we can simply use a schedule that stays put during these oscillating steps, that is we can use the schedule $\mx'=(16,16,16,16,16)$ with costs $\costs(\mx')=16$. Obviously, this seems like a rather trivial example since we set $f(\lambda)=0$, and hence we do not need to worry about the new schedule's operating costs. However, it indeed turns out that making the right choice between following the optimal schedule's oscillation and staying put will always allow us to acquire a 2-optimal approximation. This observation is the key part of the next lemma. Before we dive into the lemma and its proof, we make a handy definition:
 \begin{defn}
-Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T]$ with $x_{t-1}\neq 0$. We say that $\mx$ changes its \emph{2-state} at time $t$ if $x_t$ lies between a different pair of powers of two than its predecessor, that is $x_t$ satisfies
+Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T]$. We say that $\mx$ changes its \emph{2-state} at time $t$ if $x_t$ lies between a different pair of powers of two than its predecessor, that is $x_t$ satisfies
 \begin{equation*}
-	x_t\notin\bigl[2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1}+1)\rceil}\bigr]
+	x_t\notin\bigl[2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1}+1)\rceil}\bigr] \lor\overbrace{(x_{t-1}=0\land x_t\neq 0)}^{\text{special case for }x_{t-1}=0}
 \end{equation*}
 \end{defn}
 Now we are geared up to deal with the main work of this section.
@@ -113,10 +113,17 @@ Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'
 \end{lem}
 \begin{proof}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}.
-First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T]$, i.e.\ $x_t=0$, we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, as we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we can subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
+First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T]$ (i.e.\ $x_t=0$), we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, as we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we can subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
 	
-For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq\min\{2^{\lceil\log_2(x_1+1)\rceil},m\}\in B$. Since $x_1$ is integral, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words: The start-up switching costs of $\mx'$ are 2-competitive. Next, we show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. For this, let $i\in\fromto{2}{T},j+1\in\fromto{3}{T+1}$ with $i<j+1$ be the first unprocessed timeslots at which $\mx$ changes its 2-state. Let us have a look on the possible behaviors of $\mx$:
-
+For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq\min\{2^{\lceil\log_2(x_1+1)\rceil},m\}\in B$. Since $x_1$ is integral, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive. Next, we show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. For this, let $i\in[T]$ and $j+1\in\fromto{2}{T+1}$ with $i<j+1$ be the first unprocessed timeslots at which $\mx$ changes its 2-state. Let us have a look on the possible behaviors of $\mx$ between its 2-state changes. To do so, consider the lower and upper bound of $\mx$ between $i$ and $j$, namely
+\begin{flalign*}
+	&&l\coloneqq 2^{\lfloor\log_2(x_i)\rfloor}&&\text{and}&&u\coloneqq\max\bigl\{2^{\lceil\log_2(x_i+1)\rceil},m\bigr\}&&&
+\end{flalign*}
+as well as the lower and upper bound of $\mx$ at time $j+1$:
+\begin{flalign*}
+	&&l'\coloneqq 2^{\lfloor\log_2(x_{j+1})\rfloor}&&\text{and}&&u'\coloneqq\max\bigl\{2^{\lceil\log_2(x_{j+1}+1)\rceil},m\bigr\}&&&
+\end{flalign*}
+	We are going to classify the behavior based on how $\mx$ enters and leaves the region $[l,u)$. First, we consider the cases where $\mx$ leaves the region $[l,u)$ by turning off servers, that is $l<l'$ and $u<u'$, as depicted in Figure~\ref{fig:schedule_behavior_down}.
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.49\textwidth}
@@ -126,15 +133,25 @@ For the initial start-up process, we can simply move to the next power of 2 larg
 \begin{subfigure}[b]{0.49\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_up_down}
 \end{subfigure}
-\caption{The optimal schedule comes from above or below, stays between $[l,u)$, and then falls down to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$}
+\caption{The original schedule comes from above or below, stays between $[l,u)$, and then falls down to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$}
+\label{fig:schedule_behavior_down}
 \end{figure}
-
 \begin{figure}[H]
 \centering
 \includestandalone[width=0.5\textwidth]{../figures/schedule_behavior_up_up}	
-\caption{The optimal schedule comes from below, stays between $[l,u)$, and then rises to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$ and rises to $u'$ for timeslot $j+1$.}
+\caption{The original schedule comes from below, stays between $[l,u)$, and then rises to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$ and rises to $u'$ for timeslot $j+1$.}
 \end{figure}
-
+\begin{figure}[H]
+\captionsetup[subfigure]{labelformat=empty}
+\begin{subfigure}[b]{0.49\textwidth}
+\includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_1}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.49\textwidth}
+\includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_2}
+\end{subfigure}
+\caption{The original schedule comes from above or below, stays between $[l,u)$, and then falls down to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$}
+\end{figure}
 Let $l\coloneqq 2^k$ and $u\coloneqq\min\{2^{k+1},m\}$. TODO $2d<u-l$
 
 If $\opcosts(\mx_{i,j}^l)+\beta(u-l)$ is 2-competitive, we are done; hence, assume that this is not the case. We then need to show that $\opcosts(\mx_{i,j}^u)$ is 2-competitive. First, by assumption, we know that $\opcosts(\mx_{i,j}^l)+\beta(u-l)$ is not 2-competitive, that is we have
