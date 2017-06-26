@@ -87,12 +87,12 @@ Let $\inp=\bigl(m=8,T=5,\Lambda=(9,7,9,7,9),\beta=1,f\bigr)$ be the input for a 
 The approximative schedule's cost is thus not 2-competetive compared to the optimal schedule. Of course, we are again curious about how this cost explosion is possible. Since we set $f(\lambda)=0$, that is our servers do not incur operating costs, this explosion is evidently due to the increased switching costs of $\mx'$. The problem in this case is the oscillating behavior of $\mx$ around a power of two (namely $8=2^3$), as one can see in the following figure. 
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.47\textwidth}
+\begin{subfigure}[b]{0.5\textwidth}
 \includestandalone[width=\textwidth]{./../figures/switching_costs_not_2_opt_1}
 	\caption{\underline{Optimal schedule $\mx$:} Note how the schedule oscillates around 8 (a power of two).}
 \end{subfigure}
 \hfill
-\begin{subfigure}[b]{0.47\textwidth}
+\begin{subfigure}[b]{0.5\textwidth}
 \includestandalone[width=\textwidth]{../figures/switching_costs_not_2_opt_2}
 	\caption{\underline{Approximative schedule $\mx'$:} The approximative schedule is restricted to powers of two.}
 \end{subfigure}
@@ -113,25 +113,26 @@ Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'
 \end{lem}
 \begin{proof}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}.
-First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T-1]$, i.e.\ $x_t=0$, we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, as we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we can subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
+First, we note that if $\mx$ powers down all its servers at some timeslot $t\in[T]$, i.e.\ $x_t=0$, we can split $\mx$ into two subschedules \makebox{$\mx_1=(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2=(x_{t+1},\dotsc,x_T)$}. By setting $x_t'\coloneqq0$, it suffices to prove the claim for $\mx_1$ and $\mx_2$, as we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we can subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
 	
-For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq\min\{2^{\lceil\log_2(x_1+1)\rceil},m\}\in B$. Since $x_1$ is integral, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$. Further, since $f$ is non-negative and monotonically increasing, we have
-\begin{equation*}
-	x_1'f\Bigl(\frac{\lambda_1}{x_1'}\Bigr)\le2x_1f\Bigl(\frac{\lambda_1}{x_1'}\Bigr)\le2x_1f\Bigl(\frac{\lambda_1}{x_1}\Bigr)
-\end{equation*}
-Hence, the start-up costs of $\mx'$ are 2-competitive. Next, we show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. For this, let $i,j\in[T]$ with $i<j$ be the first timeslots at which $\mx$ changes its 2-state. Let us have a look on the possible behaviors of $\mx$:
+For the initial start-up process, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq\min\{2^{\lceil\log_2(x_1+1)\rceil},m\}\in B$. Since $x_1$ is integral, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words: The start-up switching costs of $\mx'$ are 2-competitive. Next, we show that every period between two 2-state changes of $\mx$ can be transformed to a 2-competitive period in $\mx'$. For this, let $i\in\fromto{2}{T},j+1\in\fromto{3}{T+1}$ with $i<j+1$ be the first unprocessed timeslots at which $\mx$ changes its 2-state. Let us have a look on the possible behaviors of $\mx$:
+
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.47\textwidth}
-\includestandalone[width=\textwidth]{../figures/schedule_behavior_up}	
-\caption{\underline{Rising schedule:} Stays between $2^j$ and $2^{j+1}$ and then rises above $2^{j+1}$.}
+\begin{subfigure}[b]{0.49\textwidth}
+\includestandalone[width=\textwidth]{../figures/schedule_behavior_down_down}
 \end{subfigure}
 \hfill
-\begin{subfigure}[b]{0.47\textwidth}
-\includestandalone[width=\textwidth]{../figures/schedule_behavior_up}	
-\caption{\underline{Rising schedule:} Stays between $2^j$ and $2^{j+1}$ and then rises above $2^{j+1}$.}
+\begin{subfigure}[b]{0.49\textwidth}
+\includestandalone[width=\textwidth]{../figures/schedule_behavior_up_down}
 \end{subfigure}
-\caption{Possible schedule behaviors}
+\caption{The optimal schedule comes from above or below, stays between $[l,u)$, and then falls down to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includestandalone[width=0.5\textwidth]{../figures/schedule_behavior_up_up}	
+\caption{The optimal schedule comes from below, stays between $[l,u)$, and then rises to $[l',u')$; the approximative schedule stays at $u$ for timeslots $i\le t\le j$ and rises to $u'$ for timeslot $j+1$.}
 \end{figure}
 
 Let $l\coloneqq 2^k$ and $u\coloneqq\min\{2^{k+1},m\}$. TODO $2d<u-l$
@@ -194,7 +195,7 @@ Further rearranging the left hand side gives us
 \end{align*}
 Now, since $f$ is non-negative, we just have to verify that $g(u)\ge0$ for $l\le u\le 2l$. We note that $g(u)$ is an inverted parabola with roots $l$ and $2l$. Thus, we know that $g(l)=g(2l)=0$ and $g(u)>0$ for $l<u<2l$, which finishes the case.
 
-By gradually applying the above procedure to $\mx$, starting with $i=1$ and stopping with $j=T$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
+By gradually applying the above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
 \end{proof}
 Safe in the knowledge that there always exists a 2-optimal, $B$-restricted schedule, we are just left with the verification of our new graph. We want to establish a bijection between $B$-restricted schedules and reasonable paths. Since we did not change the general construction idea of our graph, this verification turns out to be very similar to that done in Section~\ref{sec:opt_offline_pseudo_lin}. For the proof of the next lemma, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}, as well as that $B=\{0,2^0,2^1,\dotsc,2^b,m\}$.
 \begin{lem}\label{lem:sched_reasn_path_approx_2}
