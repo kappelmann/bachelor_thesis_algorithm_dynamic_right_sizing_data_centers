@@ -121,7 +121,11 @@ Next, we show that every period between two 2-state changes of $\mx$ can be iter
 \end{flalign*}
 as well as to the lower and upper bound of $\mx$ at time $j+1$:
 \begin{flalign*}
-	&&l'\coloneqq 2^{\lfloor\log_2(x_{j+1})\rfloor}&&\text{and}&&u'\coloneqq\min\bigl\{2^{\lceil\log_2(x_{j+1}+1)\rceil},m\bigr\}&&&
+	&&l'\coloneqq\begin{cases}
+		2^{\lfloor\log_2(x_{j+1})\rfloor}, & \text{if $x_{j+1}\neq 0$}\\
+		0, & \text{if $x_{j+1}=0$}
+	\end{cases}
+&&\text{and}&&u'\coloneqq\min\bigl\{2^{\lceil\log_2(x_{j+1}+1)\rceil},m\bigr\}&&&
 \end{flalign*}
 Note that for any $x\in\mathbb{N}$, the inequality $\min\bigl\{2^{\lceil\log_2(x+1)\rceil},m\bigr\}\le 2x$ holds. As an invariant of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-competitive manner, that is we ensure that we can set $x_i'\coloneqq u'$ with 2-competitive switching costs---whether this step will be taken in the end or not. For the initial start-up process (i.e.\ $i=1$), we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq u\in B$. Since $x_1\in\mathbb{N}$, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive and the invariant initially holds. Note that we can (and indeed will have to) use the difference of switching costs $\beta(2x_1-x_1')=\beta(2x_1-u)$ as a switching cost credit to compensate for subsequent, more expensive switching steps.
 
@@ -177,39 +181,50 @@ where $\hat{u}\coloneqq\min\{2^{\lceil\log_2(u+1)\rceil},m\}\in B$. Both strateg
 \caption{The original schedule comes from above, stays between $[l,u)$, and then rises to $[l',u')$. The approximative schedule has two different possibilities.}
 \label{fig:schedule_behavior_down_up}
 \end{figure}
-We are now going to prove that either $\mx_{i,j}^u$ or $\mx_{i,j}^{\hat{u}}$, including possible switching costs to satisfy our invariant for $j+1$, must be 2-competitive. If $\mx_{i,j}^u$ is 2-competitive, we are done; hence, assume that this is not the case. We then need to show that $\mx_{i,j}^{\hat{u}}$ is 2-competitive. First, we examine the switching costs of $\mx$ from $i$ up to $j+1$. Since $\mx$ has to power on at least $x_{j+1}-\min\{x_t\mid i\le t\le j\}$ servers between $i$ and $j+1$, we can estimate its switching costs by
-\begin{align*}
-	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta\bigl(x_{j+1}-\min\{x_t\mid i\le t\le j\}\bigr)
-\end{align*}
-By assumption, we know that $\mx_{i,j}^u$ is not 2-competitive, that is we have
+We are now going to prove that either $\mx_{i,j}^u$ or $\mx_{i,j}^{\hat{u}}$, including possible switching costs to satisfy our invariant for $j+1$, must be 2-competitive. 
+First, we examine the switching costs of $\mx$ from $i$ up to $j+1$. To do so, we set $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to refer to the smallest number of active servers used by $\mx_{i,j}$. Then, since $\mx$ has to power on at least $x_{j+1}-d$ servers between $i$ and $j+1$, we can give a lower bound for its switching costs:
 \begin{equation*}
-	\opcosts(\mx_{i,j}^l)+\beta(u-l)>2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)
+	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta(x_{j+1}-d)
 \end{equation*}
-We know that $\mx_{i,j}^l$ uses at most twice as many active servers as $\mx_{i,j}$, and thus $\mx_{i,j}^l$ incurs at most twice as much operating costs as $\mx_{i,j}$. Consequently, the switching costs of $\mx_{i,j}^l$ must significantly outweight those of $\mx_{i,j}$. Hence, it seems interesting to get an estimation for $\beta$. Rearranging the previous inequality gives us
+Now we can see that if $\mx_{i,j}$ at some point powers down to $l$, that is $d=l$, the switching costs of $\mx_{i,j}^u$ must be 2-competitive since
+\begin{equation*}
+	\beta(u'-u)\le\beta(2x_{j+1}-u)\le\beta(2_x{j+1}-2d)=2\beta(x_{j+1}-d)
+\end{equation*}
+Further, as in the previous cases, the operating costs of $\mx_{i,j}^u$ are 2-competitive, and thus $\mx_{i,j}^u$ is 2-competitive if $d=l$. Hence, we subsequently assume that $d>l$. 
+
+TODO reduce to proof of switching up to $\hat{u}$. and $\hat{u}-u-2d>0$
+
+If $\mx_{i,j}^u$ is 2-competitive, we are done; hence, assume that this is not the case, that is we have 
+\begin{equation*}
+	\opcosts(\mx_{i,j}^u)+\beta(u'-u)>2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)
+\end{equation*}
+We then need to show that $\mx_{i,j}^{\hat{u}}$ is 2-competitive.
+First note that $\mx_{i,j}^u$ uses at most twice as many active servers as $\mx_{i,j}$, and thus $\mx_{i,j}^u$ incurs at most twice as much operating costs as $\mx_{i,j}$. Consequently, the switching costs of $\mx_{i,j}^u$ must significantly outweight those of $\mx_{i,j}$. Hence, it seems interesting to get an estimation for $\beta$. Rearranging the previous inequality gives us
 \begin{align*}
-	&&2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)&<\opcosts(\mx_{i,j}^l)+\beta(u-l)\\
-	&\stackrel{\phantom{u-l-2d>0}}{\iff}&2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^l)&<\beta(u-l-2d)\\
-	&\stackrel{u-l-2d>0}{\iff}&\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^l)}{u-l-2d}&<\beta
+	&&\opcosts(\mx_{i,j}^u)+\beta(\hat{u}-u)&>2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)&\\
+	&\stackrel{\phantom{\hat{u}-u-2d>0}}{\iff}&\beta(\hat{u}-u-2d)&>2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^u)&\\
+	&\stackrel{\hat{u}-u-2d>0}{\iff}&\beta&>\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}
 \end{align*}
 This allows us to find a lower bound for the costs of using $\mx_{i,j}$:
 \begin{align*}
-	\opcosts(\mx_{i,j})+\beta d&>\opcosts(\mx_{i,j})+\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^l)}{u-l-2d}d\\
-	&=\frac{\opcosts(\mx_{i,j})(u-l-2d)+2d\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^l)}{u-l-2d}\\
-	&=\frac{(u-l)\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^l)}{u-l-2d}
+	\opcosts(\mx_{i,j})+\beta d&>\opcosts(\mx_{i,j})+\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}d\\
+	&=\frac{\opcosts(\mx_{i,j})(\hat{u}-u-2d)+2d\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}\\
+	&=\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}
 \end{align*}
-Next, since we want to prove that $\opcosts(\mx_{i,j}^u)$ is 2-competitive, we have to show that the following cost difference is non-negative:
+Next, since we want to prove that $\opcosts(\mx_{i,j}^{\hat{u}})$ is 2-competitive, we have to show that the following cost difference is non-negative:
 \begin{align*}
-	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^u)
+	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^{\hat{u}})
 \end{align*}
 We can use our just derived lower bound for $\opcosts(\mx_{i,j})+\beta d$ to estimate the difference:
 \begin{align*}
-	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^u)&>2\Bigl(\frac{(u-l)\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^l)}{u-l-2d}\Bigr)-\opcosts(\mx_{i,j}^u)\\
-	&=\frac{2(u-l)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^l)-(u-l-2d)\opcosts(\mx_{i,j}^u)}{u-l-2d}
+	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^u)&>2\Bigl(\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}\Bigr)-\opcosts(\mx_{i,j}^u)\\
+	&=\frac{2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}
 \end{align*}
 Thus, it suffices to show that
 \begin{align*}
-	&&\frac{2(u-l)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^l)-(u-l-2d)\opcosts(\mx_{i,j}^u)}{u-l-2d}&\ge 0\\
-	&\stackrel{u-l-2d>0}{\iff}&2(u-l)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^l)-(u-l-2d)\opcosts(\mx_{i,j}^u)&\ge 0
+	&&\frac{2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}
+&\ge 0\\
+	&\stackrel{\hat{u}-u-2d>0}{\iff}&2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^u)&\ge 0
 \end{align*}
 For this, we have to take a closer look on the the schedules' operating costs:
 \begin{align*}
@@ -239,7 +254,7 @@ Further rearranging the left hand side gives us
 \end{align*}
 Now, since $f$ is non-negative, we just have to verify that $g(u)\ge0$ for $l\le u\le 2l$. We note that $g(u)$ is an inverted parabola with roots $l$ and $2l$. Thus, we know that $g(l)=g(2l)=0$ and $g(u)>0$ for $l<u<2l$, which finishes the case.
 
-By gradually applying the above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
+By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
 \end{proof}
 Safe in the knowledge that there always exists a 2-optimal, $B$-restricted schedule, we are just left with the verification of our new graph. We want to establish a bijection between $B$-restricted schedules and reasonable paths. Since we did not change the general construction idea of our graph, this verification turns out to be very similar to that done in Section~\ref{sec:opt_offline_pseudo_lin}. For the proof of the next lemma, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}, as well as that $B=\{0,2^0,2^1,\dotsc,2^b,m\}$.
 \begin{lem}\label{lem:sched_reasn_path_approx_2}
