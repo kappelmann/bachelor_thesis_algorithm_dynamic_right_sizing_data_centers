@@ -217,42 +217,42 @@ Next, since we want to prove that $\opcosts(\mx_{i,j}^{\hat{u}})$ is 2-competiti
 \end{align*}
 We can use our just derived lower bound for $\opcosts(\mx_{i,j})+\beta d$ to estimate the difference:
 \begin{align*}
-	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^u)&>2\Bigl(\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}\Bigr)-\opcosts(\mx_{i,j}^u)\\
-	&=\frac{2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}
+	2\bigl(\opcosts(\mx_{i,j})+\beta d\bigr)-\opcosts(\mx_{i,j}^{\hat{u}})&>2\Bigl(\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-d\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}\Bigr)-\opcosts(\mx_{i,j}^{\hat{u}})\\
+	&=\frac{2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^{\hat{u}})}{\hat{u}-u-2d}
 \end{align*}
 Thus, it suffices to show that
 \begin{align*}
-	&&\frac{2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^u)}{\hat{u}-u-2d}
+	&&\frac{2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^{\hat{u}})}{\hat{u}-u-2d}
 &\ge 0\\
-	&\stackrel{\hat{u}-u-2d>0}{\iff}&2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^u)&\ge 0
+	&\stackrel{\hat{u}-u-2d>0}{\iff}&2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^{\hat{u}})&\ge 0
 \end{align*}
 For this, we have to take a closer look on the the schedules' operating costs:
 \begin{align*}
-	&&&2(u-l)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^l)-(u-l-2d)\opcosts(\mx_{i,j}^u)\\
-	&\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}&&2(u-l)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)
+	&&&2(\hat{u}-u)\opcosts(\mx_{i,j})-2d\opcosts(\mx_{i,j}^u)-(\hat{u}-u-2d)\opcosts(\mx_{i,j}^{\hat{u}})\\
+	&\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-u-2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{\hat{u}}\Bigr)\Bigr)
 \end{align*}
-First, we note that $l<u$ and $x_t<l$ for $i\le t\le j$. Together with the fact that $f$ is monotonically increasing, we infer that
+First, we note that $u<\hat{u}$ and $x_t<u$ for $i\le t\le j$. Together with the fact that $f$ is monotonically increasing, we infer that
 \begin{align*}
-	&&&2(u-l)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
-	&\ge&&2(u-l)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)
+	&&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-u-2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{\hat{u}}\Bigr)\Bigr)\\
+	&\ge&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-u-2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)
 \end{align*}
 Next, TODO f pos.\ and no oscillating
 \begin{align*}
-	&&&2(u-l)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\\
-	&\ge&&2(u-l)\sum\limits_{t=i}^j\Bigl((l-d)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)
+	&&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-u-2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
+	&\ge&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl((u-d)f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-u-2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)
 \end{align*}
 Hence, to finish the case, it suffices to show that
 \begin{align*}
-	2(u-l)\sum\limits_{t=i}^j\Bigl((l-d)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\ge 0
+	2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl((u-d)f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-u-2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\ge 0
 \end{align*}
 Further rearranging the left hand side gives us
 \begin{align*}
-	&&&2(u-l)\sum\limits_{t=i}^j\Bigl((l-d)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(lf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-(u-l-2d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\\
-	&=&&\sum\limits_{t=i}^j\Bigl((2lu-2du-2l^2+2dl)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl(dlf\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl((u^2-lu-2du)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\\
-	&=&&\sum\limits_{t=i}^j\Bigl((2lu-2du-2l^2+2dl-2dl-u^2+lu+2du)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)\\
-	&=&&\sum\limits_{t=i}^j\Bigl((-u^2+3lu-2l^2)f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr)=\sum\limits_{t=i}^j\Bigl(\underbrace{-(l-u)(2l-u)}_{g(u)\coloneqq}f\Bigl(\frac{\lambda_t}{l}\Bigr)\Bigr) 
+	&&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl((u-d)f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2d\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-u-2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
+	&=&&\sum\limits_{t=i}^j\Bigl((2u\hat{u}-2d\hat{u}-2u^2+2du)f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl(duf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl((\hat{u}^2-u\hat{u}-2d\hat{u})f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
+	&=&&\sum\limits_{t=i}^j\Bigl((2u\hat{u}-2d\hat{u}-2u^2+2du-2du-\hat{u}^2+u\hat{u}+2d\hat{u})f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
+	&=&&\sum\limits_{t=i}^j\Bigl((-\hat{u}^2+3u\hat{u}-2u^2)f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)=\sum\limits_{t=i}^j\Bigl(\underbrace{-(u-\hat{u})(2u-\hat{u})}_{g(\hat{u})\coloneqq}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr) 
 \end{align*}
-Now, since $f$ is non-negative, we just have to verify that $g(u)\ge0$ for $l\le u\le 2l$. We note that $g(u)$ is an inverted parabola with roots $l$ and $2l$. Thus, we know that $g(l)=g(2l)=0$ and $g(u)>0$ for $l<u<2l$, which finishes the case.
+Now, since $f$ is non-negative, we just have to verify that $g(\hat{u})\ge0$ for $u\le \hat{u}\le 2u$. We note that $g(\hat{u})$ is an inverted parabola with roots $u$ and $2u$. Thus, we know that $g(u)=g(2u)=0$ and $g(\hat{u})>0$ for $l<\hat{u}<2l$, which finishes the case.
 
 By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
 \end{proof}
