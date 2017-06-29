@@ -127,7 +127,7 @@ as well as to the lower and upper bound of $\mx$ at time $j+1$:
 	\end{cases}
 &&\text{and}&&u'\coloneqq\min\bigl\{2^{\lceil\log_2(x_{j+1}+1)\rceil},m\bigr\}&&&
 \end{flalign*}
-Note that $l,u,l',u'\in B$ and that for any $x\in\mathbb{N}$, the inequality $\min\bigl\{2^{\lceil\log_2(x+1)\rceil},m\bigr\}\le 2x$ holds. As an invariant of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-competitive manner, that is we ensure that we can set $x_i'\coloneqq u$ with 2-competitive switching costs---whether this step will be taken in the end or not. Further, we ensure that $x_t'\le u$ holds for any $i\le t\le j$ after every transformation step. For the initial start-up process (i.e.\ $i=1$), we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq u\in B$. Since $x_1\in\mathbb{N}$, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive and the invariant initially holds. Moreover, we can (and indeed will have to) use the difference of switching costs $\beta(2x_1-x_1')=\beta(2x_1-u)$ as a switching cost credit to compensate for subsequent, more expensive switching steps.
+Note that $l,u,l',u'\in B$ and that for any $x\in\mathbb{N}$, the inequality $\min\bigl\{2^{\lceil\log_2(x+1)\rceil},m\bigr\}\le 2x$ holds. As an invariant of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-competitive manner, that is we ensure that we can set $x_i'\coloneqq u$ with 2-competitive switching costs---whether this step will be taken in the end or not. Further, we ensure that $x_t'\ge u$ holds for any $i\le t\le j$ after every transformation step. For the initial start-up process (i.e.\ $i=1$), we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq u\in B$. Since $x_1\in\mathbb{N}$, we know that $x_1'\le2x_1$ and thus $\beta x_1'\le\beta 2x_1$; in other words, the start-up switching costs of $\mx'$ are 2-competitive and the invariant initially holds. Moreover, we can (and indeed will have to) use the difference of switching costs $\beta(2x_1-x_1')=\beta(2x_1-u)$ as a switching cost credit to compensate for subsequent, more expensive switching steps.
 
 Now, let us have a closer look on the possible behaviors of $\mx$ between its 2-state changes. We will classify the behaviors based on how $\mx$ enters and leaves the interval $[l,u)$. First, we consider the cases where $\mx$ leaves the interval $[l,u)$ by turning off servers, as depicted in Figure~\ref{fig:schedule_behavior_down}.
 \begin{figure}[H]
@@ -166,7 +166,7 @@ Finally, we have to consider the case where $\mx$ descends to $[l,u)$ and then a
 	\mx_{i,j}^u&\coloneqq(x_i^u\coloneqq u,\dotsc,x_j^u\coloneqq u)\\
 	\mx_{i,j}^{\hat{u}}&\coloneqq(x_i^{\hat{u}}\coloneqq\hat{u},\dotsc,x_j^{\hat{u}}\coloneqq\hat{u})
 \end{align*}
-where $\hat{u}\coloneqq\min\{2^{\lceil\log_2(u+1)\rceil},m\}\in B$. Both strategies are illustrated in Figure~\ref{fig:schedule_behavior_down_up}.
+where $\hat{u}\coloneqq\min\{2^{\lceil\log_2(u+1)\rceil},m\}\in B$. Due to our invariant and the fact that $\mx$ descends at time $i$, we know that $x_{i-1}'\ge \hat{u}\ge u$, and thus both strategies do no incur switching costs up to time $j$ (but possibly at time $j+1$). Both strategies are illustrated in Figure~\ref{fig:schedule_behavior_down_up}.
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.49\textwidth}
@@ -298,6 +298,7 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By using a small adaption of Proposition~\ref{prop:path_to_reasn_path} that uses logarithmic instead of incremental switching steps, we can transform $P$ to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to a 2-optimal, \makebox{$B$-restricted} schedule $\mx$ with $\costs(\mx)=\costs(P')=\costs(P)$ by Theorem~\ref{thm:approx_2}, which finishes the proof.
 \end{proof}
+TODO algorithm
 %TODO text for correctness of algorithm
 %In the following, we give an algorithm based on our just verified constructions. Like in Section~\ref{sec:opt_offline_pseudo_poly}, we split our procedure into two subroutines.
 
