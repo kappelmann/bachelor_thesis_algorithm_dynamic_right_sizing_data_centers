@@ -103,7 +103,7 @@ We split our procedure into two subroutines.
 The correctness of Algorithm~\ref{alg:opt_offline_pseudo_poly} directly follows from the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\parencite{intro-algo}) and from Theorem~\ref{thm:opt_sched_short_path_pseudo_poly}.
 
 Naturally, we are interested in our algorithm's runtime and memory complexity.
-For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\beta,f)$. In theory, our function $f:[0,1]\rightarrow \mathbb{R}$ may be easily defined by saying, for example, $f(\lambda)\coloneqq \lambda^2$; however, practically, it is difficult to answer how such a function may be specified and what the size of such a function as part of the input may be. For simplicity, we consider the size of $f$ negligible in comparison with the size of the remaining input variables. Further, we assume a real number $r$ to require $\Theta\bigl(\log_2(r)\bigr)$ bits for its encoding.\unsure{Real numbers? How should I write this? What about $\log_2(0)$?} The size of our input is then given by\unsure{The following calculation. $\mathcal{O}(m)$?}
+For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\beta,f)$. In theory, our function $f:[0,1]\rightarrow \mathbb{R}$ may be easily defined by saying, for example, $f(\lambda)\coloneqq \lambda^2$; however, practically, it is difficult to answer how such a function may be specified and what the size of such a function as part of the input may be. For simplicity, we consider the size of $f$ negligible in comparison with the remaining input variables' size. Further, we assume that a non-negative real number $r$ requires $\Theta\bigl(\log_2(r)\bigr)$ bits for its encoding; if $r$ turns out to be $0$, we assume some minor, constant encoding size. The size of our input is then given by
 \begin{align}
 	size(\inp)&=size(m)+size(T)+size(\Lambda)+size(\beta)\nonumber\\
 	&=\Theta\bigl(\log_2(m)\bigr)+\Theta\bigl(\log_2(T)\bigr)+\sum\limits_{i=1}^T \Theta\bigl(\log_2(\lambda_i)\bigr)+\Theta\bigl(\log_2(\beta)\bigr)\nonumber\\
@@ -117,7 +117,7 @@ For our runtime analysis, we assume that calling the costs function $\costs(\cdo
 \end{equation*}
 The runtime is polynomial in the numeric value of $m$ and $T$; however, it is exponential in the size of the input since, as we saw in~\eqref{eq:inp_size}, we only need $\log_2(m)$ bits to encode $m$. Hence, the algorithm is pseudo-polynomial.
 
-Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$\unsure{Is this enough?}
+Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$.
 
 \section{A Pseudo-Linear Algorithm}\label{sec:opt_offline_pseudo_lin}
 The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost: The density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to ``thin out'' our graph. 
@@ -356,4 +356,4 @@ The runtime is linear in the numeric value of $m$ and $T$; however, it is expone
 
 Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$; thus, the memory complexity does not change in comparison to Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 
-Although we have achieved a notable improvement compared to our initial approach, we shall not stop here. Our runtime is, strictly speaking, still exponential; hence, a large value of $m$ may cause undesired long execution times. Our next goal is therefore the reduction of our runtime to subexponential complexity.
+Although we have achieved a notable improvement compared to our initial approach, we shall not stop here. Our runtime is, strictly speaking, still exponential; hence, a large value of $m$ may cause undesired long execution times. Our next goal is therefore the reduction of our runtime to sub-exponential complexity.
