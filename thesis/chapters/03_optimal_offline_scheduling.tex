@@ -66,7 +66,7 @@ We split our procedure into two subroutines.
 
 \textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path; thereby, it calculates an optimal schedule for our problem instance.
 \begin{algorithm}[H]
-  \caption{Pseudo-polynomial optimal offline scheduling}
+  \caption{Pseudo-polynomial, optimal, offline scheduling}
   \begin{algorithmic}[1]
   \Function{optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
 	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
@@ -298,7 +298,7 @@ For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downar
 
 \textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path; thereby, it calculates an optimal schedule for our problem instance.
 \begin{algorithm}[H]
-  \caption{Pseudo-linear optimal offline scheduling}
+  \caption{Pseudo-linear, optimal offline scheduling}
   \begin{algorithmic}[1]
   \Function{optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
 	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}

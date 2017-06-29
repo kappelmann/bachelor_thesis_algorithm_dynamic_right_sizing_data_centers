@@ -42,7 +42,7 @@ A more appealing, graphical representation can be found in the following figure.
 \end{figure}
 The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. Since some possible scheduling choices, however, are not representable in this new graph, we may just obtain approximative costs for our nodes. Thus, the shortest path in our graph might not correspond to an optimal schedule, but it will at least correspond to an approximative one. Before we start to establish the graph's approximation guarantee, we first have to conduct some observations. We start by making a convenient definition that helps us to identify schedules that are representable in our graph.
 \begin{defn}[Restricted schedules]
-Given an input $\inp$ and a set $A\subseteq\fromto{0}{m}$, we say that a schedule $\mx=(x_1,\dotsc,x_T)$ is \emph{$A$-restricted} if $\mx$ only uses scheduling coices contained in $A$, that is $\mx$ satisfies $\forall t\in[T](x_t\in A)$.
+Given an input $\inp$ and a set $A\subseteq\fromto{0}{m}$, we say that a schedule $\mx=(x_1,\dotsc,x_T)$ is \emph{$A$-restricted} if $\mx$ only uses scheduling choices contained in $A$, that is $\mx$ satisfies $\forall t\in[T](x_t\in A)$.
 \end{defn}
 Evidently, our graph is able to represent every $B$-restricted schedule. We now examine the incurring operating costs of such a $B$-restricted schedule $\mx'$. Since we are forced to schedule a number of servers contained in $B$, we might not be able to choose an optimal scheduling choice that minimizes the schedule's operating costs. Instead, we may choose the nearest scheduling choice which is contained in $B$. For instance, if the optimal scheduling strategy at some timeslot $t$ would be to choose $x_t=3$ servers (which is not a power of two), we may instead have to choose $x_t'=4\in B$ servers for $\mx'$. One might suspect that this strategy would incur at most twice as much operating costs as an optimal schedule. This, however, is sadly not the case, as one can see in the following example.
 \begin{exmpl}
@@ -51,7 +51,7 @@ Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a 
 	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_tf(\lambda_t/x_t)}^{3(3/3-1)^2}+\overbrace{\swcosts(x_{t-1},x_t)}^{0\max\{\,\cdots\}}\bigr)=5\cdot3\Bigl(\frac{3}{3}-1\Bigr)^2=0\\
 	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_t'f(\lambda_t/x_t')}^{4(3/4-1)^2}+\overbrace{\swcosts(x_{t-1}',x_t')}^{0\max\{\,\cdots\}}\bigr)=5\cdot4\Bigl(\frac{3}{4}-1\Bigr)^2=\frac{20}{16} 
 \end{align*}
-Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation estimation. Naturally, we may ask ourselves how this explosion of costs is even possible. Evidently, the switching costs are not the root of this explosion since $\beta=0$. Thus, we shall take a closer look on the used operating costs function. The optimal schedule $\mx$ evenly distributes every load $\lambda_t=3$ to $x_t=3$ servers. Hence, every active server has to process a load of $\frac{\lambda_t}{x_t}=1$ at every time step, incurring costs of $f(1)=0$. On the other hand, the approximative schedule $\mx'$ is able to distribute every load to 4 active machines. Thus, every machine incurs costs of $f(\frac{3}{4})=\frac{1}{16}$. This observation seems rather surprsing: Although every server has to process a smaller load using $\mx'$, the incurred operating costs of each server turn out to be higher. Intuitevly, however, we would expect that a less stressed machine would incur less costs. This surprising behavior is due to the fact that our operating costs function $f$ is not monotonically increasing, as one can see in the following figure.
+Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation estimation. Naturally, we may ask ourselves how this explosion of costs is even possible. Evidently, the switching costs are not the root of this explosion since $\beta=0$. Thus, we shall take a closer look on the used operating costs function. The optimal schedule $\mx$ evenly distributes every load $\lambda_t=3$ to $x_t=3$ servers. Hence, every active server has to process a load of $\frac{\lambda_t}{x_t}=1$ at every time step, incurring costs of $f(1)=0$. On the other hand, the approximative schedule $\mx'$ is able to distribute every load to 4 active machines. Thus, every machine incurs costs of $f(\frac{3}{4})=\frac{1}{16}$. This observation seems rather surprising: Although every server has to process a smaller load using $\mx'$, the incurred operating costs of each server turn out to be higher. Intuitively, however, we would expect that a less stressed machine would incur less costs. This surprising behavior is due to the fact that our operating costs function $f$ is not monotonically increasing, as one can see in the following figure.
 \begin{figure}[H]
 \centering
 \includestandalone{../figures/non_mono_incr_f}
@@ -84,7 +84,7 @@ Let $\inp=\bigl(m=8,T=5,\Lambda=(9,7,9,7,9),\beta=1,f\bigr)$ be the input for a 
 	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_tf(\lambda_t/x_t)}^{x_t\cdot 0}+\overbrace{\swcosts(x_{t-1},x_t)}^{\max\{0,x_t-x_{t-1}\}}\bigr)=9+0+2+0+2=13\\
 	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_t'f(\lambda_t/x_t')}^{x_t'\cdot 0}+\overbrace{\swcosts(x_{t-1}',x_t')}^{\max\{0,x_t'-x_{t-1}'\}}\bigr)=16+0+8+0+8=32
 \end{align*}
-The approximative schedule's cost is thus not 2-competetive compared to the optimal schedule. Of course, we are again curious about how this cost explosion is possible. Since we set $f(\lambda)=0$, that is our servers do not incur operating costs, this explosion is evidently due to the increased switching costs of $\mx'$. The problem in this case is the oscillating behavior of $\mx$ around a power of two (namely $8=2^3$), as one can see in the following figure. 
+The approximative schedule's cost is thus not 2-competitive compared to the optimal schedule. Of course, we are again curious about how this cost explosion is possible. Since we set $f(\lambda)=0$, that is our servers do not incur operating costs, this explosion is evidently due to the increased switching costs of $\mx'$. The problem in this case is the oscillating behavior of $\mx$ around a power of two (namely $8=2^3$), as one can see in the following figure. 
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.5\textwidth}
@@ -113,7 +113,7 @@ Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'
 \end{lem}
 \begin{proof}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}.
-First, if $\mx$ is not feasible, we have $\costs(\mx)=\infty$, and thus any arbitrary $B$-restricted schedule $\mx'$ satisfies $\costs(\mx')\le2\costs(\mx)$; hence, assume that $\mx$ is feasible. We note that if $\mx$ powers all its servers down at some timeslot $t\in[T]$ (i.e.\ $x_t=0$), we can split $\mx$ into two subschedules \makebox{$\mx_1\coloneqq(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2\coloneqq(x_{t+1},\dotsc,x_T)$}. It then suffices to prove the claim for $\mx_1$ and $\mx_2$, as we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t'\coloneqq0,\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
+First, if $\mx$ is not feasible, we have $\costs(\mx)=\infty$, and thus any arbitrary $B$-restricted schedule $\mx'$ satisfies $\costs(\mx')\le2\costs(\mx)$; hence, assume that $\mx$ is feasible. We notice that if $\mx$ powers all its servers down at some timeslot $t\in[T]$ (i.e.\ $x_t=0$), we can split $\mx$ into two subschedules \makebox{$\mx_1\coloneqq(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2\coloneqq(x_{t+1},\dotsc,x_T)$}. It then suffices to prove the claim for $\mx_1$ and $\mx_2$, as we can then construct the 2-competitive schedule by setting $\mx'\coloneqq(\mx_1',x_t'\coloneqq0,\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never power down all servers. Consequently, without loss of generality, we subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
 	
 Next, we show that every period between two 2-state changes of $\mx$ can be iteratively transformed to a 2-competitive period in $\mx'$. For this, let $i\in[T]$ and $j+1\in\fromto{2}{T+1}$ with $i<j+1$ be the first unprocessed timeslots at which $\mx$ changes its 2-state. To conveniently refer to the schedules' periods between $i$ and $j$, we define the subschedules $\mx_{i,j}\coloneqq(x_i,\dotsc,x_j)$ and $\mx'_{i,j}\coloneqq(x_i',\dotsc,x_j')$. Further, in the following steps, we will need to refer to the lower and upper bound of $\mx_{i,j}$, namely
 \begin{flalign*}
@@ -146,7 +146,7 @@ Due to our invariant, we know that we can set $x_i'\coloneqq u$ with 2-competiti
 \begin{equation*}
 	\opcosts(\mx_{i,j}')\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\le\sum\limits_{t=i}^j\Bigl(2x_tf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\le2\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}2\opcosts(\mx_{i,j})
 \end{equation*}
-Thus, the operating costs of $\mx_{i,j}'$ are 2-competitive. Further, since $u'<u$, we do not need to account for additional switching costs to satisfy our invariant for time $j+1$; however, we want to stress that one cannot tell at this step if we should indeed set $x_{j+1}\coloneqq u'$ (c.f. Figure~\ref{fig:schedule_behavior_down_up} and its related case). 
+Thus, the operating costs of $\mx_{i,j}'$ are 2-competitive. Further, since $u'<u$, we do not need to account for additional switching costs to satisfy our invariant at time $j+1$; however, we want to stress that one cannot tell at this step if we should indeed set $x_{j+1}\coloneqq u'$ (c.f. Figure~\ref{fig:schedule_behavior_down_up} and its related case). 
 	
 Next, we consider the case where $\mx$ rises to $[l,u)$ and then further ascends to $[l',u')$, as illustrated in Figure~\ref{fig:schedule_behavior_up_up}.
 \begin{figure}[H]
@@ -181,15 +181,18 @@ where $\hat{u}\coloneqq\min\{2^{\lceil\log_2(u+1)\rceil},m\}\in B$. Both strateg
 \caption{The original schedule comes from above, stays between $[l,u)$, and then rises to $[l',u')$. The approximative schedule has two different possibilities.}
 \label{fig:schedule_behavior_down_up}
 \end{figure}
-We are now going to prove that either the costs of $\mx_{i,j}^u$ or of $\mx_{i,j}^{\hat{u}}$, including possible switching costs to satisfy our invariant for $j+1$, must be 2-competitive. 
+We are now going to prove that either the costs of $\mx_{i,j}^u$ or of $\mx_{i,j}^{\hat{u}}$, including possible switching costs to satisfy our invariant at time $j+1$, must be 2-competitive. 
 First, we examine the switching costs of $\mx$ from $i$ up to $j+1$. To do so, we set $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to refer to the smallest number of active servers used by $\mx_{i,j}$. Then, since $\mx$ has to power on at least $x_{j+1}-d$ servers between $i$ and $j+1$, we can give a lower bound for its switching costs:
 \begin{equation*}
 	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta(x_{j+1}-d)
 \end{equation*}
+The next idea is to split $\mx_{i,j}$ and its associated switching costs at the final switching step into two parts; more precisely, we split $\beta(x_{j+1}-d)$ into $\beta(x_{j+1}-u)$ and $\beta(u-d)$. It then suffices to show that either $\mx_{i,j}^u$ or $\mx_{i,j}^{\hat{u}}$ can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\hat{u}$ with 2-competitive costs under the assumption that $\mx_{i,j}$ only switches to $u$ as a first step. This is due to the fact that the remaining switching costs to ascend to $u'$ are 2-competitive anyway:
+\begin{equation*}
+	\beta(u'-\hat{u})\le\beta(2x_{j+1}-\hat{u})=\beta(2x_{j+1}-2u)=2\beta(x_{j+1}-u)
+\end{equation*}
+where for the second equality, we assumed that $\hat{u}=2u$; otherwise, we have $u'=\hat{u}=m$ and the inequality trivially holds. Further, if $\hat{u}=2u$, we can once more use the difference $2\beta(x_{j+1}-u)-\beta(u'-\hat{u})=\beta(2x_{j+1}-u')$ as a switching cost credit for subsequent operations. If $\hat{u}\neq2u$, no further credit is needed, since we already reached the limit of servers $m$.
 
-TODO reduce to hat u. 
-
-We notice that if $\hat{u}-u\le2(u-d)$ holds, strategy $\mx_{i,j}^u$ hast 2-competitive switching costs:
+To proceed, we notice that if $\hat{u}-u\le2(u-d)$ holds, strategy $\mx_{i,j}^u$ hast 2-competitive switching costs:
 \begin{equation*}
 	\beta(\hat{u}-u)\le2\beta(u-d)
 \end{equation*}
@@ -202,13 +205,13 @@ Next, by the law of excluded middle, either $\mx_{i,j}^u$ is 2-competitive, or i
 	\opcosts(\mx_{i,j}^u)+\beta(\hat{u}-u)>2\bigl(\opcosts(\mx_{i,j})+\beta(u-d)\bigr)
 \end{equation*}
 We then need to show that $\mx_{i,j}^{\hat{u}}$ is 2-competitive.
-First note that $\mx_{i,j}^u$ uses at most twice as many active servers as $\mx_{i,j}$, and therefore $\mx_{i,j}^u$ incurs at most twice as much operating costs as $\mx_{i,j}$. Consequently, the switching costs of $\mx_{i,j}^u$ must significantly outweight those of $\mx_{i,j}$. Hence, it seems interesting to get an estimation for $\beta$. Rearranging the previous inequality gives us
+First note that $\mx_{i,j}^u$ uses at most twice as many active servers as $\mx_{i,j}$, and therefore $\mx_{i,j}^u$ incurs at most twice as much operating costs as $\mx_{i,j}$. Consequently, the switching costs of $\mx_{i,j}^u$ must significantly outweigh those of $\mx_{i,j}$. Hence, it seems interesting to get an estimation for $\beta$. Rearranging the previous inequality gives us
 \begin{align*}
 	&&\opcosts(\mx_{i,j}^u)+\beta(\hat{u}-u)&>2\bigl(\opcosts(\mx_{i,j})+\beta(2u-d)\bigr)&\\
 	&\stackrel{\phantom{\hat{u}-3u+2d)>0}}{\iff}&\beta(\hat{u}-3u+2d)&>2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^u)&\\
 	&\stackrel{\hat{u}-3u+2d>0}{\iff}&\beta&>\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}
 \end{align*}
-where the last step is justified by assumption~\eqref{eq:proof_2_competitive_asm_dist_pos}.
+where the last step is justified by Assumption~\eqref{eq:proof_2_competitive_asm_dist_pos}.
 This allows us to find a lower bound for the costs of using $\mx_{i,j}$:
 \begin{align*}
 	\opcosts(\mx_{i,j})+\beta(u-d)&>\opcosts(\mx_{i,j})+\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}(u-d)\\
@@ -225,20 +228,23 @@ We can use our just derived lower bound for $\opcosts(\mx_{i,j})+\beta(u-d)$ to 
 \end{align*}
 Thus, it suffices to show that
 \begin{align*}
-	&&2\Bigl(\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}\Bigr)-\opcosts(\mx_{i,j}^{\hat{u}})&\ge 0\\
-	&\stackrel{\hat{u}-3u+2d>0}{\iff}&2(\hat{u}-u)\opcosts(\mx_{i,j})-2(u-d)\opcosts(\mx_{i,j}^u)-(\hat{u}-3u+2d)\opcosts(\mx_{i,j}^{\hat{u}})&\ge 0
+	2\Bigl(\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}\Bigr)-\opcosts(\mx_{i,j}^{\hat{u}})\ge 0
 \end{align*}
-For this, we have to take a closer look on the the schedules' operating costs:
+which, using Assumption~\eqref{eq:proof_2_competitive_asm_dist_pos}, that is $\hat{u}-3u+2d>0$, can be simplified to
+\begin{equation*}
+	2(\hat{u}-u)\opcosts(\mx_{i,j})-2(u-d)\opcosts(\mx_{i,j}^u)-(\hat{u}-3u+2d)\opcosts(\mx_{i,j}^{\hat{u}})\ge 0
+\end{equation*}
+To show this inequality, we have to take a closer look on the the schedules' operating costs:
 \begin{align*}
 	&&&2(\hat{u}-u)\opcosts(\mx_{i,j})-2(u-d)\opcosts(\mx_{i,j}^u)-(\hat{u}-3u+2d)\opcosts(\mx_{i,j}^{\hat{u}})\\
 	&\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{\hat{u}}\Bigr)\Bigr)
 \end{align*}
-First, we note that $u\le\hat{u}$ and $x_t<u$ for $i\le t\le j$. Together with the fact that $f$ is monotonically increasing, we infer that
+First, we notice that $u\le\hat{u}$ and $x_t<u$ for $i\le t\le j$. Together with the fact that $f$ is monotonically increasing, we infer that
 \begin{align*}
 	&&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{\hat{u}}\Bigr)\Bigr)\\
 	&\ge&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)
 \end{align*}
-Next, TODO f pos.\ and no oscillating
+Since $d$ is the smallest number of active servers scheduled by $\mx$, and $f$ is non-negative, we can conclude that
 \begin{align*}
 	&&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
 	&\ge&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(df\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)
@@ -292,6 +298,61 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By using a small adaption of Proposition~\ref{prop:path_to_reasn_path} that uses logarithmic instead of incremental switching steps, we can transform $P$ to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to a 2-optimal, \makebox{$B$-restricted} schedule $\mx$ with $\costs(\mx)=\costs(P')=\costs(P)$ by Theorem~\ref{thm:approx_2}, which finishes the proof.
 \end{proof}
+%TODO text for correctness of algorithm
+%In the following, we give an algorithm based on our just verified constructions. Like in Section~\ref{sec:opt_offline_pseudo_poly}, we split our procedure into two subroutines.
 
+%\textproc{shortest\_paths} calculates the minimum costs of the graph's nodes by following the graph's topological sorting. Although we could search for an arbitrary shortest path in our graph and transform it to an optimal schedule, as shown in Corollary~\ref{cor:opt_sched_short_path_pseudo_lin}, our algorithm only considers reasonable paths. 
+%For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downarrow}$ and $v_{x,t\uparrow}$ in each time slot $t\in[T-1]$. Ultimately, it only keeps the relevant information for each node $v_{x,t\uparrow}$, namely the node's cost and best scheduling choice at time $t$. The information that would tell us the path between $v_{x,t\uparrow}$ and its best scheduling choice at time $t$ in our graph is lost; however, this information is of no concern since we only want to consider reasonable paths, which are already uniquely identified by their scheduling choices (see Lemma~\ref{lem:sched_reasn_path_pseudo_lin}). This restriction to reasonable paths additionally improves the memory complexity of our algorithm as we can keep the size of the tables $C$ and $P$ down to $mT$ instead of $2mT$. The function returns the minimum cost $v_{x,T\downarrow}$ as well as the minimum costs to all nodes $v_{x,t\uparrow}$ for $t\in[T-1]$. Moreover, it returns the predecessors of these nodes in respect to the best scheduling choice.
 
+%\textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path; thereby, it calculates an optimal schedule for our problem instance.
+%\begin{algorithm}[H]
+  %\caption{Linear, 2-optimal offline scheduling}
+  %\begin{algorithmic}[1]
+  %\Function{optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
+	  %\Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
+	  %\Let{$\mx$}{\Call{extract\_schedule}{$P,T$}}
+	  %\State \Return{$\mx$}
+  %\EndFunction
+  %\Statex
+  %\Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
+	%\LineCommentFunc{Allocate nodes' costs and predecessors tables}
+	%\Blet{$C[0\dotso m,1\dotso T]$ and $P[0\dotso m,1\dotso T]$}{new tables}
+	%\Let{$P[m,1]$}{$m$ and $C[m,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
+	%\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
+		%\If {$C[x+1,1]<\costs(0,x,\lambda_1)$}
+			%\Let{$P[x,1]$}{$P[x+1,1]$ and $C[x,1]\gets C[x+1,1]$}
+		%\Else
+			%\Let{$P[x,1]$}{$x$ and $C[x,1]\gets\costs(0,x,\lambda_1)$}
+		%\EndIf
+	%\EndFor
+	%\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and predecessors}
+		%\For{$x \gets 1 \textrm{ to } m$}\Comment{Upward minimization step}
+			%\If {$C[x-1,t]+\beta<C[x,t]$}
+			    %\Let{$P[x,t]$}{$P[x-1,t]$ and $C[x,t]\gets C[x-1,t]+\beta$}
+			%\EndIf
+		%\EndFor
+		%\Let{$P[m,t+1]$}{$m$ and $C[m,t+1]\gets C[m,t]+\opcosts(m,\lambda_{t+1})$}
+		%\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Downward minimization step}
+			%\If {$C[x+1,t+1]<C[x,t]+\opcosts(x,\lambda_{t+1})$}
+				%\Let{$P[x,t+1]$}{$P[x+1,t+1]$ and $C[x,t+1]\gets C[x+1,t+1]$}
+			%\Else
+				%\Let{$P[x,t+1]$}{$x$ and $C[x,t+1]\gets C[x,t]+\opcosts(x,\lambda_{t+1})$}
+			%\EndIf
+		%\EndFor
+	%\EndFor
+	%\State \Return{$(C,P)$}
+  %\EndFunction
+  %\Statex
+  %\Function{extract\_schedule}{$P,T$}
+	%\Blet{$\mx[T]$}{a new array}
+    	%\Let{$\mx[T]$}{$P[0,T]$}\Comment{Get best choice for last time slot}
+        %\For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
+		%\Let{$\mx[t]$}{$P\bigl[\mx[t+1],t\bigr]$}
+	%\EndFor
+	%\State \Return{$\mx$}
+  %\EndFunction
+  %\end{algorithmic}
+%\label{alg:approx_2_offline_linear}
+%\end{algorithm}
+%
 \section{A <TODO runtime+precision> $1+\beps$-Optimal Algorithm}

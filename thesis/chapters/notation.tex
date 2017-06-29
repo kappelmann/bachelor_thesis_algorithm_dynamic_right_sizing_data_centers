@@ -10,7 +10,7 @@ Below, we give an overview of the definitions and conventions commonly referred 
 	\item $\lambda_1,\ldots,\lambda_{T}\in[0,m]$\ldots arrival rates
 	\item $\Lambda\coloneqq(\lambda_1,\ldots,\lambda_T)$\ldots sequence of arrival rates
 	\item $\beta\in\mathbb{R}_{\ge 0}$\ldots switching costs of a server
-	\item $f:[0,1]\rightarrow\mathbb{R}$\ldots convex operating costs function of a server. Note that for chapter~\ref{sec:chap:approx_offline_scheduling}, $f$ is further assumed to be non-negative and monotonically increasing.	
+	\item $f:[0,1]\rightarrow\mathbb{R}$\ldots convex operating costs function of a server. Note that for Chapter~\ref{chap:approx_offline_scheduling}, $f$ is further assumed to be non-negative and monotonically increasing.	
 	\item $\inp\coloneqq(m,T,\Lambda,\beta,f)$\ldots input of a problem instance
 \end{itemize}
 
@@ -22,13 +22,17 @@ Below, we give an overview of the definitions and conventions commonly referred 
 	\item $L_i\coloneqq(\lambda_{i,1},\ldots,\lambda_{i,T})$\ldots sequence of assigned loads for server $i$
 	\item $\mathcal{S}\coloneqq(S_1,\ldots,S_m)$\ldots sequence of all state changes
 	\item $\mathcal{L}\coloneqq(L_1,\ldots,L_m)$\ldots sequence of all assigned loads
-	\item $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$\ldots schedule for a problem instance $\inp$
+	\item $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$\ldots schedule for a problem instance $\inp$.
 \end{itemize}
 
 \section*{Miscellaneous}
 \begin{itemize}
 	\item $x_t\in\fromto{0}{m}$\ldots number of active servers at time $t$
-	\item $\mx\coloneqq(x_1,\ldots,x_T)$\ldots sequence of number of active servers
+	\item $\mx\coloneqq(x_1,\ldots,x_T)$\ldots sequence of numbers of active servers. Note that due to Chapter~\ref{chap:preliminaries}, $\mx$ can be interpreted as a schedule.
+	\item $\opcosts(x,\lambda)$\ldots costs of processing $\lambda$ with $x$ servers.
+	\item $\swcosts(x_{t-1},x_{t})$\ldots costs of switching from $x_{t-1}$ to $x_t$ servers.
+	\item $\costs(x_{t-1},x_{t},\lambda_t)$\ldots costs of switching from $x_{t-1}$ to $x_t$ servers and processing $\lambda_t$ with $x_t$ servers.
+	\item $\costs(\mx)$\ldots costs of a schedule.
 \end{itemize}
 
 \section*{Conventions}
