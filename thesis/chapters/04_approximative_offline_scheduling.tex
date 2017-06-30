@@ -298,7 +298,7 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By using a small adaption of Proposition~\ref{prop:path_to_reasn_path} that uses logarithmic instead of incremental switching steps, we can transform $P$ to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to a 2-optimal, \makebox{$B$-restricted} schedule $\mx$ with $\costs(\mx)=\costs(P')=\costs(P)$ by Theorem~\ref{thm:approx_2}, which finishes the proof.
 \end{proof}
-In the following, we give an algorithm based on our just verified constructions. Naturally, since we did not change the graph's overall structure and working principle, a small adaption of Algorithm~\ref{alg:opt_offline_pseudo_linear} will serve its purpose. Note that in the following algorithm the variable $b$ is defined as $\log_2(\lceil m\rceil)$ instead of $\log_2(\lfloor m\rfloor)$ just as a matter of implementation convenience.
+In the following, we give an algorithm based on our just verified constructions. Naturally, since we did not change the graph's overall structure and working principle, a small adaption of Algorithm~\ref{alg:opt_offline_pseudo_linear} will serve its purpose. Note that in the following algorithm the variable $b$ is defined as $\log_2(\lceil m\rceil)$ instead of $\log_2(\lfloor m\rfloor)$ as a matter of implementation convenience.
 \begin{algorithm}[H]
   \caption{Linear, 2-optimal offline scheduling}
   \label{alg:approx_2_offline_linear}
@@ -306,15 +306,15 @@ In the following, we give an algorithm based on our just verified constructions.
   \Function{2\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
 	  \Let{$b$}{$\log_2(\lceil m\rceil)$}
 	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f,b$}}
-	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T,b$}}
+	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T,m,b$}}
 	  \State \Return{$\mx$}
   \EndFunction
   \Statex
-  \Function{node}{$i$}
-	  \If{$i\le0$}
-	  	\State \Return{$0$}
-  	  \EndIf
-	  \State \Return{$2^{i-1}$}
+  \Function{node}{$i,m,b$}
+	  \If{$i=b+1$}
+		\Return{$m$}
+	  \EndIf
+	  \State \Return{$\lfloor2^{i-1}\rfloor$}
   \EndFunction
   \algstore{lin2opt}
   \end{algorithmic}
@@ -323,39 +323,42 @@ In the following, we give an algorithm based on our just verified constructions.
   \begin{algorithmic}[1]
   \algrestore{lin2opt}
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f,b$}
-	\LineComment{Allocate nodes' costs and predecessors tables}
+	\LineCommentFunc{Allocate nodes' costs and predecessor tables}
 	\Blet{$C[0\dotso b+1,1\dotso T]$ and $P[0\dotso b+1,1\dotso T]$}{new tables}
 	\Let{$P[b+1,1]$}{$b+1$ and $C[b+1,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
 	\For{$i \gets b \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
-		\If {$C[i+1,1]<\costs\bigl(0,\Call{node}{i},\lambda_1\bigr)$}
+		\If {$C[i+1,1]<\costs\bigl(0,\Call{node}{i,m,b},\lambda_1\bigr)$}
 			\Let{$P[i,1]$}{$P[i+1,1]$ and $C[i,1]\gets C[i+1,1]$}
 		\Else
-			\Let{$P[i,1]$}{$i$ and $C[i,1]\gets\costs\bigl(0,\Call{node}{i},\lambda_1\bigr)$}
+			\Let{$P[i,1]$}{$i$ and $C[i,1]\gets\costs\bigl(0,\Call{node}{i,m,b},\lambda_1\bigr)$}
 		\EndIf
 	\EndFor
 	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and predecessors}
 		\For{$i \gets 1 \textrm{ to } b+1$}\Comment{Upward minimization step}
-			\If {$C[i-1,t]+\beta\cdot\Call{node}{i}<C[i,t]$}
-			    \Let{$P[x,t]$}{$P[x-1,t]$ and $C[x,t]\gets C[x-1,t]+\beta$}
+			\If {$C[i-1,t]+\beta\bigl(\Call{node}{i,m,b}-\Call{node}{i-1,m,b}\bigr)<C[i,t]$}
+			    \Let{$P[i,t]$}{$P[i-1,t]$}
+			    \Let{$C[i,t]$}{$C[i-1,t]+\beta\bigl(\Call{node}{i,m,b}-\Call{node}{i-1,m,b}\bigr)$}
 			\EndIf
 		\EndFor
-		\Let{$P[m,t+1]$}{$m$ and $C[m,t+1]\gets C[m,t]+\opcosts(m,\lambda_{t+1})$}
-		\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Downward minimization step}
-			\If {$C[x+1,t+1]<C[x,t]+\opcosts(x,\lambda_{t+1})$}
-				\Let{$P[x,t+1]$}{$P[x+1,t+1]$ and $C[x,t+1]\gets C[x+1,t+1]$}
+		\Let{$P[b+1,t+1]$}{$b+1$ and $C[b+1,t+1]\gets C[b+1,t]+\opcosts(m,\lambda_{t+1})$}
+		\For{$i \gets b \textrm{ to } 0$}\Comment{Downward minimization step}
+			\If {$C[i+1,t+1]<C[i,t]+\opcosts\bigl(\Call{node}{i,m,b},\lambda_{t+1}\bigr)$}
+				\Let{$P[i,t+1]$}{$P[i+1,t+1]$ and $C[i,t+1]\gets C[i+1,t+1]$}
 			\Else
-				\Let{$P[x,t+1]$}{$x$ and $C[x,t+1]\gets C[x,t]+\opcosts(x,\lambda_{t+1})$}
+				\Let{$P[i,t+1]$}{$i$ and $C[i,t+1]\gets C[i,t]+\opcosts\bigl(\Call{node}{i,m,b},\lambda_{t+1}\bigr)$}
 			\EndIf
 		\EndFor
 	\EndFor
 	\State \Return{$(C,P)$}
   \EndFunction
   \Statex
-  \Function{extract\_schedule}{$P,T,b$}
+  \Function{extract\_schedule}{$P,T,m,b$}
 	\Blet{$\mx[T]$}{a new array}
-    	\Let{$\mx[T]$}{$P[0,T]$}\Comment{Get best choice for last time slot}
+	\Let{$i$}{$P[0,T]$}\Comment{Get index of best choice for last time slot}
+    	\Let{$\mx[T]$}{$\Call{node}{i,m,b}$}\Comment{Calculate best choice for last time slot}
         \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
-		\Let{$\mx[t]$}{$P\bigl[\mx[t+1],t\bigr]$}
+		\Let{$i$}{$P[i,t]$}
+		\Let{$\mx[t]$}{$\Call{node}{i,m,b}$}	
 	\EndFor
 	\State \Return{$\mx$}
   \EndFunction

@@ -75,7 +75,7 @@ We split our procedure into two subroutines.
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\LineCommentFunc{Allocate nodes' costs and predecessors tables}
+	\LineCommentFunc{Allocate nodes' costs and predecessor tables}
 	\Blet{$C[0\dotso m,1\dotso T]$ and $P[0\dotso m,1\dotso T]$}{new tables}
 	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialize first layer}
 		\Let{$P[x,1]$}{$0$ and $C[x,1]\gets\costs(0,x,\lambda_1)$}
@@ -307,7 +307,7 @@ For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downar
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\LineCommentFunc{Allocate nodes' costs and predecessors tables}
+	\LineCommentFunc{Allocate nodes' costs and predecessor tables}
 	\Blet{$C[0\dotso m,1\dotso T]$ and $P[0\dotso m,1\dotso T]$}{new tables}
 	\Let{$P[m,1]$}{$m$ and $C[m,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
 	\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
