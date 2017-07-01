@@ -1,0 +1,18 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}
+	\begin{axis}[grid=both,tick style={draw=none},every axis plot/.style={
+	    domain=0:1,samples=15,smooth,thick}, 
+    	    ymin=0.0,
+	    xlabel=Load $\lambda$,
+	    ylabel=Operating costs,
+	    enlargelimits=upper,
+	    legend pos=outer north east
+	    ]
+	\addplot[domain=0:0.5,mark=none,color=blue]{0.05};
+	\addplot[domain=0.4999:1,mark=none,color=blue]{0.05+(x-0.5)^2};
+	\addlegendentry{$f'(\lambda)$};
+	\end{axis}
+\end{tikzpicture}
+\end{document}
