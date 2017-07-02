@@ -54,12 +54,12 @@ Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a 
 Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation estimation. Naturally, we may ask ourselves how this explosion of costs is even possible. Evidently, the switching costs are not the root of this explosion since $\beta=0$. Thus, we shall take a closer look on the used operating costs function. The optimal schedule $\mx$ evenly distributes every load $\lambda_t=3$ to $x_t=3$ servers. Hence, every active server has to process a load of $\frac{\lambda_t}{x_t}=1$ at every time step, incurring costs of $f(1)=0$. On the other hand, the approximative schedule $\mx'$ is able to distribute every load to 4 active machines. Thus, every machine incurs costs of $f(\frac{3}{4})=\frac{1}{16}$. This observation seems rather surprising: Although every server has to process a smaller load using $\mx'$, the incurred operating costs of each server turn out to be higher. Intuitively, however, we would expect that a less stressed machine would incur less costs. This surprising behavior is due to the fact that our operating costs function $f$ is not monotonically increasing, as one can see in the following figure.
 \begin{figure}[H]
 \centering
-\includestandalone{../figures/non_mono_incr_f}
-\caption{Example of a non-monotonically increasing operating costs function \makebox{$f(\lambda)=(\lambda-1)^2$}, where smaller loads incur higher costs.}
+\includestandalone{../figures/non_mono_incr_f_1}
+\caption{Example of a non monotonically increasing operating costs function \makebox{$f(\lambda)=(\lambda-1)^2$}, where smaller loads incur higher costs.}
 \label{fig:non_mono_incr_f}
 \end{figure}
 \end{exmpl}
-The above example shows us that our graph may not able to deliver a sensible approximation when dealing with general convex operating costs functions $f$. Luckily, this inconvenience can solved by additionally assuming that $f$ is non-negative and monotonically increasing\unsure{note that in practice used functions are mostly monotone+non-neg.?}. To see this, assume that at some timeslot $t$ the scheduling choice $x_t$ minimizes the operating costs to process the load $\lambda_t$. Then let $x_t'\in B$ the next scheduling choice representable in $G$. Since $x_t$ minimizes the operating costs at timeslot $t$, we have
+The above example shows us that our graph may not able to deliver a sensible approximation when dealing with general convex operating costs functions $f$. Luckily, this inconvenience can solved by additionally assuming that $f$ is non-negative and monotonically increasing. To see this, assume that at some timeslot $t$ the scheduling choice $x_t$ minimizes the operating costs to process the load $\lambda_t$. Then let $x_t'\in B$ the next scheduling choice representable in $G$. Since $x_t$ minimizes the operating costs at timeslot $t$, we have
 \begin{equation*}
 	\opcosts(x_t,\lambda_t)\le\opcosts(x_t',\lambda_t)\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}x_t'f\Bigl(\frac{\lambda_t}{x_t'}\Bigr)
 \end{equation*}
@@ -75,8 +75,19 @@ Ultimately, we can combine our observations and conclude
 \begin{equation*}
 	\opcosts(x_t,\lambda_t)\le\opcosts(x_t',\lambda_t)\le2\opcosts(x_t,\lambda_t)
 \end{equation*}
-which shows us that our approximative scheduling choice incurs at most twice as much operating costs as an optimal scheduling strategy. We thus subsequently restrict ourselves to non-negative, monotonically increasing convex cost functions.
-
+which shows us that our approximative scheduling choice incurs at most twice as much operating costs as an optimal scheduling strategy. We thus subsequently restrict ourselves to non-negative, monotonically increasing, convex cost functions. This evidently reduces the theoretical generality of our initial approach, but it does not interfere with practical applicability. On the one hand, negative cost functions would semantically allow to ``generate profit by consuming energy'', which is nonsense in practice. On the other hand, having a non monotonically increasing, convex cost function, we can simply add artifical loads to our machines to reduce our costs in given circumstances. For instance, in our previous example, we could assign every machine a load of $1$ instead of $\frac{3}{4}$ to reduce the approximative schedule's costs. This trick, which is exemplarily outlined in Figure~\ref{fig:transform_to_mono_incr}, allows us to transform any arbitrary, convex cost function to a monotonically increasing one.\unsure{is this paragraph + figure intelligible?}
+\begin{figure}[H]
+\captionsetup[subfigure]{labelformat=empty}
+\begin{subfigure}[b]{0.5\textwidth}
+\includestandalone[width=\textwidth]{./../figures/non_mono_incr_f_2}
+\end{subfigure}
+\hfill
+\begin{subfigure}[b]{0.5\textwidth}
+\includestandalone[width=\textwidth]{../figures/mono_incr_f}
+\end{subfigure}
+\caption{The non monotonically increasing, convex function $f$ can be transformed to the monotonically increasing, convex function $f'$ by adding artifical loads $\lambda^+$ to assignments $\lambda\in[0,0.5)$ such that we obtain a new assignment $\lambda'\coloneqq\lambda+\lambda^+=0.5$.}
+\label{fig:transform_to_mono_incr}
+\end{figure}
 Next, we examine the incurring switching costs of a $B$-restricted schedule $\mx'$. Again, given an optimal scheduling choice $x_t$, we use the idea to choose the nearest scheduling choice $x_t'$ that is contained in $B$ to construct $\mx'$. Once more, one might hope that $\mx'$ would incur at most twice as much switching costs as an optimal schedule. Needless to say, the next example dashes this hope.
 \begin{exmpl}\label{exmpl:oscillating_schedule}
 Let $\inp=\bigl(m=8,T=5,\Lambda=(9,7,9,7,9),\beta=1,f\bigr)$ be the input for a problem instance where $f(\lambda)=0$. Our possible scheduling choices are then given by $B=\{0,1,2,4,8\}$, and one optimal schedule is given by $\mx=(9,7,9,7,9)$. The $B$-restricted schedule corresponding to $\mx$ is then given by $\mx'=(16,8,16,8,16)$. The schedules' costs amount to
@@ -104,7 +115,7 @@ So, is this the end of our hunt for a 2-optimal approximation? No, certainly not
 \begin{defn}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T]$. We say that $\mx$ changes its \emph{2-state} at time $t$ if $x_t$ lies between a different pair of powers of two than its predecessor, that is $x_t$ satisfies
 \begin{equation*}
-	x_t\notin\bigl[2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1}+1)\rceil}\bigr] \lor\overbrace{(x_{t-1}=0\land x_t\neq 0)}^{\text{special case for }x_{t-1}=0}
+	x_t\notin\bigl[2^{\lfloor \log_2(x_{t-1})\rfloor},2^{\lceil \log_2(x_{t-1}+1)\rceil}\bigr) \lor\overbrace{(x_{t-1}=0\land x_t\neq 0)}^{\text{special case for }x_{t-1}=0}
 \end{equation*}
 \end{defn}
 Now we are geared up to deal with the main work of this section.
@@ -190,9 +201,9 @@ The next idea is to split $\mx_{i,j}$ and its associated switching costs at the 
 \begin{equation*}
 	\beta(u'-\hat{u})\le\beta(2x_{j+1}-\hat{u})=\beta(2x_{j+1}-2u)=2\beta(x_{j+1}-u)
 \end{equation*}
-where for the second equality, we assumed that $\hat{u}=2u$; otherwise, we have $u'=\hat{u}=m$ and the inequality trivially holds. Further, if $\hat{u}=2u$, we can once more use the difference $2\beta(x_{j+1}-u)-\beta(u'-\hat{u})=\beta(2x_{j+1}-u')$ as a switching cost credit for subsequent operations. If $\hat{u}\neq2u$, no further credit is needed, since we already reached the limit of servers $m$.
+where we assumed that $\hat{u}=2u$ holds; otherwise, we have $u'=\hat{u}=m$ and the inequality trivially holds. Further, if $\hat{u}=2u$, we can once more use the difference $2\beta(x_{j+1}-u)-\beta(u'-\hat{u})=\beta(2x_{j+1}-u')$ as a switching cost credit for subsequent operations. If $\hat{u}\neq2u$, no further credit is needed, since we already reached the limit of servers $m$.
 
-To proceed, we notice that if $\hat{u}-u\le2(u-d)$ holds, strategy $\mx_{i,j}^u$ hast 2-competitive switching costs:
+To proceed, we notice that if $\hat{u}-u\le2(u-d)$ holds, strategy $\mx_{i,j}^u$ has 2-competitive switching costs:
 \begin{equation*}
 	\beta(\hat{u}-u)\le2\beta(u-d)
 \end{equation*}
@@ -369,6 +380,6 @@ For our runtime analysis, we again take the same assumptions as done for Algorit
 \end{equation*}
 To our great joy, the runtime is linear in the size of the input. Similarly, our memory demand is reduced to linear space $\Theta\bigl(T\log_2(m)\bigr)$, since the algorithm's memory demand is defined by the size of the tables $C$ and $P$, both being of size $\Theta\bigl(T\log_2(m)\bigr)$.
 
-Although we have achieved a notable improvement compared to our initial approach, we shall not stop here. Our runtime is, strictly speaking, still exponential; hence, a large value of $m$ may cause undesired long execution times. Our next goal is therefore the reduction of our runtime to sub-exponential complexity.
+In this section, we saw that our reduction to logarithmic steps allows us to derive a linear algorithm that guarantees 2-optimal results. In our approach, we chose the base two logarithm for our step sizes. It seems like an interesting question, if this approach can be generalized to arbitrary bases, allowing for more precise approximations. This shall be final task of our work.
 
 \section{A <TODO runtime+precision> $1+\beps$-Optimal Algorithm}
