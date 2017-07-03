@@ -4,9 +4,9 @@
 \chapter{Approximative Offline Scheduling}\label{chap:approx_offline_scheduling}
 Heretofore, we have derived two optimal offline algorithms for our scheduling problem. Unfortunately, the algorithm's runtime complexities are exponential in the input size of the number of servers $m$. Needless to say, we want to reduce this exponential runtime. For this, we must slightly loosen our aspirations, that is we move to approximative methods. Further, as we will see in the next section, we need to assume that our convex operating costs function $f$ is non-negative and monotonically increasing; however, this restriction is of no great significance since in practice most operating costs functions fulfill this requirement.\unsure{Any reference?} 
 
-In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-optimal offline algorithm with linear runtime complexity. As a next step, we will generalize our first approach to allow for arbitrary $1+\beps$-approximations with TODO complexity.
+In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-competitive offline algorithm with linear runtime complexity. As a next step, we will generalize our first approach to allow for arbitrary $1+\beps$-approximations with TODO complexity.
 
-\section{A Linear, 2-Optimal Algorithm}
+\section{A Linear 2-Competitive Algorithm}
 Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's runtime complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Since we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, that is the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
 
 As we saw in Equation~\eqref{eq:inp_size}, the size of our input $\inp$ is given by $\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)$. Consequently, in order to obtain a linear runtime complexity, we want to reduce the graph's height from $m+1$ to a logarithmic height of $\mathcal{O}\bigl(\log(m)\bigr)$. Given this observation, it seems natural for a computer scientist to choose a logarithmic scale for the number of servers in each layer; that is, instead of adding a node for each possible number of active servers (i.e.\ $0,1,\dotsc,m$), we only add nodes for logarithmic choices (i.e.\ $0,2^0,2^1,\dotsc,2^{\floor{\log_2(m)}},m$). More formally, given a problem instance $\inp$, we set\unsure{$b\coloneqq\ceil{\log_2(m)}-1$ and $B\coloneqq\{0,2^0,2^1,\dotsc,\floor{2^b},m\}$}
@@ -37,7 +37,7 @@ where $B$ will subsequently represent the set of possible scheduling choices at 
 A more appealing, graphical representation can be found in the following figure.
 \begin{figure}[H]
 \includestandalone[width=\textwidth]{../figures/graph_lin_approx_2}
-\caption{Graph for a linear, 2-optimal offline algorithm; the path of the topological sorting is highlighted in red. Note that $\beta(2^i-2^{i-1})=\beta2^{i-1}$.}
+\caption{Graph for a linear 2-competitive offline algorithm; the path of the topological sorting is highlighted in red. Note that $\beta(2^i-2^{i-1})=\beta2^{i-1}$.}
 \label{fig:graph_lin_approx_2}
 \end{figure}
 The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. Since some possible scheduling choices, however, are not representable in this new graph, we may just obtain approximative costs for our nodes. Thus, the shortest path in our graph might not correspond to an optimal schedule, but it will at least correspond to an approximative one. Before we start to establish the graph's approximation guarantee, we first have to conduct some observations. We start by making a convenient definition that helps us to identify schedules that are representable in our graph.
@@ -111,7 +111,7 @@ The approximative schedule's cost is thus not 2-competitive compared to the opti
 \label{fig:adaption-schedule}
 \end{figure}
 \end{exmpl}
-So, is this the end of our hunt for a 2-optimal approximation? No, certainly not! Although our naive approach was to no avail, there is indeed a better $B$-restricted schedule for our example. Instead of following the optimal schedule's oscillation, we can simply use a schedule that stays put during these oscillating steps, that is we can use the schedule $\mx'=(16,16,16,16,16)$ with costs $\costs(\mx')=16$. Obviously, this seems like a rather trivial example since we set $f(\lambda)=0$, and hence we do not need to worry about the new schedule's operating costs. However, it indeed turns out that making the right choice between following the optimal schedule's oscillation and staying put will always allow us to acquire a 2-optimal approximation. This observation is a key part of the next lemma's proof. Before we dive into the lemma and its proof, we make a handy definition:
+So, is this the end of our hunt for a 2-competitive approximation? No, certainly not! Although our naive approach was to no avail, there is indeed a better $B$-restricted schedule for our example. Instead of following the optimal schedule's oscillation, we can simply use a schedule that stays put during these oscillating steps, that is we can use the schedule $\mx'=(16,16,16,16,16)$ with costs $\costs(\mx')=16$. Obviously, this seems like a rather trivial example since we set $f(\lambda)=0$, and hence we do not need to worry about the new schedule's operating costs. However, it indeed turns out that making the right choice between following the optimal schedule's oscillation and staying put will always allow us to acquire a 2-competitive approximation. This observation is a key part of the next lemma's proof. Before we dive into the lemma and its proof, we make a handy definition:
 \begin{defn}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T]$. We say that $\mx$ changes its \emph{2-state} at time $t$ if $x_t$ lies between a different pair of powers of two than its predecessor, that is $x_t$ satisfies
 \begin{equation*}
@@ -275,7 +275,7 @@ Now, since $f$ is non-negative, we just have to verify that $g(\hat{u})\ge0$ for
 
 By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
 \end{proof}
-Safe in the knowledge that there always exists a 2-optimal, $B$-restricted schedule, we are just left with the verification of our new graph. Since we did not change the general construction idea of our graph, this verification turns out to be very similar to that done in Section~\ref{sec:opt_offline_pseudo_lin}. For the proof of the next lemma, the bijection between $B$-restricted schedules and reasonable paths, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}.
+Safe in the knowledge that there always exists a 2-competitive, $B$-restricted schedule, we are just left with the verification of our new graph. Since we did not change the general construction idea of our graph, this verification turns out to be very similar to that done in Section~\ref{sec:opt_offline_pseudo_lin}. For the proof of the next lemma, the bijection between $B$-restricted schedules and reasonable paths, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}.
 \begin{lem}\label{lem:sched_reasn_path_approx_2}
 Let $\bm{\mx}$ be the set of all $B$-restricted schedules for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
 \begin{equation*}
@@ -288,7 +288,7 @@ The proof is analogous to the proof of Lemma~\ref{lem:sched_reasn_path_pseudo_li
 \end{proof}
 Finally, we arrive at the main result of this section.
 \begin{thm}\label{thm:approx_2}
-Any shortest, reasonable path $P$ corresponds to a 2-optimal, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(P)=\costs(\mx)$.
+Any shortest, reasonable path $P$ corresponds to a 2-competitive, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(P)=\costs(\mx)$.
 \end{thm} 
 \begin{proof}
 By Lemma~\ref{lem:sched_reasn_path_approx_2}, we have a bijection $\Phi$ between reasonable paths $P$ and $B$-restricted schedules obeying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$. Thus, we have 
@@ -301,17 +301,17 @@ Now let $P$ be a shortest, reasonable path, and let $\mx^*$ be an optimal schedu
 \end{equation*}
 and the claim follows.
 \end{proof}
-Again, it is not difficult to show that also shortest paths which are not reasonable can be transformed to a desired 2-optimal schedule.
+Again, it is not difficult to show that also shortest paths which are not reasonable can be transformed to a desired 2-competitive schedule.
 \begin{cor}
-Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to a 2-optimal, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(\mx)=\costs(P)$.
+Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to a 2-competitive, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(\mx)=\costs(P)$.
 \end{cor}
 \begin{proof}
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By using a small adaption of Proposition~\ref{prop:path_to_reasn_path} that uses logarithmic instead of incremental switching steps, we can transform $P$ to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
-In turn, $P'$ corresponds to a 2-optimal, \makebox{$B$-restricted} schedule $\mx$ with $\costs(\mx)=\costs(P')=\costs(P)$ by Theorem~\ref{thm:approx_2}, which finishes the proof.
+In turn, $P'$ corresponds to a 2-competitive, \makebox{$B$-restricted} schedule $\mx$ with $\costs(\mx)=\costs(P')=\costs(P)$ by Theorem~\ref{thm:approx_2}, which finishes the proof.
 \end{proof}
 In the following, we give an algorithm based on our just verified constructions. Naturally, since we did not change the graph's overall structure and working principle, a small adaption of Algorithm~\ref{alg:opt_offline_pseudo_linear} will serve its purpose. To account for the logarithmic steps in our graph, we introduce an auxiliary function \textproc{nodes}, which calculates the number of servers associated to an given index $i$ in our tables $C$ and $P$. As a matter of implementation convenience, the variable $b$ is defined as $\log_2(\ceil{m})$ instead of $\log_2(\floor{m})$ in the following algorithm.
 \begin{algorithm}[H]
-  \caption{Linear, 2-optimal offline scheduling}
+  \caption{Linear 2-competitive offline scheduling}
   \label{alg:approx_2_offline_linear}
   \begin{algorithmic}[1]
   \Function{2\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
@@ -380,9 +380,9 @@ For our runtime analysis, we again take the same assumptions as done for Algorit
 \end{equation*}
 To our great joy, the runtime is linear in the size of the input. Similarly, our memory demand is reduced to linear space $\Theta\bigl(T\log_2(m)\bigr)$, since the algorithm's memory demand is defined by the size of the tables $C$ and $P$, both being of size $\Theta\bigl(T\log_2(m)\bigr)$.
 
-In this section, we saw that our reduction to logarithmic steps allows us to derive a linear algorithm that guarantees 2-optimal results. In our approach, we chose the base two logarithm for our step sizes. It seems like an interesting question, if this approach can be generalized to arbitrary bases, allowing for more precise approximations. This shall be final task of our work.
+In this section, we saw that our reduction to logarithmic steps allows us to derive a linear algorithm that guarantees 2-competitive results. In our approach, we chose the base two logarithm for our step sizes. It seems like an interesting question, if this approach can be generalized to arbitrary bases, allowing for more precise approximations. This shall be final task of our work.
 
-\section{A Linear, $1+\beps$-Optimal Algorithm}
+\section{A Linear $1+\beps$-Competitive Algorithm}
 TODO text + graph
 
 \begin{defn}
@@ -548,17 +548,17 @@ By iteratively applying above procedure to $\mx$, starting with $i=1$ and stoppi
 
 
 \begin{algorithm}[H]
-  \caption{Linear, $1+\beps$-optimal offline scheduling}
+  \caption{Linear $1+\beps$-competitive offline scheduling}
   \label{alg:approx_1_eps_offline_linear}
   \begin{algorithmic}[1]
   \Function{$1+\beps$\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f,\beps$}
 	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f,1+\beps$}}
-	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T,m$}}
+	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T,m,1+\beps$}}
 	  \State \Return{$\mx$}
   \EndFunction
   \Statex
-  \Function{node}{$i,m$}
-	  \State \Return{$\min\bigl\{m,\floor{2^{i-1}}\bigr\}$}
+  \Function{node}{$i,m,y$}
+	  \State \Return{$\min\bigl\{m,\floor{y^{i-1}}\bigr\}$}
   \EndFunction
   \algstore{lin2opt}
   \end{algorithmic}
@@ -566,44 +566,44 @@ By iteratively applying above procedure to $\mx$, starting with $i=1$ and stoppi
 \begin{algorithm}[H]
   \begin{algorithmic}[1]
   \algrestore{lin2opt}
-  \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\Let{$b$}{$\ceil{\log_y(m)}-1$}
+  \Function{shortest\_paths}{$m,T,\Lambda,\beta,f,y$}
+	\Let{$b$}{$\ceil{\log_y(m)}$}
 	\LineComment{Allocate nodes' costs and predecessor tables}
 	\Blet{$C[0\dotso b+1,1\dotso T]$ and $P[0\dotso b+1,1\dotso T]$}{new tables}
 	\Let{$P[b+1,1]$}{$b+1$ and $C[b+1,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
 	\For{$i \gets b \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
-		\If {$C[i+1,1]<\costs\bigl(0,\Call{node}{i,m},\lambda_1\bigr)$}
+		\If {$C[i+1,1]<\costs\bigl(0,\Call{node}{i,m,y},\lambda_1\bigr)$}
 			\Let{$P[i,1]$}{$P[i+1,1]$ and $C[i,1]\gets C[i+1,1]$}
 		\Else
-			\Let{$P[i,1]$}{$i$ and $C[i,1]\gets\costs\bigl(0,\Call{node}{i,m},\lambda_1\bigr)$}
+			\Let{$P[i,1]$}{$i$ and $C[i,1]\gets\costs\bigl(0,\Call{node}{i,m,y},\lambda_1\bigr)$}
 		\EndIf
 	\EndFor
 	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and predecessors}
 		\For{$i \gets 1 \textrm{ to } b+1$}\Comment{Upward minimization step}
-			\If {$C[i-1,t]+\beta\bigl(\Call{node}{i,m}-\Call{node}{i-1,m}\bigr)<C[i,t]$}
+			\If {$C[i-1,t]+\beta\bigl(\Call{node}{i,m,y}-\Call{node}{i-1,m,y}\bigr)<C[i,t]$}
 			    \Let{$P[i,t]$}{$P[i-1,t]$}
-			    \Let{$C[i,t]$}{$C[i-1,t]+\beta\bigl(\Call{node}{i,m}-\Call{node}{i-1,m}\bigr)$}
+			    \Let{$C[i,t]$}{$C[i-1,t]+\beta\bigl(\Call{node}{i,m,y}-\Call{node}{i-1,m,y}\bigr)$}
 			\EndIf
 		\EndFor
 		\Let{$P[b+1,t+1]$}{$b+1$ and $C[b+1,t+1]\gets C[b+1,t]+\opcosts(m,\lambda_{t+1})$}
 		\For{$i \gets b \textrm{ to } 0$}\Comment{Downward minimization step}
-			\If {$C[i+1,t+1]<C[i,t]+\opcosts\bigl(\Call{node}{i,m},\lambda_{t+1}\bigr)$}
+			\If {$C[i+1,t+1]<C[i,t]+\opcosts\bigl(\Call{node}{i,m,y},\lambda_{t+1}\bigr)$}
 				\Let{$P[i,t+1]$}{$P[i+1,t+1]$ and $C[i,t+1]\gets C[i+1,t+1]$}
 			\Else
-				\Let{$P[i,t+1]$}{$i$ and $C[i,t+1]\gets C[i,t]+\opcosts\bigl(\Call{node}{i,m},\lambda_{t+1}\bigr)$}
+				\Let{$P[i,t+1]$}{$i$ and $C[i,t+1]\gets C[i,t]+\opcosts\bigl(\Call{node}{i,m,y},\lambda_{t+1}\bigr)$}
 			\EndIf
 		\EndFor
 	\EndFor
 	\State \Return{$(C,P)$}
   \EndFunction
   \Statex
-  \Function{extract\_schedule}{$P,T,m$}
+  \Function{extract\_schedule}{$P,T,m,y$}
 	\Blet{$\mx[1\dotso T]$}{a new array}
 	\Let{$i$}{$P[0,T]$}\Comment{Get index of best choice for last time slot}
-    	\Let{$\mx[T]$}{$\Call{node}{i,m}$}\Comment{Calculate best choice for last time slot}
+    	\Let{$\mx[T]$}{$\Call{node}{i,m,y}$}\Comment{Calculate best choice for last time slot}
         \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
 		\Let{$i$}{$P[i,t]$}
-		\Let{$\mx[t]$}{$\Call{node}{i,m}$}	
+		\Let{$\mx[t]$}{$\Call{node}{i,m,y}$}
 	\EndFor
 	\State \Return{$\mx$}
   \EndFunction
