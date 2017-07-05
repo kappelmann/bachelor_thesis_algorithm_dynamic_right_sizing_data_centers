@@ -1,0 +1,40 @@
+% !TeX root = ../main.tex
+% Add the above to each chapter to make compiling the PDF easier in some editors.
+
+\chapter{Model and Problem Formulation}
+TODO
+
+\section{Model Description}\label{sec:model_descr}
+In order to address the problem of ever-growing energy consumption, we examine a scheduling problem that commonly arises in data centers. More specifically, we consider a model consisting of a fixed number of homogeneous servers, denoted by $m\in\mathbb{N}$, and a fixed number of time slots, denoted by $T\in\mathbb{N}$. Each server possesses two power states, to wit: a machine is either powered on (\emph{active state}) or powered off (\emph{sleep state}). For notational convenience, given a natural number $n\in\mathbb{N}$, we define $[n]$ to be the set of natural numbers from~$1$ to~$n$:
+\begin{equation*}
+	[n]\coloneqq\fromto{1}{n}\subseteq\mathbb{N}
+\end{equation*}
+For any time slot $t\in[T]$, we have a \emph{mean arrival rate}, denoted by $\lambda_t$, that is the expected load to be processed in time slot $t$. We assume that each server can handle a load between~$0$ and $1$ in any time slot. The assigned load for server $i$ in time slot $t$ is denoted by $\lambda_{i,t}\in[0,1]$. Consequently, for any time slot $t$, we expect an arrival rate between $0$ and $m$, that is $\lambda_t\in[0,m]$; otherwise, the servers would not be able to process the given load in the allotted time.
+
+Naturally, a machine incurs \emph{operating costs} when processing its assigned load, which we specify by \makebox{$f:[0,1]\rightarrow \mathbb{R}$}. The operating costs function $f$ may not exclusively account for energy costs. For example, $f$ may also allow for costs incurred by delays, such as lost revenue caused by users waiting for their responses~\parencite{dyn-right-sizing}\parencite{geo-load-balancing}. We assume that a sleeping server does not create any costs. Note, however, that $f(0)$ denotes the costs incurred by an idle server, not a sleeping one; in other words, $f(0)$ may be non-zero. Further, we expect $f$ to be a convex function, i.e.\ $f$ has to satisfy
+\begin{equation}\label{eq:convex_condition}
+	\forall \lambda_1,\lambda_2,\mu\in[0,1]:f(\mu\lambda_1+(1-\mu)\lambda_2)\le\mu f(\lambda_1)+(1-\mu)f(\lambda_2)
+\end{equation}
+This might at first seem like a notable restriction, but it still allows for the capture of the behavior of modern server models~\parencite{bansal-soco}\parencite{dyn-right-sizing}.
+
+For convenience, we assume that all machines sleep at time $t=0$ and also force all machines to sleep after the scheduling process, i.e.\ at times $t>T$. Consequently, we expect that there are no loads at times $t\notin[T]$, that is $\lambda_t=\lambda_{i,t}=0$ for $t\notin[T]$. Moreover, as another consequence, we know that any server must power down exactly as many times as it powers on.
+
+A machine also incurs \emph{switching costs} when changing its power state. In general, we can distinguish between power-up costs $\beta_\uparrow\in\mathbb{R}_{\ge 0}$ and power-down costs $\beta_\downarrow\in\mathbb{R}_{\ge 0}$. However, since we know that any server must power down exactly as many times as is it powers on, we can model both costs as being incurred when powering up a server; more precisely, given a model with power-up costs $\beta_\uparrow$ and power-down costs $\beta_\downarrow$, we can simply transfer the model to a model without power-down costs by setting $\beta_\uparrow'\coloneqq\beta_\uparrow+\beta_\downarrow$ and $\beta_\downarrow'\coloneqq0$. In our work, we will always take this consolidation step and denote the combined switching costs by $\beta\coloneqq\beta_\uparrow+\beta_\downarrow$. Like our operating costs function $f$, our switching costs $\beta$ may not exclusively account for energy costs but also allow for delay costs, wear and tear costs, and the like~\parencite{dyn-right-sizing}. Finally, since we are dealing with homogeneous servers, we note that $f$ and $\beta$ are the same for all machines.
+
+\section{Problem Statement}
+Using the above definitions, we can define the input of our model by setting $\inp\coloneqq(m,T,\Lambda,\beta,f)$ where $\Lambda=(\lambda_1,\dotsc,\lambda_T)$ is the sequence of arrival rates. We will subsequently identify a problem instance by its input $\inp$. Naturally, given a problem instance $\inp$, we want to schedule our servers to minimize the sum of incurred costs while ensuring that the servers process the given loads in time. To do this, consider for each server $i\in[m]$ the sequence of its states $S_i$ and the sequence of its assigned loads $L_i$:
+\begin{align*}
+	S_i&\coloneqq(s_{i,1},\dotsc,s_{i,T})\in\{0,1\}^T\\
+	L_i&\coloneqq(\lambda_{i,1},\dotsc,\lambda_{i,T})\in[0,1]^T
+\end{align*}
+where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0) or active (1). Recall that we assume all machines are sleeping at times $t\notin[T]$; thus, for $t\notin[T]$ and $i\in[m]$, we have $s_{i,t}=0$. We can now define the sequence of all state changes and the sequence of all assigned loads:
+\begin{align*}
+	\mathcal{S}&\coloneqq(S_1,\dotsc,S_m)\\
+	\mathcal{L}&\coloneqq(L_1,\dotsc,L_m)
+\end{align*}
+We will subsequently call a pair $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$ a \emph{schedule}. Finally, we are ready to define our problem statement. Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies the following optimization:
+\begin{align}
+	&\text{minimize}&&\costs(\Sigma)\coloneqq\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t}) s_{i,t}\bigr)}_{\text{operating costs}}+\underbrace{\beta\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\max\{0,s_{i,t}-s_{i,t-1}\}}_{\text{switching costs}}\label{eq:schedule_costs}\\ 
+	&\text{subject to}&&\sum\limits_{i=1}^{m}(\lambda_{i,t} s_{i,t})=\lambda_t,\quad \forall t\in[T]\label{eq:feasible_constraint}
+\end{align}
+We call a schedule \emph{feasible} if it satisfies~\eqref{eq:feasible_constraint}, and \emph{optimal} if it satisfies~\eqref{eq:schedule_costs} and~\eqref{eq:feasible_constraint}.
