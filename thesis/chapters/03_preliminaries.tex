@@ -10,25 +10,26 @@ This investigation is captured by our first proposition.
 Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
 \begin{enumerate}[(i)]
 		\item $\costs(\Sigma')\le \costs(\Sigma)$ and 
-		\item $\Sigma'$ never powers on and shuts down servers at the same time slot, that is $\Sigma'$ satisfies the formula
+		\item $\Sigma'$ never powers on and shuts down servers at the same time slot. More formally, $\Sigma'$ satisfies the formula $\forall t\in[T]:F$ where
 \begin{equation}
-	\forall t\in[T]\Bigl[\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\ge0)\bigr)\lor\bigl(\forall i\in[m](s_{i,t}-s_{i,t-1}\le 0)\bigr)\Bigr]\label{eq:reasonable_switching}
-\end{equation}
+	F\coloneqq\bigl(\forall i\in[m]:s_{i,t}-s_{i,t-1}\ge0\bigr)\lor\bigl(\forall i\in[m]:s_{i,t}-s_{i,t-1}\le 0\bigr)\label{eq:reasonable_switching}
+\end{equation}\label{itm:cond_reasonable_switching}
+\vspace{-\baselineskip}\vspace{-\belowdisplayskip}
 \end{enumerate}
 \end{prop}
 \begin{proof}
-Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies~\eqref{eq:reasonable_switching} and reduces or retains its costs. 
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies condition~\eqref{itm:cond_reasonable_switching} and reduces or retains its costs. 
 	
 Let $t\in[T]$ be the first time slot that falsifies~\eqref{eq:reasonable_switching}. If there does not exist such a time slot, we are finished. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, that is server $i$ powers on at time $t$ and server $j$ powers off. Without loss of generality, we may assume $i<j$. Since all servers are sleeping at time $t=0$, we have
 \begin{equation*}
 	s_{k,1}-s_{k,0}=s_{k,1}-0=s_{k,1}\ge 0,\quad\forall k\in[m]
 \end{equation*}
-which satisfies formula~\eqref{eq:reasonable_switching} for $t=1$. Thus, we further assume $t>1$. Now consider the state sequences of server $i$ and $j$:
+which shows that formula~\eqref{eq:reasonable_switching} is satisfied for $t=1$. Thus, we further assume $t>1$. Now consider the state sequences of server $i$ and $j$:
 \begin{align*}
 	S_i&=(s_{i,1},\dotsc,s_{i,t-1}=0,s_{i,t}=1,\dotsc,s_{i,T})\\
 	S_j&=(s_{j,1},\dotsc,s_{j,t-1}=1,s_{j,t}=0,\dotsc,s_{j,T})
 \end{align*}
-We modify $S_i$ and $S_j$ by swapping their states for time slots $\ge t$, that is we set
+We modify $S_i$ and $S_j$ by swapping their states for time slots $\ge t$, i.e.\ we set
 \begin{align*}
 	S_i'&\coloneqq(s_{i,1},\dotsc,s_{i,t-1}=0,s_{j,t}=0,\dotsc,s_{j,T})\\
 	S_j'&\coloneqq(s_{j,1},\dotsc,s_{j,t-1}=1,s_{i,t}=1,\dotsc,s_{i,T})
@@ -47,14 +48,14 @@ We now want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ s
 
 Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, by exchanging $\mathcal{S}$ with $\mathcal{S}'$, we reduced the number of servers powering up at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$.
 
-Moreover, we decreased the number of servers violating~\eqref{eq:reasonable_switching} at time $t$. Hence, by repeating described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
+Moreover, we decreased the number of servers violating~\eqref{eq:reasonable_switching} at time $t$. Hence, by repeating the described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
 Our next proposition---which will pose the cornerstone of our subsequent works---requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is less than or equal to the convex-combination of the function values at the sampling points.
 \begin{lem}[Jensen's inequality]\label{lem:jensens-inequality}
 Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\dotsc,\lambda_n\in\mathbb{R}$}, and $\mu_1,\dotsc,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
 \begin{equation*}
-	f\Bigl(\sum_{i=1}^n(\mu_i \lambda_i)\Bigr) \le \sum_{i=1}^n\bigl(\mu_i f(\lambda_i)\bigr)
+	f\left(\sum_{i=1}^n(\mu_i \lambda_i)\right) \le \sum_{i=1}^n\bigl(\mu_i f(\lambda_i)\bigr)
 \end{equation*}
 \end{lem}
 \begin{proof}
@@ -62,7 +63,7 @@ We proof the claim by induction on $n\in\mathbb{N}$.
 \begin{itemize}
 \item\underline{Basis:} For $n=1$, we have $\mu_1=1$ and thus
 \begin{equation*}
-	f\Bigl(\sum\limits_{i=1}^1(\mu_i\lambda_i)\Bigr)=f(\lambda_1)=\sum\limits_{i=1}^1\bigl(\mu_if(\lambda_i)\bigr)
+	f\left(\sum\limits_{i=1}^1(\mu_i\lambda_i)\right)=f(\lambda_1)=\sum\limits_{i=1}^1\bigl(\mu_if(\lambda_i)\bigr)
 \end{equation*}
 \item\underline{Step:} Let $n\in\mathbb{N}$ be arbitrary and fixed.
 \begin{itemize}
@@ -70,19 +71,19 @@ We proof the claim by induction on $n\in\mathbb{N}$.
 	\item\underline{Claim:} The assertion holds for $n+1$.
 	\item\underline{Proof:} Since $\sum\limits_{i=1}^{n+1}\mu_i=1$, $\mu_i\in[0,1]$, and $n+1\ge 2$, at least one $\mu_i$ must be smaller than 1. Without loss of generality, we may assume $\mu_1<1$.
 	\begin{equation*}
-		f\Bigl(\sum\limits_{i=1}^{n+1}(\mu_i\lambda_i)\Bigr)=f\Bigl(\mu_1\lambda_1+\sum\limits_{i=2}^{n+1}(\mu_i\lambda_i)\Bigr)\stackrel{\mu_1\neq1}{=}f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
+		f\left(\sum\limits_{i=1}^{n+1}(\mu_i\lambda_i)\right)=f\left(\mu_1\lambda_1+\sum\limits_{i=2}^{n+1}(\mu_i\lambda_i)\right)\stackrel{\mu_1\neq1}{=}f\left(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\right)
 	\end{equation*}
 	As $f$ is convex, we have
 	\begin{equation*}
-		f\Bigl(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)\stackrel{f\text{ convex~\eqref{eq:convex_condition}}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)
+		f\left(\mu_1\lambda_1+(1-\mu_1)\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\right)\stackrel{f\text{ convex~\eqref{eq:convex_condition}}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)f\left(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\right)
 	\end{equation*}
 	Since $\sum\limits_{i=2}^{n+1}\frac{\mu_i}{1-\mu_1}=1$, we can apply our induction hypothesis.
 	\begin{equation*}
-		\mu_1f(\lambda_1)+(1-\mu_1)f\Bigl(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\Bigr)\stackrel{\text{I.H.}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\Bigl(\frac{\mu_i}{1-\mu_1}f(\lambda_i)\Bigr)
+		\mu_1f(\lambda_1)+(1-\mu_1)f\left(\sum\limits_{i=2}^{n+1}\frac{\mu_i\lambda_i}{1-\mu_1}\right)\stackrel{\text{I.H.}}{\le} \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\left(\frac{\mu_i}{1-\mu_1}f(\lambda_i)\right)
 	\end{equation*}
 	We combine our steps and obtain
 	\begin{align*}
-		f\Bigl(\sum\limits_{i=1}^{n+1}(\mu_i\lambda_i)\Bigr)&\le \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\Bigl(\frac{\mu_i}{1-\mu_1}f(\lambda_i)\Bigr)\\
+		f\left(\sum\limits_{i=1}^{n+1}(\mu_i\lambda_i)\right)&\le \mu_1f(\lambda_1)+(1-\mu_1)\sum\limits_{i=2}^{n+1}\left(\frac{\mu_i}{1-\mu_1}f(\lambda_i)\right)\\
 		&=\mu_1f(\lambda_1)+\sum\limits_{i=2}^{n+1}\bigl(\mu_if(\lambda_i)\bigr)=\sum_{i=1}^{n+1}\bigl(\mu_i f(\lambda_i)\bigr)\qedhere
 	\end{align*}
 \end{itemize}
