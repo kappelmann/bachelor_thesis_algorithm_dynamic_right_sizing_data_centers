@@ -9,8 +9,8 @@ After that, we refine our initial approach to derive an improved algorithm with 
 \section{A Pseudo-Polynomial Algorithm}\label{sec:opt_offline_pseudo_poly}
 Let $\inp$ be a problem instance. Thanks to our preliminary work, we know that there exists an optimal schedule which is identifiable by its sequence of active servers $\mx$. In order to find this sequence $\mx$, consider the weighted, level structured graph $G$ defined as follows:
 \begin{align*}
-	&V\coloneqq\bigl\{v_{x,t}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
-	&E\coloneqq\bigl\{(v_{x,t},v_{x',t+1})\mid x,x'\in\fromto{0}{m},t\in\fromto{0}{T},v_{x,t},v_{x',t+1}\in V\bigr\}\\
+	&V\coloneqq\bigl\{v_{x,t}\mid x\in[m]_0,t\in[T]\bigr\}\dotcup\{v_{0,0},v_{0,T+1}\}\\
+	&E\coloneqq\bigl\{(v_{x,t},v_{x',t+1})\mid x,x'\in[m]_0,t\in[T]_0,v_{x,t},v_{x',t+1}\in V\bigr\}\\
 	&c_G(v_{x,t},v_{x',t+1})\coloneqq\costs(x,x',\lambda_{t+1})\\
 	&G\coloneqq(V,E,c_G)
 \end{align*}
@@ -82,7 +82,7 @@ We split our procedure into two subroutines.
 	\EndFor
 	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculate costs and predecessors}
 		\For{$x' \gets 0 \textrm{ to } m$}
-			\Let{$P[x',t]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[x,t-1]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Get best preceding choice}
+			\Let{$P[x',t]$}{$\argmin\limits_{x\in[m]_0}\bigl\{C[x,t-1]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Get best preceding choice}
 			\Let{$C[x',t]$}{$C\bigl[P[x',t],t-1\bigr]+c\bigl(P[x',t],x',\lambda_t\bigr)$}\Comment{Set the costs}
 		\EndFor
 	\EndFor
@@ -91,7 +91,7 @@ We split our procedure into two subroutines.
   \Statex
   \Function{extract\_schedule}{$P,T$}
 	\Blet{$\mx[1\dotso T]$}{a new array}\Comment{Allocate the schedule array}
-    	\Let{$\mx[T]$}{$\argmin\limits_{x\in\fromto{0}{m}}\bigl\{C[x,T]\bigr\}$}\Comment{Find best choice for last time slot}
+	  \Let{$\mx[T]$}{$\argmin\limits_{x\in[m]_0}\bigl\{C[x,T]\bigr\}$}\Comment{Find best choice for last time slot}
         \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from predecessors table}
 		\Let{$\mx[t]$}{$P\bigl[\mx[t+1],t+1\bigr]$}
 	\EndFor
@@ -141,12 +141,12 @@ Let $\inp_i=(m=1,T=2,\Lambda_i,\beta=1,f)$ be the inputs for two problem instanc
 \end{exmpl}
 Although our algorithm delivers the correct end results, its immediate steps are somewhat unsatisfying. We want our states to capture a more general notion than given in Section~\ref{sec:opt_offline_pseudo_poly}; preferably, we would like a node $v_{x,t}$ to denote the state of having $x$ active servers at the end of time slot $t$. In practice, we may reach such a state $v_{x,t}$ by moving down from a state $v_{y^\downarrow,t}$ where $y^\downarrow>x$ with cost $0$ or by moving up from a state $v_{y^\uparrow,t}$ where $y^\uparrow<x$ with cost $\beta(x-y^\uparrow)$. In order to allow for these new possibilities, given a problem instance $\inp$, we define a directed, weighted graph as follows:
 \begin{align*}
-	V&\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in\fromto{0}{m},t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
-	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in\fromto{0}{m}\bigr\}\\
+	V&\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in[m]_0,t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in[m]_0,t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
+	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in[m]_0\bigr\}\\
 	E_\downarrow&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x-1,t\downarrow})\mid x\in[m],t\in[T]\bigr\}\\
 	E_\uparrow&\coloneqq\bigl\{(v_{x-1,t\uparrow},v_{x,t\uparrow})\mid x\in[m],t\in[T-1]\bigr\}\\
-	E_{\downarrow\uparrow}&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\\
-	E_{\uparrow\downarrow}&\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in\fromto{0}{m},t\in[T-1]\bigr\}\\
+	E_{\downarrow\uparrow}&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in[m]_0,t\in[T-1]\bigr\}\\
+	E_{\uparrow\downarrow}&\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in[m]_0,t\in[T-1]\bigr\}\\
 	E&\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
 	c_G(e)&\coloneqq
 	\begin{cases}

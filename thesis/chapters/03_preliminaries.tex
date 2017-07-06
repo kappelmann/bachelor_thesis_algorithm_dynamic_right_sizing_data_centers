@@ -53,7 +53,7 @@ Moreover, we decreased the number of servers violating~\eqref{eq:reasonable_swit
 
 Our next proposition---which will pose the cornerstone of our subsequent works---requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is less than or equal to the convex-combination of the function values at the sampling points.
 \begin{lem}[Jensen's inequality]\label{lem:jensens-inequality}
-Let $f:\mathbb{R}\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\dotsc,\lambda_n\in\mathbb{R}$}, and $\mu_1,\dotsc,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
+Let $f:D\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\dotsc,\lambda_n\in D$}, and $\mu_1,\dotsc,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
 \begin{equation*}
 	f\left(\sum_{i=1}^n(\mu_i \lambda_i)\right) \le \sum_{i=1}^n\bigl(\mu_i f(\lambda_i)\bigr)
 \end{equation*}
@@ -89,15 +89,15 @@ We proof the claim by induction on $n\in\mathbb{N}$.
 \end{itemize}
 \end{itemize}
 \end{proof}
-Next, we consider the sequence of active servers. For this, let $\mx$ denote the sequence of sums of active servers at each time slot $t$, that is
-\begin{equation*}
-	\mx\coloneqq\bigl(x_1=\sum\limits_{i=1}^{m}s_{i,1},\dotsc,x_T=\sum\limits_{i=1}^{m}s_{i,T}\bigr)\in\fromto{0}{m}^T
-\end{equation*}
+Next, we consider the sequence of the number of active servers $\mx$ defined as
+\begin{flalign*}
+	&&\mx\coloneqq(x_1,\dotsc,x_T)\in[m]_0^T&&\text{where}&&x_t\coloneqq\sum\limits_{i=1}^{m}s_{i,t}\in[m]_0&&&
+\end{flalign*}	
 As we assume all machines sleeping at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$. We now want to establish an optimal scheduling strategy given a fixed number of active servers. It turns out that an even load distribution seems a very desirable strategy.\begin{prop}[Even load distribution]\label{prop:even_load_distribution}
 Given $x_t\in\mathbb{N}$ active servers in time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex operating costs function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.
 \end{prop}
 \begin{proof}
-Let $\Sigma$ be an arbitrary, feasible schedule using $x_t$ servers in time slot $t$, and let $A$ be its set of active servers in time slot $t$, that is $A\coloneqq\{i\in[m]\mid s_{i,t}=1\}$.
+Let $\Sigma$ be an arbitrary feasible schedule using $x_t$ servers in time slot $t$, and let $A$ be its set of active servers in time slot $t$, that is $A\coloneqq\{i\in[m]\mid s_{i,t}=1\}$.
 Consider the operating costs of $\Sigma$ at time $t$ given by
 \begin{equation*}
 	\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t})\cdot s_{i,t}\bigr)=\sum\limits_{i\in A}\bigl(f(\lambda_{i,t})\cdot1\bigr)+\sum\limits_{i\in [m]\setminus A}\bigl(f(\lambda_{i,t})\cdot0\bigr)=\sum\limits_{i\in A}f(\lambda_{i,t})
@@ -106,21 +106,21 @@ Since $\Sigma$ is feasible (see constraint~\eqref{eq:feasible_constraint}), we h
 \begin{equation*}
 	\sum\limits_{i\in A}\lambda_{i,t}=\lambda_t
 \end{equation*}
-Hence, we can obtain weights $\mu_1,\dotsc,\mu_{x_t}\in[0,1]$ that relate $\lambda_{i,t}$ and $\lambda_t$, for $i\in A$, such that
+Hence, we can obtain weights $\mu_1,\dotsc,\mu_{x_t}\in[0,1]$ that relate $\lambda_t$ to $\lambda_{i,t}$ for $i\in A$ such that
 \begin{align}
-	\sum\limits_{i=1}^{x_t}\mu_i=1\quad\text{and}\quad \sum\limits_{i\in A}f(\lambda_{i,t})=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\label{eq:mu_lambda_costs}
+	\sum\limits_{j=1}^{x_t}\mu_j=1\qquad\text{and}\qquad \sum\limits_{i\in A}f(\lambda_{i,t})=\sum\limits_{j=1}^{x_t}f(\mu_j\lambda_t)\label{eq:mu_lambda_costs}
 \end{align}
 In particular, we have 
 \begin{equation}
-	\sum_{i=1}^{x_t}\mu_i\lambda_t=\lambda_t\label{eq:mu_convex_comb}
+	\sum_{j=1}^{x_t}\mu_j\lambda_t=\lambda_t\label{eq:mu_convex_comb}
 \end{equation}
 Using these weights, we now consider the operating costs of a schedule $\Sigma^*$ that evenly distributes $\lambda_t$ to its $x_t$ active servers:
 \begin{align*}
-	\sum\limits_{i=1}^{x_t}f\Bigl(\frac{\lambda_t}{x_t}\Bigr)=x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\eqref{eq:mu_convex_comb}}{=}x_tf\Bigl(\sum\limits_{i=1}^{x_t}{\frac{\mu_i\lambda_t}{x_t}}\Bigr)
+	\sum\limits_{j=1}^{x_t}f\left(\frac{\lambda_t}{x_t}\right)=x_tf\left(\frac{\lambda_t}{x_t}\right)\stackrel{\eqref{eq:mu_convex_comb}}{=}x_tf\left(\sum\limits_{j=1}^{x_t}{\frac{\mu_j\lambda_t}{x_t}}\right)
 \end{align*}
-With the fact that $\sum_{i=1}^{x_t}(1/x_t)=1$ and the use of Jensen's inequality (Lemma~\ref{lem:jensens-inequality}), we can give an upper bound for the costs:
+With the fact that $\sum_{j=1}^{x_t}(1/x_t)=1$ and the use of Jensen's inequality (Lemma~\ref{lem:jensens-inequality}), we can give an upper bound for the costs:
 \begin{align*}
-	x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\text{Lemma~\ref{lem:jensens-inequality}}}{\le}x_t\sum\limits_{i=1}^{x_t}\Bigl(\frac{1}{x_t}f(\mu_i\lambda_t)\Bigr)=\frac{x_t}{x_t}\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)=\sum\limits_{i=1}^{x_t}f(\mu_i\lambda_t)\stackrel{\eqref{eq:mu_lambda_costs}}{=}\sum\limits_{i\in A}f(\lambda_{i,t})
+	x_tf\left(\frac{\lambda_t}{x_t}\right)\stackrel{\text{Lemma~\ref{lem:jensens-inequality}}}{\le}x_t\sum\limits_{j=1}^{x_t}\left(\frac{1}{x_t}f(\mu_j\lambda_t)\right)=\frac{x_t}{x_t}\sum\limits_{j=1}^{x_t}f(\mu_j\lambda_t)=\sum\limits_{j=1}^{x_t}f(\mu_j\lambda_t)\stackrel{\eqref{eq:mu_lambda_costs}}{=}\sum\limits_{i\in A}f(\lambda_{i,t})
 \end{align*}
 Thus, the operating costs of $\Sigma^*$ give a lower bound for the operating costs of $\Sigma$, and the claim follows.
 \end{proof}
@@ -133,19 +133,19 @@ Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exc
 \end{proof}
 As a result of Corollary~\ref{cor:even_load_distribution}, we can restrict ourselves to finding an optimal schedule that evenly distributes its arrival rates to its active servers. We now combine our results to derive the main theorem of our preliminary work.
 \begin{thm}\label{thm:even_load_distribution_reasonable_switching}
-Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates to its active servers in each time slot and further satisfies~\eqref{eq:reasonable_switching}.
+Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates to its active servers in each time slot and further satisfies~\eqref{eq:reasonable_switching} for all $t\in[T]$.
 \end{thm}
 \begin{proof}
-By Corollary~\ref{cor:even_load_distribution}, we obtain an optimal schedule $\Sigma$ that evenly distributes its arrival rates to its active servers. Applying the procedure given in Proposition~\ref{prop:reasonable_switching} to $\Sigma$ yields $\Sigma^*$ that further satisfies~\eqref{eq:reasonable_switching}.
+By Corollary~\ref{cor:even_load_distribution}, we obtain an optimal schedule $\Sigma$ that evenly distributes its arrival rates to its active servers. Applying the procedure given in Proposition~\ref{prop:reasonable_switching} to $\Sigma$ yields $\Sigma^*$ that further satisfies~\eqref{eq:reasonable_switching} for all $t\in[T]$.
 \end{proof}
 
-Theorem~\ref{thm:even_load_distribution_reasonable_switching} allows us to subsequently identify an optimal schedule by its sequence of active servers $\mx$ and thereby to simplify our optimization conditions~\eqref{eq:schedule_costs} and \eqref{eq:feasible_constraint}. 
+Theorem~\ref{thm:even_load_distribution_reasonable_switching} allows us to identify an optimal schedule by its sequence of active servers $\mx$ and thereby to simplify our optimization conditions~\eqref{eq:schedule_costs} and \eqref{eq:feasible_constraint}. 
 For this, given a problem instance $\inp$, we define the operating costs function $\opcosts(x,\lambda)$, which describes the costs incurred by evenly distributing $\lambda$ on $x$ active servers using $f$:
 \begin{equation}\label{eq:mx_schedule_op_costs}
-	\opcosts:\fromto{0}{m}\times[0,m]\rightarrow\mathbb{R}\cup\{\infty\},\quad \opcosts(x,\lambda)=\begin{cases}
-          0, & \text{if $x=0$}\\
+	\opcosts:[m]_0\times[0,m]\rightarrow\mathbb{R}\cup\{\infty\},\quad \opcosts(x,\lambda)=\begin{cases}
+	  \infty, & \text{if $\lambda>x$}\\
 	  xf(\lambda/x), & \text{if $x\ne 0\land\lambda\le x$}\\
-	  \infty, & \text{if $x\ne 0\land\lambda>x$}
+          0, & \text{if $x=\lambda=0$}
 	  \end{cases}
 \end{equation}
 We assign infinite costs in case $\lambda>x$ as there would be too few active servers to process the arrival rate, that is the schedule would not be feasible. Naturally, this definition can be lifted to whole schedules by setting

@@ -27,8 +27,9 @@ Below, we give an overview of the definitions and conventions commonly referred 
 
 \section*{Miscellaneous}
 \begin{itemize}
-	\item $[n]$\ldots$\fromto{1}{n}$
-	\item $x_t\in\fromto{0}{m}$\ldots number of active servers at time $t$
+	\item $[n]$\ldots$\fromto{1}{n}\subset\mathbb{N}$
+	\item $[n]_0$\ldots$\fromto{0}{n}\subset\mathbb{N}_0$
+	\item $x_t\in[m]_0$\ldots number of active servers at time $t$
 	\item $\mx\coloneqq(x_1,\ldots,x_T)$\ldots sequence of numbers of active servers. Note that due to Chapter~\ref{chap:preliminaries}, $\mx$ can be interpreted as a schedule.
 	\item $\opcosts(x,\lambda)$\ldots costs of processing $\lambda$ with $x$ servers.
 	\item $\swcosts(x_{t-1},x_{t})$\ldots costs of switching from $x_{t-1}$ to $x_t$ servers.
