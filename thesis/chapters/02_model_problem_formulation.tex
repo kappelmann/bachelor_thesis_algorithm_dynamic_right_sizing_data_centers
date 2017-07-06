@@ -28,12 +28,12 @@ Using the above definitions, we can define the input of our model by setting $\i
 	S_i&\coloneqq(s_{i,1},\dotsc,s_{i,T})\in\{0,1\}^T\\
 	L_i&\coloneqq(\lambda_{i,1},\dotsc,\lambda_{i,T})\in[0,1]^T
 \end{align*}
-where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0) or active (1). Recall that we assume all machines are sleeping at times $t\notin[T]$; thus, for $t\notin[T]$ and $i\in[m]$, we have $s_{i,t}=0$. We can now define the sequence of all state changes and the sequence of all assigned loads:
+where $s_{i,t}\in\{0,1\}$ denotes whether server $i$ at time $t$ is sleeping (0) or active (1). Recall that we assume that all machines are sleeping at times $t\notin[T]$; thus, for $t\notin[T]$ and $i\in[m]$, we have $s_{i,t}=0$. The sequence of all state changes and the sequence of all assigned loads are then defined by
 \begin{align*}
 	\mathcal{S}&\coloneqq(S_1,\dotsc,S_m)\\
 	\mathcal{L}&\coloneqq(L_1,\dotsc,L_m)
 \end{align*}
-We will subsequently call a pair $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$ a \emph{schedule}. Finally, we are ready to define our problem statement. Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies the following optimization:
+We will call a pair $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$ a \emph{schedule}. Finally, we are ready to define our problem statement. Given an input $\inp$, our goal is to find a schedule $\Sigma$ that satisfies the following optimization:
 \begin{align}
 	&\text{minimize}&&\costs(\Sigma)\coloneqq\underbrace{\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\bigl(f(\lambda_{i,t}) s_{i,t}\bigr)}_{\text{operating costs}}+\underbrace{\beta\sum\limits_{t=1}^{T}\sum\limits_{i=1}^{m}\max\{0,s_{i,t}-s_{i,t-1}\}}_{\text{switching costs}}\label{eq:schedule_costs}\\ 
 	&\text{subject to}&&\sum\limits_{i=1}^{m}(\lambda_{i,t} s_{i,t})=\lambda_t,\quad \forall t\in[T]\label{eq:feasible_constraint}
