@@ -6,7 +6,7 @@ Heretofore, we have derived two optimal offline algorithms for our scheduling pr
 
 In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-competitive offline algorithm with linear runtime complexity. As a next step, we will generalize our first approach to allow for arbitrary $(1+\beps)$-approximations with TODO complexity.
 
-\section{A Linear 2-Competitive Algorithm}
+\section{A Linear 2-Approximative Algorithm}
 Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's runtime complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Since we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, that is the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
 
 As we saw in Equation~\eqref{eq:inp_size}, the size of our input $\inp$ is given by $\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)$. Consequently, in order to obtain a linear runtime complexity, we want to reduce the graph's height from $m+1$ to a logarithmic height of $\mathcal{O}\bigl(\log(m)\bigr)$. Given this observation, it seems natural for a computer scientist to choose a logarithmic scale for the number of servers in each layer; that is, instead of adding a node for each possible number of active servers (i.e.\ $0,1,\dotsc,m$), we only add nodes for logarithmic choices (i.e.\ $0,2^0,2^1,\dotsc,2^{\floor{\log_2(m)}},m$). More formally, given a problem instance $\inp$, we set\unsure{$b\coloneqq\ceil{\log_2(m)}-1$ and $B\coloneqq\{0,2^0,2^1,\dotsc,\floor{2^b},m\}$}
@@ -382,7 +382,7 @@ To our great joy, the runtime is linear in the size of the input. Similarly, our
 
 In this section, we saw that our reduction to logarithmic steps allows us to derive a linear algorithm that guarantees 2-competitive results. In our approach, we chose the base two logarithm for our step sizes. It seems like an interesting question, if this approach can be generalized to arbitrary bases, allowing for more precise approximations. This shall be final task of our work.
 
-\section{A Linear $1+\beps$-Competitive Algorithm}
+\section{A Linear $(1+\beps)$-Approximative Algorithm}
 TODO text + graph
 
 \begin{defn}
@@ -548,10 +548,10 @@ By iteratively applying above procedure to $\mx$, starting with $i=1$ and stoppi
 
 
 \begin{algorithm}[H]
-  \caption{Linear $1+\beps$-competitive offline scheduling}
+  \caption{Linear $(1+\beps)$-competitive offline scheduling}
   \label{alg:approx_1_eps_offline_linear}
   \begin{algorithmic}[1]
-  \Function{$1+\beps$\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f,\beps$}
+  \Function{$(1+\beps)$\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f,\beps$}
 	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f,1+\beps$}}
 	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T,m,1+\beps$}}
 	  \State \Return{$\mx$}
