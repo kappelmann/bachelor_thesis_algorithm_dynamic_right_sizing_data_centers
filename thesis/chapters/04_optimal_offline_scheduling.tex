@@ -70,13 +70,13 @@ We split our procedure into two subroutines.
   \begin{algorithmic}[1]
   \Function{optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
 	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
-	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T$}}
+	  \Let{$\mx$}{\Call{extract\_schedule}{$C,P,T$}}
 	  \State \Return{$\mx$}
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\LineCommentFunc{Allocate nodes' costs and predecessor tables}
 	\Blet{$C[0\dotso m,1\dotso T]$ and $P[0\dotso m,1\dotso T]$}{new tables}
+	\Statex \Comment{Allocate nodes' costs and predecessor tables}
 	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialize first layer}
 		\Let{$P[x,1]$}{$0$ and $C[x,1]\gets\costs(0,x,\lambda_1)$}
 	\EndFor
@@ -89,7 +89,7 @@ We split our procedure into two subroutines.
 	\State \Return{$(C,P)$}
   \EndFunction
   \Statex
-  \Function{extract\_schedule}{$P,T$}
+  \Function{extract\_schedule}{$C,P,T$}
 	\Blet{$\mx[1\dotso T]$}{a new array}\Comment{Allocate the schedule array}
 	  \Let{$\mx[T]$}{$\argmin\limits_{x\in[m]_0}\bigl\{C[x,T]\bigr\}$}\Comment{Find best choice for last time slot}
         \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from predecessors table}
@@ -103,15 +103,15 @@ We split our procedure into two subroutines.
 The correctness of Algorithm~\ref{alg:opt_offline_pseudo_poly} directly follows from Theorem~\ref{thm:opt_sched_short_path_pseudo_poly} and the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\parencite{intro-algo}).
 
 Naturally, we are interested in our algorithm's runtime and memory complexity.
-For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\beta,f)$. In theory, our function $f:[0,1]\rightarrow \mathbb{R}$ may be easily defined by saying, for example, $f(\lambda)\coloneqq \lambda^2$; however, practically, it is difficult to answer how such a function may be specified and what the size of such a function as part of the input may be. For simplicity, we consider the size of $f$ negligible in comparison with the remaining input variables' size. Further, we assume that a non-negative real number $r$ requires $\Theta\bigl(\log_2(r)\bigr)$ bits for its encoding; if $r$ turns out to be $0$, we assume some minor, constant encoding size. The size of our input is then given by
+For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\beta,f)$. In theory, our function $f:[0,1]\rightarrow \mathbb{R}$ may be easily defined by saying, for example, $f(\lambda)\coloneqq \lambda^2$; however, practically, it is difficult to answer how such a function may be specified and what the size of such a function as part of the input may be. For simplicity, we consider the size of $f$ negligible in comparison with the remaining input variables' size. Further, we assume that a non-negative real number $r$ requires $\Theta\bigl(\log_2(r)\bigr)$ bits for its encoding; if $r$ turns out to be smaller than $1$, we assume some minor constant encoding size. The size of our input is then given by
 \begin{align}
 	size(\inp)&=size(m)+size(T)+size(\Lambda)+size(\beta)\nonumber\\
 	&=\Theta\bigl(\log_2(m)\bigr)+\Theta\bigl(\log_2(T)\bigr)+\sum\limits_{i=1}^T \Theta\bigl(\log_2(\lambda_i)\bigr)+\Theta\bigl(\log_2(\beta)\bigr)\nonumber\\
 	&=\Theta\bigl(\log_2(m)+\log_2(T)+\log_2(\beta)\bigr)+\sum\limits_{i=1}^T \Theta\bigl(\log_2(\overbrace{\lambda_i}^{\le m})\bigr)\nonumber\\
-	&\in\Theta\bigl(\log_2(m)+\log_2(T)+\log_2(\beta)\bigr)+\mathcal{O}\bigl(T\log_2(m)\bigr)\nonumber\\
-	&\in\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)\label{eq:inp_size}
+	&\le\Theta\bigl(\log_2(m)+\log_2(T)+\log_2(\beta)\bigr)+\mathcal{O}\bigl(T\log_2(m)\bigr)\nonumber\\
+	&\le\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)\label{eq:inp_size}
 \end{align}
-For our runtime analysis, we assume that calling the costs function $\costs(\cdot,\cdot,\cdot)$ incurs constant cost. Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialization and $\Theta(Tm^2)$ steps for the iterative calculation of predecessors and costs. In addition, \textproc{extract\_schedule} needs $\Theta(m)$ steps for its initial minimization search and $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
+For our runtime analysis, we assume that calling the operating costs function $f(\cdot)$, and as a consequence also $\costs(\cdot,\cdot,\cdot)$, incurs constant cost. Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ iterations for its initialization and $\Theta(Tm^2)$ steps for the iterative calculation of predecessors and costs. In addition, \textproc{extract\_schedule} needs $\Theta(m)$ steps for its initial minimization search and $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
 \begin{equation*}
 	\Theta(m+Tm^2+m+T)=\Theta(Tm^2)
 \end{equation*}
@@ -120,7 +120,7 @@ The runtime is polynomial in the numeric value of $m$ and $T$; however, it is ex
 Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$.
 
 \section{A Pseudo-Linear Algorithm}\label{sec:opt_offline_pseudo_lin}
-The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply we add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost: The density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to ``thin out'' our graph. 
+The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph $G$ is able to represent any possible schedule $\mx$ since we simply add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost: The density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to ``thin out'' our graph. 
 
 Let us revise our initial approach. Our graph consists of nodes $v_{x,t}$, any of which represents the state of distributing the arrival rate $\lambda_{t}$ evenly to $x$ servers in time slot $t$. The algorithm calculates the minimum costs to all those nodes. Thus, for any node $v_{x,t}$, it returns the lowest achievable cost up to time slot $t$ of all schedules $\mx$ that assign $x$ servers at time $t$ to process the arrival rate $\lambda_t$. In particular, the cost of the end node $v_{0,T+1}$ tells us the minimum cost of all schedules. This approach, however, does not consider the possibility to schedule $y\neq x$ servers in time slot $t$ and to switch to $x$ servers just at the very last moment of $t$ when calculating the cost of $v_{x,t}$. Consider the following example:
 \begin{exmpl}
@@ -186,7 +186,7 @@ This revised path pleasantly translates to a schedule $\mx$, in this case $\mx=(
 Let $P$ be a path from $v_{0,0}$ to $v_{0,T\downarrow}$. For any time slot $t\in[T]$, let $E_\downarrow^t$ be the set of edges $(v_{x,t\downarrow},v_{x-1,t\downarrow})\in E_\downarrow$ used by $P$ at time $t$. Similarly, let $E_\uparrow^t$ be the set of edges $(v_{x,t\uparrow},v_{x+1,t\uparrow})\in E_\uparrow$ used by $P$ at time $t\in[T-1]$.
 The path $P$ is called \emph{reasonable} if for any time slot $t\in[T-1]$, the path does not shut down and power on servers simultaneously at $t$. More formally, $P$ must satisfy the formula
 \begin{equation}
-	\forall t\in[T-1]\left(E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset\right)\label{eq:reasn_path}
+	\forall t\in[T-1]:E_\downarrow^t=\emptyset \lor E_\uparrow^t=\emptyset\label{eq:reasn_path}
 \end{equation}
 \end{defn}
 The next proposition shall justify that our reasonable paths indeed deserve to be called \textit{reasonable}.
@@ -307,8 +307,8 @@ For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downar
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\LineCommentFunc{Allocate nodes' costs and predecessor tables}
 	\Blet{$C[0\dotso m,1\dotso T]$ and $P[0\dotso m,1\dotso T]$}{new tables}
+	\Statex \Comment{Allocate nodes' costs and predecessor tables}
 	\Let{$P[m,1]$}{$m$ and $C[m,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
 	\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
 		\If {$C[x+1,1]<\costs(0,x,\lambda_1)$}
