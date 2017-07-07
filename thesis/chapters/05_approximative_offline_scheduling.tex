@@ -2,14 +2,13 @@
 % Add the above to each chapter to make compiling the PDF easier in some editors.
 
 \chapter{Approximative Offline Scheduling}\label{chap:approx_offline_scheduling}
-Heretofore, we have derived two optimal offline algorithms for our scheduling problem. Unfortunately, the algorithms' runtime complexities are exponential in the input size of the number of servers $m$. Needless to say, we want to reduce this exponential runtime. For this, we must slightly loosen our aspirations, that is we move to approximative methods. Further, as we will see in the next section, we need to assume that our convex operating cost function $f$ is non-negative and monotonically increasing; however, this restriction is of no great significance since in practice most operating cost functions fulfill this requirement.\unsure{Any reference?} 
+Heretofore, we have derived two optimal offline algorithms for our scheduling problem. Unfortunately, the algorithms' time complexities are exponential in the input size of the number of servers $m$. Needless to say, we want to reduce this exponential runtime. For this, we must slightly loosen our aspirations, that is we move to approximative methods. Further, we will need to assume that our convex operating cost function $f$ is non-negative and monotonically increasing; however, this restriction is of no great significance in practice, as will be discussed in the next section.
+To obtain an approximative schedule, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-approximative offline algorithm with linear time complexity. As a next step, we will generalize our first approach to allow for arbitrary $(1+\beps)$-approximations with TODO time complexity.
 
-In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-competitive offline algorithm with linear runtime complexity. As a next step, we will generalize our first approach to allow for arbitrary $(1+\beps)$-approximations with TODO complexity.
+\section{A 2-Approximative Linear-Time Algorithm}
+Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's time complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Since we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, i.e.\ the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
 
-\section{A Linear 2-Approximative Algorithm}
-Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's runtime complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Since we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, that is the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
-
-As we saw in Equation~\eqref{eq:inp_size}, the size of our input $\inp$ is given by $\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)$. Consequently, in order to obtain a linear runtime complexity, we want to reduce the graph's height from $m+1$ to a logarithmic height of $\mathcal{O}\bigl(\log(m)\bigr)$. Given this observation, it seems natural for a computer scientist to choose a logarithmic scale for the number of servers in each layer; that is, instead of adding a node for each possible number of active servers (i.e.\ $0,1,\dotsc,m$), we only add nodes for logarithmic choices (i.e.\ $0,2^0,2^1,\dotsc,2^{\floor{\log_2(m)}},m$). More formally, given a problem instance $\inp$, we set\unsure{$b\coloneqq\ceil{\log_2(m)}-1$ and $B\coloneqq\{0,2^0,2^1,\dotsc,\floor{2^b},m\}$}
+As we saw in Equation~\eqref{eq:inp_size}, the size of our input $\inp$ is given by $\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)$. Consequently, in order to obtain a linear time complexity, we want to reduce the graph's height from $m+1$ to a logarithmic height of $\mathcal{O}\bigl(\log(m)\bigr)$. Given this observation, it seems natural for a computer scientist to choose a logarithmic scale for the number of servers in each layer, to wit, instead of adding a node for each possible number of active servers (i.e.\ $0,1,\dotsc,m$), we only add nodes for logarithmic choices (i.e.\ $0,2^0,2^1,\dotsc,2^{\floor{\log_2(m)}},m$). More formally, given a problem instance $\inp$, we set
 \begin{align*}
 	b&\coloneqq\floor{\log_2(m)}\\
 	B&\coloneqq\{0,2^0,2^1,\dotsc,2^b,m\}
@@ -34,24 +33,25 @@ where $B$ will subsequently represent the set of possible scheduling choices at 
 	\end{cases}\\
 	G&\coloneqq(V,E,c_G)
 \end{align*}
-A more appealing, graphical representation can be found in the following figure.
+If $m$ is a power of two, i.e.\ $m=2^b$, it happens that we add unnecessary loops in~$E_\downarrow$ and~$E_\uparrow$, which we can simply ignore for our following works.
+A graphical representation of $G$ can be found in the following figure.
 \begin{figure}[H]
 \includestandalone[width=\textwidth]{../figures/graph_lin_approx_2}
-\caption{Graph for a linear 2-competitive offline algorithm; the path of the topological sorting is highlighted in red. Note that $\beta(2^i-2^{i-1})=\beta2^{i-1}$.}
+\caption{Graph for a 2-approximative linear-time offline algorithm; the path of the topological sorting is highlighted in red. Note that $\beta(2^i-2^{i-1})=\beta2^{i-1}$.}
 \label{fig:graph_lin_approx_2}
 \end{figure}
-The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. Since some possible scheduling choices, however, are not representable in this new graph, we may just obtain approximative costs for our nodes. Thus, the shortest path in our graph might not correspond to an optimal schedule, but it will at least correspond to an approximative one. Before we start to establish the graph's approximation guarantee, we first have to conduct some observations. We start by making a convenient definition that helps us to identify schedules that are representable in our graph.
+The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. However, since some possible scheduling choices are not representable in this new graph, we may just obtain approximative costs for our nodes. Thus, the shortest path in our graph might not correspond to an optimal schedule, but it will at least correspond to an approximative one. Before we start to establish the graph's approximation guarantee, we first have to conduct some observations. We start by making a convenient definition that helps us to identify schedules that are representable in our graph.
 \begin{defn}[Restricted schedules]
-Given an input $\inp$ and a set $A\subseteq[m]_0$, we say that a schedule $\mx=(x_1,\dotsc,x_T)$ is \emph{$A$-restricted} if $\mx$ only uses scheduling choices contained in $A$, that is $\mx$ satisfies $\forall t\in[T]:x_t\in A$.
+Given an input $\inp$ and a set $A\subseteq[m]_0$, we say that a schedule $\mx=(x_1,\dotsc,x_T)$ is \emph{$A$-restricted} if $\mx$ only uses scheduling choices contained in~$A$, that is $\mx$ satisfies the formula $\forall t\in[T]:x_t\in A$.
 \end{defn}
 Evidently, our graph is able to represent every $B$-restricted schedule. We now examine the incurring operating costs of such a $B$-restricted schedule $\mx'$. Since we are forced to schedule a number of servers contained in $B$, we might not be able to choose an optimal scheduling choice that minimizes the schedule's operating costs. Instead, we may choose the nearest scheduling choice which is contained in $B$. For instance, if the optimal scheduling strategy at some timeslot $t$ would be to choose $x_t=3$ servers (which is not a power of two), we may instead have to choose $x_t'=4\in B$ servers for $\mx'$. One might suspect that this strategy would incur at most twice as much operating costs as an optimal schedule. This, however, is sadly not the case, as one can see in the following example.
 \begin{exmpl}
-Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a problem instance where $f(\lambda)=(\lambda-1)^2$. Since we need at least 3 active servers at any timeslot, any $B$-restricted schedule $\mx'=(x_1',\dotsc,x_5')$ forces us to constantly use $x_t'=4$ active machines. An optimal schedule $\mx=(x_1,\dotsc,x_5)$, on the other hand, is able to minimize its costs by constantly scheduling $x_t=3$ servers. Let us compare the costs between $\mx'$ and $\mx$. The schedules' costs are given by
+Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a problem instance where $f(\lambda)=(\lambda-1)^2$. Since we need at least 3 active servers at any timeslot, any $B$-restricted schedule $\mx'=(x_1',\dotsc,x_5')$ forces us to constantly use $x_t'=4$ active machines. An optimal schedule $\mx=(x_1,\dotsc,x_5)$, on the other hand, is able to minimize its cost by constantly scheduling $x_t=3$ servers. Let us compare the costs between $\mx'$ and $\mx$. The schedules' costs are given by
 \begin{align*}
-	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_tf(\lambda_t/x_t)}^{3(3/3-1)^2}+\overbrace{\swcosts(x_{t-1},x_t)}^{0\max\{\,\cdots\}}\bigr)=5\cdot3\Bigl(\frac{3}{3}-1\Bigr)^2=0\\
-	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_t'f(\lambda_t/x_t')}^{4(3/4-1)^2}+\overbrace{\swcosts(x_{t-1}',x_t')}^{0\max\{\,\cdots\}}\bigr)=5\cdot4\Bigl(\frac{3}{4}-1\Bigr)^2=\frac{20}{16} 
+	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_tf(\lambda_t/x_t)}^{3(3/3-1)^2}+\overbrace{\swcosts(x_{t-1},x_t)}^{0\max\{\,\cdots\}}\bigr)=5\cdot3\left(\frac{3}{3}-1\right)^2=0\\
+	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_t'f(\lambda_t/x_t')}^{4(3/4-1)^2}+\overbrace{\swcosts(x_{t-1}',x_t')}^{0\max\{\,\cdots\}}\bigr)=5\cdot4\left(\frac{3}{4}-1\right)^2=\frac{20}{16} 
 \end{align*}
-Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation estimation. Naturally, we may ask ourselves how this explosion of costs is even possible. Evidently, the switching costs are not the root of this explosion since $\beta=0$. Thus, we shall take a closer look on the used operating cost function. The optimal schedule $\mx$ evenly distributes every load $\lambda_t=3$ to $x_t=3$ servers. Hence, every active server has to process a load of $\frac{\lambda_t}{x_t}=1$ at every time step, incurring costs of $f(1)=0$. On the other hand, the approximative schedule $\mx'$ is able to distribute every load to 4 active machines. Thus, every machine incurs costs of $f(\frac{3}{4})=\frac{1}{16}$. This observation seems rather surprising: Although every server has to process a smaller load using $\mx'$, the incurred operating costs of each server turn out to be higher. Intuitively, however, we would expect that a less stressed machine would incur less costs. This surprising behavior is due to the fact that our operating cost function $f$ is not monotonically increasing, as one can see in the following figure.
+Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation estimation. Naturally, we may ask ourselves how this explosion of costs is even possible. Evidently, the switching costs are not the root of this explosion since $\beta=0$. Thus, we shall take a closer look on the used operating cost function. The optimal schedule $\mx$ evenly distributes every load $\lambda_t=3$ to $x_t=3$ servers. Hence, every active server has to process a load of $\frac{\lambda_t}{x_t}=1$ at every time step, incurring costs of $f(1)=0$. On the other hand, the approximative schedule $\mx'$ is able to distribute every load to 4 active machines. Thus, every machine incurs costs of $f(3/4)=\frac{1}{16}$. This observation seems rather surprising: Although every server has to process a smaller load using $\mx'$, the incurring operating costs of each server turn out to be higher. Intuitively, however, we would expect that a less stressed machine would incur less costs. This surprising behavior is due to the fact that our operating cost function $f$ is not monotonically increasing, as one can see in the following figure.
 \begin{figure}[H]
 \centering
 \includestandalone{../figures/non_mono_incr_f_1}
@@ -59,23 +59,23 @@ Albeit our approximative schedule uses only one server in addition, the schedule
 \label{fig:non_mono_incr_f}
 \end{figure}
 \end{exmpl}
-The above example shows us that our graph may not able to deliver a sensible approximation when dealing with general convex operating cost functions $f$. Luckily, this inconvenience can solved by additionally assuming that $f$ is non-negative and monotonically increasing. To see this, assume that at some timeslot $t$ the scheduling choice $x_t$ minimizes the operating costs to process the load $\lambda_t$. Then let $x_t'\in B$ the next scheduling choice representable in $G$. Since $x_t$ minimizes the operating costs at timeslot $t$, we have
+The above example shows us that our graph may not able to deliver a sensible approximation when dealing with general convex operating cost functions $f$. Luckily, this inconvenience can be solved by additionally assuming that $f$ is non-negative and monotonically increasing. To see this, assume that at some timeslot $t$ the scheduling choice $x_t$ minimizes the operating costs to process the load $\lambda_t$. Then let $x_t'\in B$ the next scheduling choice representable in~$G$. Since $x_t$ minimizes the operating costs at timeslot $t$, we have
 \begin{equation*}
-	\opcosts(x_t,\lambda_t)\le\opcosts(x_t',\lambda_t)\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}x_t'f\Bigl(\frac{\lambda_t}{x_t'}\Bigr)
+	\opcosts(x_t,\lambda_t)\le\opcosts(x_t',\lambda_t)\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}x_t'f(\lambda_t/x_t')
 \end{equation*}
 Further, since $B$ contains all powers of two up to $m$, we have $x_t\le x_t'\le 2x_t$. If we additionally assume that $f$ is non-negative, we can infer that
 \begin{equation*}
-	x_t'f\Bigl(\frac{\lambda_t}{x_t'}\Bigr)\le2x_tf\Bigl(\frac{\lambda_t}{x_t'}\Bigr)
+	x_t'f(\lambda_t/x_t')\le2x_tf(\lambda_t/x_t')
 \end{equation*}
-Now, using the fact that $x_t\le x_t'$ and assuming that $f$ is monotonically increasing, we have
+Now, using the fact that $x_t\le x_t'$ and assuming that $f$ is monotonically increasing, we can see that
 \begin{equation*}
-	2x_tf\Bigl(\frac{\lambda_t}{x_t'}\Bigr)\le 2x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}2\opcosts(x_t,\lambda_t)
+	2x_tf(\lambda_t/x_t')\le 2x_tf(\lambda_t/x_t)\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}2\opcosts(x_t,\lambda_t)
 \end{equation*}
 Ultimately, we can combine our observations and conclude
 \begin{equation*}
 	\opcosts(x_t,\lambda_t)\le\opcosts(x_t',\lambda_t)\le2\opcosts(x_t,\lambda_t)
 \end{equation*}
-which shows us that our approximative scheduling choice incurs at most twice as much operating costs as an optimal scheduling strategy. We thus subsequently restrict ourselves to non-negative, monotonically increasing, convex cost functions. This evidently reduces the theoretical generality of our initial approach, but it does not interfere with practical applicability. On the one hand, negative cost functions would semantically allow to ``generate profit by consuming energy'', which seems unreasonable in practice. On the other hand, having a non monotonically increasing, convex cost function, we can simply add artifical loads to our machines to reduce our costs in given circumstances. For instance, in our previous example, we could assign every machine a load of $1$ instead of $\frac{3}{4}$ to reduce the approximative schedule's costs. This trick, which is exemplarily outlined in Figure~\ref{fig:transform_to_mono_incr}, allows us to transform any arbitrary, convex cost function to a monotonically increasing one.\unsure{is this paragraph + figure intelligible?}
+which shows us that our approximative scheduling choice incurs at most twice as much operating costs as an optimal scheduling strategy. We thus subsequently restrict ourselves to non-negative, monotonically increasing convex cost functions. This evidently reduces the theoretical generality of our initial approach, but it does not interfere with practical applicability. On the one hand, negative cost functions would semantically allow to ``generate profit by consuming energy'', which seems unreasonable in practice. On the other hand, if we have a non monotonically increasing convex cost function, we can simply add artifical loads to our machines to reduce our costs in given circumstances. For instance, in our previous example, we could assign every machine a load of $1$ instead of $\frac{3}{4}$ to reduce the approximative schedule's cost. This trick, which is exemplarily outlined in Figure~\ref{fig:transform_to_mono_incr}, allows us to transform any arbitrary convex cost function to a monotonically increasing one.
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.5\textwidth}
@@ -85,7 +85,7 @@ which shows us that our approximative scheduling choice incurs at most twice as 
 \begin{subfigure}[b]{0.5\textwidth}
 \includestandalone[width=\textwidth]{../figures/mono_incr_f}
 \end{subfigure}
-\caption{The non monotonically increasing, convex function $f$ can be transformed to the monotonically increasing, convex function $f'$ by adding artifical loads $\lambda^+$ to assignments $\lambda\in[0,0.5)$ such that we obtain a new assignment $\lambda'\coloneqq\lambda+\lambda^+=0.5$.}
+\caption{The non monotonically increasing convex function $f$ can be transformed to the monotonically increasing convex function $f'$ by adding artifical loads $\lambda^+$ to assignments $\lambda\in[0,0.5)$ such that we obtain a new assignment $\lambda'\coloneqq\lambda+\lambda^+=0.5$.}
 \label{fig:transform_to_mono_incr}
 \end{figure}
 Next, we examine the incurring switching costs of a $B$-restricted schedule $\mx'$. Again, given an optimal scheduling choice $x_t$, we use the idea to choose the nearest scheduling choice $x_t'$ that is contained in $B$ to construct $\mx'$. Once more, one might hope that $\mx'$ would incur at most twice as much switching costs as an optimal schedule. Needless to say, the next example dashes this hope.
@@ -382,7 +382,7 @@ To our great joy, the runtime is linear in the size of the input. Similarly, our
 
 In this section, we saw that our reduction to logarithmic steps allows us to derive a linear algorithm that guarantees 2-competitive results. In our approach, we chose the base two logarithm for our step sizes. It seems like an interesting question, if this approach can be generalized to arbitrary bases, allowing for more precise approximations. This shall be final task of our work.
 
-\section{A Linear $(1+\beps)$-Approximative Algorithm}
+\section{A $(1+\beps)$-Approximative Linear-Time Algorithm}
 TODO text + graph
 
 \begin{defn}

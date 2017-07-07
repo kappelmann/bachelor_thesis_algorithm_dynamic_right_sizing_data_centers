@@ -41,8 +41,8 @@ Similarly, we need to swap the assigned loads for server $i$ and $j$:
 \end{align*}
 Finally, we construct a new schedule $\Sigma'\coloneqq(\mathcal{S}',\mathcal{L}')$ by setting
 \begin{align*}
-	\mathcal{S}'&\coloneqq(S_1,\dotsc,S_{i-1},S_i',S_{i+1},\dotsc,S_{j-1},S_j',S_{j+1},\dotsc,S_T)\\
-	\mathcal{L}'&\coloneqq(L_1,\dotsc,L_{i-1},L_i',L_{i+1},\dotsc,L_{j-1},L_j',L_{j+1},\dotsc,L_T)
+	\mathcal{S}'&\coloneqq\bigl(S_1,\dotsc,S_{i-1},S_i',S_{i+1},\dotsc,S_{j-1},S_j',S_{j+1},\dotsc,S_T\bigr)\\
+	\mathcal{L}'&\coloneqq\bigl(L_1,\dotsc,L_{i-1},L_i',L_{i+1},\dotsc,L_{j-1},L_j',L_{j+1},\dotsc,L_T\bigr)
 \end{align*}
 We now want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ satisfies~\eqref{eq:feasible_constraint}. For time slots $<t$, the schedules $\Sigma'$ and $\Sigma$ still coincide. For time slots $\ge t$, we only changed the order of summation in~\eqref{eq:feasible_constraint}. Thus, $\Sigma'$ is feasible.
 

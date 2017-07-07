@@ -12,6 +12,7 @@
 	    ]
 	\addplot[domain=0:0.5,mark=none,color=blue]{0.05};
 	\addplot[domain=0.4999:1,mark=none,color=blue]{0.05+(x-0.5)^2};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0.5,0) (0.5,0.05)};
 	\addlegendentry{$f'(\lambda)$};
 	\end{axis}
 \end{tikzpicture}

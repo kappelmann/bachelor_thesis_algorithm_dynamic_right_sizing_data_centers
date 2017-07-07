@@ -118,7 +118,7 @@ For our runtime analysis, we assume that calling the operating cost function $f(
 \end{equation*}
 The runtime is polynomial in the numeric value of $m$ and $T$; however, it is exponential in the size of the input since, as we saw in~\eqref{eq:inp_size}, we only need $\log_2(m)$ bits to encode $m$. Hence, the algorithm is pseudo-polynomial.
 
-Our memory demand is defined by the size of the array $\mx$ and the size of the tables $C$ and $P$. The former is of size $\Theta(T)$, and the latter are of size $\Theta(Tm)$. Thus, Algorithm~\ref{alg:opt_offline_pseudo_poly} has a memory complexity of $\Theta(T+2Tm)=\Theta(Tm)$.
+Our memory demand is determined by the size of the array $\mx$ and the size of the tables $C$ and $P$. The former is of size $\Theta(T)$, and the latter are of size $\Theta(Tm)$. Thus, Algorithm~\ref{alg:opt_offline_pseudo_poly} has a memory complexity of $\Theta(T+2Tm)=\Theta(Tm)$.
 
 \section{A Pseudo-Linear-Time Algorithm}\label{sec:opt_offline_pseudo_lin}
 The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph~$G$ is able to represent any possible schedule $\mx$ since we simply add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost: The density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to ``thin out'' our graph. 
@@ -299,7 +299,7 @@ Like in Section~\ref{sec:opt_offline_pseudo_poly}, we next give an algorithm bas
 
 \textproc{extract\_schedule} uses the selections calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path; thereby, it calculates an optimal schedule for our problem instance.
 \begin{algorithm}[H]
-  \caption{Pseudo-linear, optimal offline scheduling}
+  \caption{Pseudo-linear-time optimal offline scheduling}
   \begin{algorithmic}[1]
   \Function{optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
 	  \Let{$(C,S)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
@@ -356,6 +356,6 @@ For our runtime analysis, we take the same assumptions as done for Algorithm~\re
 \end{equation*}
 The runtime is linear in the numeric value of $m$ and $T$; however, it is exponential in the size of the input since, as we saw in~\eqref{eq:inp_size}, we only need $\log_2(m)$ bits to encode $m$. Thus, the algorithm is pseudo-linear, which is an improvement over the pseudo-polynomial complexity $\Theta(Tm^2)$ of Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 
-Our memory demand is defined by the size of the array $\mx$ and the size of the tables $C$ and $S$. The former is of size $\Theta(T)$, and the latter are of size $\Theta(Tm)$. Thus, Algorithm~\ref{alg:opt_offline_pseudo_linear} has a memory complexity of $\Theta(T+2Tm)=\Theta(Tm)$, which shows that the memory complexity does not change in comparison to Algorithm~\ref{alg:opt_offline_pseudo_poly}.
+Our memory demand is determined by the size of the array $\mx$ and the size of the tables $C$ and $S$. The former is of size $\Theta(T)$, and the latter are of size $\Theta(Tm)$. Thus, Algorithm~\ref{alg:opt_offline_pseudo_linear} has a memory complexity of $\Theta(T+2Tm)=\Theta(Tm)$, which shows that the memory complexity does not change in comparison to Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 
 Although we have achieved a notable improvement compared to our initial approach, we shall not stop here. Our runtime is, strictly speaking, still exponential; hence, a large value of $m$ may cause undesired long execution times. Our next goal is therefore the reduction of our runtime to sub-exponential complexity.
