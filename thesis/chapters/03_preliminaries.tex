@@ -8,7 +8,7 @@ We begin by examining the state sequences of feasible schedules. As we consider 
 This investigation is captured by our first proposition.
 \begin{prop}[Reasonable switching]\label{prop:reasonable_switching}
 Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a feasible schedule $\Sigma'$ such that 
-\begin{enumerate}[(i)]
+\begin{enumerate}[label=(\roman*)]
 		\item $\costs(\Sigma')\le \costs(\Sigma)$ and 
 		\item $\Sigma'$ never powers on and shuts down servers at the same time slot. More formally, $\Sigma'$ satisfies the formula $\forall t\in[T]:F$ where $F$ is defined as
 \begin{equation}
@@ -18,7 +18,7 @@ Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a
 \end{enumerate}
 \end{prop}
 \begin{proof}
-Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies condition~\eqref{itm:cond_reasonable_switching} and reduces or retains its cost.
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies condition~\ref{itm:cond_reasonable_switching} and reduces or retains its cost.
 	
 Let $t\in[T]$ be the first time slot that falsifies~\eqref{eq:reasonable_switching}. If there does not exist such a time slot, we are finished. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, that is server $i$ powers on at time $t$ and server $j$ shuts down. Without loss of generality, we may assume $i<j$. Since all servers are sleeping at time $t=0$, we have
 \begin{equation*}
@@ -49,7 +49,7 @@ We now want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ s
 Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, by exchanging $\mathcal{S}$ with $\mathcal{S}'$, we reduced the number of servers powering up at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$. Moreover, we decreased the number of servers violating~\eqref{eq:reasonable_switching} at time $t$. Hence, by repeating the described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
-Our next proposition---which will pose the cornerstone of our subsequent works---requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is less than or equal to the convex-combination of the function values at the sampling points.
+Our next proposition -- which will pose the cornerstone of our subsequent works -- requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is less than or equal to the convex-combination of the function values at the sampling points.
 \begin{lem}[Jensen's inequality]\label{lem:jensens-inequality}
 Let $f:D\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\dotsc,\lambda_n\in D$}, and $\mu_1,\dotsc,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
 \begin{equation*}
