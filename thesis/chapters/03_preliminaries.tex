@@ -18,7 +18,7 @@ Given a problem instance $\inp$ and a feasible schedule $\Sigma$, there exists a
 \end{enumerate}
 \end{prop}
 \begin{proof}
-Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies condition~\eqref{itm:cond_reasonable_switching} and reduces or retains its costs. 
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be a feasible schedule for $\inp$. We give a procedure that repeatedly modifies $\Sigma$ such that it satisfies condition~\eqref{itm:cond_reasonable_switching} and reduces or retains its cost.
 	
 Let $t\in[T]$ be the first time slot that falsifies~\eqref{eq:reasonable_switching}. If there does not exist such a time slot, we are finished. Otherwise, we can obtain machines $i,j\in[m]$ such that $s_{i,t}-s_{i,t-1}=1$ and \makebox{$s_{j,t}-s_{j,t-1}=-1$}, that is server $i$ powers on at time $t$ and server $j$ shuts down. Without loss of generality, we may assume $i<j$. Since all servers are sleeping at time $t=0$, we have
 \begin{equation*}
@@ -93,7 +93,7 @@ Next, we want to consider the sequence of the number of active servers $\mx$ def
 	&&\mx\coloneqq(x_1,\dotsc,x_T)\in[m]_0^T&&\text{where}&&x_t\coloneqq\sum\limits_{i=1}^{m}s_{i,t}\in[m]_0&&&
 \end{flalign*}	
 As we assume that all machines are sleeping at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$. We now want to establish an optimal scheduling strategy given a fixed number of active servers. It turns out that an even load distribution seems a very desirable strategy.\begin{prop}[Even load distribution]\label{prop:even_load_distribution}
-Given $x_t\in\mathbb{N}$ active servers in time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex operating costs function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.
+Given $x_t\in\mathbb{N}$ active servers in time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex operating cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.
 \end{prop}
 \begin{proof}
 Let $\Sigma$ be an arbitrary feasible schedule using $x_t$ servers in time slot $t$, and let $A$ be its set of active servers in time slot $t$, that is $A\coloneqq\{i\in[m]\mid s_{i,t}=1\}$.
@@ -128,18 +128,18 @@ As a special case, we can apply our just derived proposition to optimal schedule
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates to its active servers in each time slot.
 \end{cor}
 \begin{proof}
-Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy $\mathcal{L}^*$ that evenly distributes the arrival rates to all active servers of $\Sigma$ in each time slot, that is we set $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$. By Proposition~\ref{prop:even_load_distribution}, we have $\costs(\Sigma^*)\le\costs(\Sigma)$ and, since $\Sigma$ is optimal, $\costs(\Sigma)\le\costs(\Sigma^*)$. Thus, we conclude $\costs(\Sigma^*)=\costs(\Sigma)$, i.e.\ $\Sigma^*$ is optimal, which finishes the proof.
+Let $\Sigma=(\mathcal{S},\mathcal{L})$ be an optimal schedule for $\inp$. We exchange $\mathcal{L}$ with a new strategy~$\mathcal{L}^*$ that evenly distributes the arrival rates to all active servers of $\Sigma$ in each time slot, that is we set $\Sigma^*\coloneqq(\mathcal{S},\mathcal{L}^*)$. By Proposition~\ref{prop:even_load_distribution}, we have $\costs(\Sigma^*)\le\costs(\Sigma)$ and, since $\Sigma$ is optimal, $\costs(\Sigma)\le\costs(\Sigma^*)$. Thus, we conclude $\costs(\Sigma^*)=\costs(\Sigma)$, i.e.\ $\Sigma^*$ is optimal, which finishes the proof.
 \end{proof}
 As a result of Corollary~\ref{cor:even_load_distribution}, we can restrict ourselves to finding an optimal schedule that evenly distributes its arrival rates to its active servers. We now combine our results to derive the main theorem of our preliminary work.
 \begin{thm}\label{thm:even_load_distribution_reasonable_switching}
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates and never powers on and shuts down servers at the same time slot.
 \end{thm}
 \begin{proof}
-By Corollary~\ref{cor:even_load_distribution}, we obtain an optimal schedule $\Sigma$ that evenly distributes its arrival rates to its active servers. Applying the procedure given in Proposition~\ref{prop:reasonable_switching} to $\Sigma$ yields $\Sigma^*$ that further satisfies~\eqref{eq:reasonable_switching} for all $t\in[T]$ and $\costs(\Sigma^*)\le\costs(\Sigma)$. Since $\Sigma$ is optimal, we conclude $\costs(\Sigma^*)=\costs(\Sigma)$, and the claim follows.
+By Corollary~\ref{cor:even_load_distribution}, we obtain an optimal schedule $\Sigma$ that evenly distributes its arrival rates to its active servers. Applying the procedure given in Proposition~\ref{prop:reasonable_switching} to $\Sigma$ yields~$\Sigma^*$ that further satisfies~\eqref{eq:reasonable_switching} for all $t\in[T]$ and $\costs(\Sigma^*)\le\costs(\Sigma)$. Since $\Sigma$ is optimal, we conclude $\costs(\Sigma^*)=\costs(\Sigma)$, and the claim follows.
 \end{proof}
 
 Theorem~\ref{thm:even_load_distribution_reasonable_switching} allows us to identify an optimal schedule by its sequence of the number of active servers $\mx$ and thereby to simplify our optimization conditions~\eqref{eq:schedule_costs} and \eqref{eq:feasible_constraint}. 
-For this, given a problem instance $\inp$, we define the operating costs function $\opcosts(x,\lambda)$, which describes the costs incurred by evenly distributing $\lambda$ on $x$ active servers using $f$:
+For this, given a problem instance $\inp$, we define the operating cost function $\opcosts(x,\lambda)$, which describes the costs incurred by evenly distributing $\lambda$ on $x$ active servers using $f$:
 \begin{equation}\label{eq:mx_schedule_op_costs}
 	\opcosts:[m]_0\times[0,m]\rightarrow\mathbb{R}\dotcup\{\infty\},\quad \opcosts(x,\lambda)=\begin{cases}
 	  \infty, & \text{if $\lambda>x$}\\
@@ -155,7 +155,7 @@ which will come in handy in later sections. Next, we define the switching costs 
 \begin{equation}\label{eq:mx_schedule_sw_costs}
 	\swcosts(x_{t-1},x_t)\coloneqq\beta\max\{0,x_t-x_{t-1}\}
 \end{equation}
-Lastly, we can define the costs function $\costs(x_{t-1},x_t,\lambda_t)$, which describes the incurring costs for a single time step using an even distribution of loads:
+Lastly, we can define the cost function $\costs(x_{t-1},x_t,\lambda_t)$, which describes the incurring costs for a single time step using an even distribution of loads:
 \begin{equation}\label{eq:mx_schedule_costs}
 	\costs(x_{t-1},x_{t},\lambda_t)\coloneqq\opcosts(x_t,\lambda_t)+\swcosts(x_{t-1},x_t)
 \end{equation}
