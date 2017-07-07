@@ -176,10 +176,10 @@ Next, we consider case~\ref{itm:schedule_behavior_up_up}, which is illustrated i
 \begin{figure}[ht]
 \centering
 \includestandalone[width=0.5\textwidth]{../figures/schedule_behavior_up_up}	
-\caption{The original schedule comes from below, stays between $[l,u)$, and then rises to $[l',u')$. The approximative schedule stays put at $u$ for timeslots $i\le t\le j$ and rises to $u'$ at time $j+1$.}
+\caption{The original schedule (case~\ref{itm:schedule_behavior_up_up}) comes from below, stays between $[l,u)$, and then rises to $[l',u')$. The approximative schedule stays put at $u$ for timeslots $i\le t\le j$.}
 \label{fig:schedule_behavior_up_up}
 \end{figure}
-In this case, we set $x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq u\in B$ and $x_{j+1}'\coloneqq u'\in B$. Evidently, as in the previous case, the operating costs of $\mx_{i,j}'$ are 2-approximative. Further, due to our invariant, we can again safely move to $u$ with 2-approximative switching costs. Since $\mx$ has to power on at least $x_{j+1}-x_i$ servers between $i$ and $j+1$, it suffices to show that $\beta(u'-u)\le2\beta(x_{j+1}-x_i)$ holds; however, it is clear that this must not be the case (just take $u'=8,u=4,x_{j+1}=4,x_i=3$). Nevertheless, using an amortized analysis, that is using our switching cost credit, we can see that
+Again, due to our invariant, we know that setting $x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq u\in B$ gives us a strategy with \makebox{2-approximative} switching costs. Moreover, as in the previous case, the operating costs of $\mx_{i,j}'$ are 2-approximative. To verify that our invariant holds at time $j+1$, we note that $\mx$ has to power on at least $x_{j+1}-x_i$ servers between $i$ and $j+1$. Thus, it suffices to show that $\beta(u'-u)\le2\beta(x_{j+1}-x_i)$ holds; however, it is clear that this must not be the case (just take $u'=8,u=4,x_{j+1}=4,x_i=3$). Nevertheless, using an amortized analysis, that is using our switching cost credit, we can see that
 \begin{align*}
 	2\beta(x_{j+1}-x_i)+\overbrace{\beta(2x_i-u)}^{\text{credit}}=\beta(2x_{j+1}-u)\ge\beta(u'-u)
 \end{align*}
@@ -193,16 +193,16 @@ Finally, we have to consider the case where $\mx$ descends to $[l,u)$ and then a
 where $\hat{u}\coloneqq\min\{2^{\ceil{\log_2(u+1)}},m\}\in B$. Due to our invariant and the fact that $\mx$ descends at time $i$, we know that $x_{i-1}'\ge \hat{u}\ge u$, and thus both strategies do no incur switching costs up to time $j$ (but possibly at time $j+1$). Both strategies are illustrated in Figure~\ref{fig:schedule_behavior_down_up}.
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.49\textwidth}
+\begin{subfigure}[b]{0.48\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_1}
-\caption{Strategy $\mx_{i,j}^u$ stays put at $u$ for $i\le t\le j$\\and then rises to $u'$.}
+\caption{Strategy $\mx_{i,j}^u$ stays put at $u$ for $i\le t\le j$.}
 \end{subfigure}
 \hfill
-\begin{subfigure}[b]{0.49\textwidth}
+\begin{subfigure}[b]{0.48\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_2}
-\caption{Strategy $\mx_{i,j}^{\hat{u}}$ stays put at $\hat{u}$ for $i\le t\le j$ and then rises to $u'$.}
+\caption{Strategy $\mx_{i,j}^{\hat{u}}$ stays put at $\hat{u}$ for $i\le t\le j$.}
 \end{subfigure}
-\caption{The original schedule comes from above, stays between $[l,u)$, and then rises to $[l',u')$. The approximative schedule has two different possibilities.}
+\caption{The original schedule (case~\ref{itm:schedule_behavior_down_up}) comes from above, stays between $[l,u)$, and then rises to $[l',u')$. The approximative schedule has two different possibilities.}
 \label{fig:schedule_behavior_down_up}
 \end{figure}
 We are now going to prove that either the costs of $\mx_{i,j}^u$ or of $\mx_{i,j}^{\hat{u}}$, including possible switching costs to satisfy our invariant at time $j+1$, must be 2-competitive. 
