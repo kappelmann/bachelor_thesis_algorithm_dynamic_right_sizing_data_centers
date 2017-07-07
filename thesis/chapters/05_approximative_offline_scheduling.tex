@@ -95,15 +95,15 @@ Let $\inp=\bigl(m=16,T=5,\Lambda=(9,7,9,7,9),\beta=1,f\bigr)$ be the input for a
 	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_tf(\lambda_t/x_t)}^{x_t\cdot 0}+\overbrace{\swcosts(x_{t-1},x_t)}^{\max\{0,x_t-x_{t-1}\}}\bigr)=9+0+2+0+2=13\\
 	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_t'f(\lambda_t/x_t')}^{x_t'\cdot 0}+\overbrace{\swcosts(x_{t-1}',x_t')}^{\max\{0,x_t'-x_{t-1}'\}}\bigr)=16+0+8+0+8=32
 \end{align*}
-The approximative schedule's cost is thus not 2-competitive compared to the optimal schedule. Of course, we are again curious about how this cost explosion is possible. Since we set $f(\lambda)=0$, that is our servers do not incur operating costs, this explosion is evidently due to the increased switching costs of $\mx'$. The problem in this case is the oscillating behavior of $\mx$ around a power of two (namely $8=2^3$), as one can see in the following figure. 
+which shows that $\mx'$ is not 2-approximative. Of course, we are again curious about how this cost explosion is possible. Since we set $f(\lambda)=0$, our servers do not incur operating costs, which means that the cost explosion must be due to the increased switching costs of $\mx'$. The problem in this case is the oscillating behavior of $\mx$ around a power of two (namely $8=2^3$), as one can see in the following figure. 
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.49\textwidth}
+\begin{subfigure}[b]{0.48\textwidth}
 \includestandalone[width=\textwidth]{./../figures/switching_costs_not_2_opt_1}
 	\caption{\underline{Optimal schedule $\mx$:} Note how the schedule oscillates around 8 (a power of two).}
 \end{subfigure}
 \hfill
-\begin{subfigure}[b]{0.49\textwidth}
+\begin{subfigure}[b]{0.48\textwidth}
 \includestandalone[width=\textwidth]{../figures/switching_costs_not_2_opt_2}
 	\caption{\underline{Approximative schedule $\mx'$:} The approximative schedule is restricted to powers of two.}
 \end{subfigure}
