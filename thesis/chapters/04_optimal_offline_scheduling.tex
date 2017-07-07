@@ -81,7 +81,7 @@ We split our procedure into two subroutines.
 	\For{$x \gets 0 \textrm{ to } m$}\Comment{Initialize first layer}
 		\Let{$P[x,1]$}{$0$ and $C[x,1]\gets\costs(0,x,\lambda_1)$}
 	\EndFor
-	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iterative calculate costs and predecessors}
+	\For{$t \gets 2 \textrm{ to } T$}\Comment{Iteratively calculate costs and predecessors}
 		\For{$x' \gets 0 \textrm{ to } m$}
 			\Let{$P[x',t]$}{$\argmin\limits_{x\in[m]_0}\bigl\{C[x,t-1]+\costs(x,x',\lambda_t)\bigr\}$}\Comment{Get best preceding choice}
 			\Let{$C[x',t]$}{$C\bigl[P[x',t],t-1\bigr]+c\bigl(P[x',t],x',\lambda_t\bigr)$}\Comment{Set the node's cost}
@@ -103,7 +103,7 @@ We split our procedure into two subroutines.
 \end{algorithm}
 The correctness of Algorithm~\ref{alg:opt_offline_pseudo_poly} directly follows from Theorem~\ref{thm:opt_sched_short_path_pseudo_poly} and the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\parencite{intro-algo}).
 
-Naturally, we are interested in our algorithm's runtime and memory complexity.
+Naturally, we are interested in our algorithm's time and memory complexity.
 For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\beta,f)$. In theory, our function $f:[0,1]\rightarrow \mathbb{R}$ may be easily defined by saying, for example, $f(\lambda)\coloneqq \lambda^2$; however, practically, it is difficult to answer how such a function may be specified and what the size of such a function as part of the input may be. For simplicity, we consider the size of~$f$ negligible in comparison with the remaining input variables' size. Further, we assume that a non-negative real number $r$ requires $\Theta\bigl(\log_2(r)\bigr)$ bits for its encoding; if $r$ turns out to be smaller than $1$, we assume some minor constant encoding size. The size of our input is then given by
 \begin{align}
 	size(\inp)&=size(m)+size(T)+size(\Lambda)+size(\beta)\nonumber\\
@@ -112,13 +112,13 @@ For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\be
 	&\le\Theta\bigl(\log_2(m)+\log_2(T)+\log_2(\beta)\bigr)+\mathcal{O}\bigl(T\log_2(m)\bigr)\nonumber\\
 	&\le\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)\label{eq:inp_size}
 \end{align}
-For our runtime analysis, we assume that calling the operating cost function $f(\cdot)$, and as a consequence also $\costs(\cdot,\cdot,\cdot)$, incurs constant cost. Subroutine \textproc{shortest\_paths} requires $\Theta(m)$ steps for its initialization and $\Theta(Tm^2)$ steps for the iterative calculation of the predecessors and costs. In addition, \textproc{extract\_schedule} needs $\Theta(m)$ steps for its initial minimization search and $\Theta(T)$ iterations for its schedule retrieval. Thus, we receive a runtime of 
+For our runtime analysis, we assume that calling the operating cost function $f(\cdot)$, and as a consequence also $\costs(\cdot,\cdot,\cdot)$, incurs constant cost. Subroutine \textproc{shortest\_paths} requires $\Theta(m)$ steps for its initialization and $\Theta(Tm^2)$ steps for the iterative calculation of the predecessors and costs. In addition, \textproc{extract\_schedule} needs $\Theta(m)$ steps for its initial minimization search and $\Theta(T)$ iterations for its schedule retrieval. Thus, Algorithm~\ref{alg:opt_offline_pseudo_poly} has a time complexity of
 \begin{equation*}
 	\Theta(m+Tm^2+m+T)=\Theta(Tm^2)
 \end{equation*}
 The runtime is polynomial in the numeric value of $m$ and $T$; however, it is exponential in the size of the input since, as we saw in~\eqref{eq:inp_size}, we only need $\log_2(m)$ bits to encode $m$. Hence, the algorithm is pseudo-polynomial.
 
-Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$.
+Our memory demand is defined by the size of the array $\mx$ and the size of the tables $C$ and $P$. The former is of size $\Theta(T)$, and the latter are of size $\Theta(Tm)$. Thus, Algorithm~\ref{alg:opt_offline_pseudo_poly} has a memory complexity of $\Theta(T+2Tm)=\Theta(Tm)$.
 
 \section{A Pseudo-Linear-Time Algorithm}\label{sec:opt_offline_pseudo_lin}
 The algorithm developed in Section~\ref{sec:opt_offline_pseudo_poly} is of a quite simple nature. Its underlying graph~$G$ is able to represent any possible schedule $\mx$ since we simply add an edge for any possible scheduling choice at any possible time slot. This approach seems rather intuitive and readily verifiable, but this convenience comes with a cost: The density of $G$ causes a quadratic runtime in the number of servers $m$. In order to improve the runtime to pseudo-linear complexity, we need to ``thin out'' our graph. 
@@ -222,7 +222,7 @@ Let $\inp=\bigl(m=3,T=3,\Lambda=(3,0,1),\beta,f\bigr)$ be the input for a proble
 \begin{align*}
 	P&\coloneqq(v_{0,0},v_{3,1\downarrow},v_{2,1\downarrow},v_{1,1\downarrow},v_{0,1\downarrow},v_{0,1\uparrow},v_{0,2\downarrow},v_{0,2\uparrow},v_{1,2\uparrow},v_{1,3\downarrow},v_{0,3\downarrow})
 \end{align*}
-A schedule corresponding to $P$ would use three active server in its first time slot, then shut down all servers for the second time slot, and ultimately power on one server to process the last arrival rate; that is, the corresponding schedule of $P$ is $\mx=(3,0,1)$. As can be seen in Figure~\ref{fig:graph_pseudo_lin_example_max_nodes}, this sequence also corresponds to the sequence of ``maximum'' nodes $v_{x,t\downarrow}$ taken by $P$. 
+A schedule corresponding to $P$ would use three active server in its first time slot, then shut down all servers for the second time slot, and ultimately power on one server to process the last arrival rate; that is, the corresponding schedule of $P$ is $\mx=(3,0,1)$. As can be seen in Figure~\ref{fig:graph_pseudo_lin_example_max_nodes}, this sequence also corresponds to the sequence of ``maximum'' nodes~$v_{x,t\downarrow}$ taken by $P$. 
 Conversely, given the schedule $\mx=(3,0,1)$, it can easily be seen that there exists only one reasonable path corresponding to $\mx$, namely $P$.
 \begin{figure}[H]
 \includestandalone[width=\textwidth]{../figures/graph_pseudo_lin_example_max_nodes}
@@ -276,10 +276,10 @@ which shows that $\Phi$ is a cost-preserving map.
 \end{proof}
 Again, we can use the established bijection to obtain our desired result: the correspondence between optimal schedules and shortest reasonable paths.
 \begin{thm}\label{thm:opt_sched_reasn_path}
-There exists a cost-preserving bijection between optimal schedules $\mx^*$ for $\inp$ and shortest reasonable paths.
+There exists a cost-preserving bijection between optimal schedules $\mx^*$ for~$\inp$ and shortest reasonable paths.
 \end{thm} 
 \begin{proof}
-By Lemma~\ref{lem:sched_reasn_path_pseudo_lin}, we have a bijection $\Phi$ between reasonable paths $P$ and schedules $\mx$ obeying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$. Thus, we have 
+By Lemma~\ref{lem:sched_reasn_path_pseudo_lin}, we have a bijection $\Phi$ between reasonable paths $P$ and schedules~$\mx$ obeying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$. Thus, we have 
 \begin{equation*}
 	\costs(P)\text{ minimal}\iff \costs\bigl(\Phi(P)\big)\text{ minimal}
 \end{equation*}
@@ -293,55 +293,55 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By Proposition~\ref{prop:path_to_reasn_path}, the path $P$ can be transformed to a reasonable path $P'$ with $\costs(P')\le\costs(P)$.
 In turn, $P'$ corresponds to an optimal schedule $\mx^*$ with $\costs(\mx^*)=\costs(P')$ by Theorem~\ref{thm:opt_sched_reasn_path}. Since $P$ is a shortest path, we know that $\costs(P)\le\costs(P')$ and thus conclude $\costs(P')=\costs(P)$. Hence, we have $c(\mx^*)=c(P)$, and the claim follows.
 \end{proof}
-In the following, we give an algorithm based on our just verified constructions. Like in Section~\ref{sec:opt_offline_pseudo_poly}, we split our procedure into two subroutines.
+Like in Section~\ref{sec:opt_offline_pseudo_poly}, we next give an algorithm based on our just verified construction. Although we could search for an arbitrary shortest path in our graph and transform it to an optimal schedule, as shown in Corollary~\ref{cor:opt_sched_short_path_pseudo_lin}, our algorithm only considers reasonable paths. Again, we split our procedure into two subroutines.
 
-\textproc{shortest\_paths} calculates the minimum costs of the graph's nodes by following the graph's topological sorting. Although we could search for an arbitrary shortest path in our graph and transform it to an optimal schedule, as shown in Corollary~\ref{cor:opt_sched_short_path_pseudo_lin}, our algorithm only considers reasonable paths. 
-For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downarrow}$ and $v_{x,t\uparrow}$ in each time slot $t\in[T-1]$. Ultimately, it only keeps the relevant information for each node $v_{x,t\uparrow}$, namely the node's cost and best scheduling choice at time $t$. The information that would tell us the path between $v_{x,t\uparrow}$ and its best scheduling choice at time $t$ in our graph is lost; however, this information is of no concern since we only want to consider reasonable paths, which are already uniquely identified by their scheduling choices (see Lemma~\ref{lem:sched_reasn_path_pseudo_lin}). This restriction to reasonable paths additionally improves the algorithm's memory complexity as we can reduce the sizes of the tables $C$ and $P$ from $2mT$ to $mT$. The function returns the minimum cost $v_{x,T\downarrow}$ as well as the minimum costs to all nodes $v_{x,t\uparrow}$ for $t\in[T-1]$. Moreover, it returns the predecessors of these nodes in respect to the best scheduling choice.
+\textproc{shortest\_paths} calculates the minimum costs of the graph's nodes by following the graph's topological sorting. When calculating a node's minimum cost after time slot~$t$, it further keeps track of the selection that has to be made at time $t$ to obtain the node's minimum cost. It merges the costs of the nodes $v_{x,t\downarrow}$ and $v_{x,t\uparrow}$ in each time slot $t\in[T-1]$ and ultimately only keeps the relevant information for each node $v_{x,t\uparrow}$, namely the node's cost and best scheduling selection at time $t$. The information that would tell us the path between $v_{x,t\uparrow}$ and its best scheduling selection at time $t$ in our graph is lost; however, this information is of no concern since we only want to consider reasonable paths, which are already uniquely identified by their scheduling choices (see Lemma~\ref{lem:sched_reasn_path_pseudo_lin}). The restriction to reasonable paths additionally reduces the algorithm's memory demand as we can reduce the sizes of the tables $C$ and $S$ from $2mT$ to $mT$. The function returns the minimum costs to all nodes $v_{x,T\downarrow}$ and to all nodes $v_{x,t\uparrow}$ for $t\in[T-1]$ as well as the selections that have to be made to obtain the nodes' minimum costs.\unsure{Is this better with $S$?}
 
-\textproc{extract\_schedule} uses the predecessors calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path; thereby, it calculates an optimal schedule for our problem instance.
+\textproc{extract\_schedule} uses the selections calculated by \textproc{shortest\_paths} in order to obtain the sequence of nodes describing a shortest path; thereby, it calculates an optimal schedule for our problem instance.
 \begin{algorithm}[H]
   \caption{Pseudo-linear, optimal offline scheduling}
   \begin{algorithmic}[1]
   \Function{optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
-	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
-	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T$}}
+	  \Let{$(C,S)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
+	  \Let{$\mx$}{\Call{extract\_schedule}{$S,T$}}
 	  \State \Return{$\mx$}
   \EndFunction
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
-	\Blet{$C[0\dotso m,1\dotso T]$ and $P[0\dotso m,1\dotso T]$}{new tables}
-	\Statex \Comment{Allocate nodes' costs and predecessor tables}
-	\Let{$P[m,1]$}{$m$ and $C[m,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
+	\Blet{$C[0\dotso m,1\dotso T]$ and $S[0\dotso m,1\dotso T]$}{new tables}
+	\Statex \Comment{Allocate cost and selection tables}
+	\Let{$S[m,1]$}{$m$ and $C[m,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
 	\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
 		\If {$C[x+1,1]<\costs(0,x,\lambda_1)$}
-			\Let{$P[x,1]$}{$P[x+1,1]$ and $C[x,1]\gets C[x+1,1]$}
+			\Let{$S[x,1]$}{$S[x+1,1]$ and $C[x,1]\gets C[x+1,1]$}
 		\Else
-			\Let{$P[x,1]$}{$x$ and $C[x,1]\gets\costs(0,x,\lambda_1)$}
+			\Let{$S[x,1]$}{$x$ and $C[x,1]\gets\costs(0,x,\lambda_1)$}
 		\EndIf
 	\EndFor
-	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and predecessors}
+	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iteratively calculate costs and selections}
 		\For{$x \gets 1 \textrm{ to } m$}\Comment{Upward minimization step}
 			\If {$C[x-1,t]+\beta<C[x,t]$}
-			    \Let{$P[x,t]$}{$P[x-1,t]$ and $C[x,t]\gets C[x-1,t]+\beta$}
+			    \Let{$S[x,t]$}{$S[x-1,t]$ and $C[x,t]\gets C[x-1,t]+\beta$}
 			\EndIf
 		\EndFor
-		\Let{$P[m,t+1]$}{$m$ and $C[m,t+1]\gets C[m,t]+\opcosts(m,\lambda_{t+1})$}
+		\Let{$S[m,t+1]$}{$m$}\Comment{Move to next time slot and initialize first node}
+		\Let{$C[m,t+1]$}{$C[m,t]+\opcosts(m,\lambda_{t+1})$}
 		\For{$x \gets m-1 \textrm{ to } 0$}\Comment{Downward minimization step}
 			\If {$C[x+1,t+1]<C[x,t]+\opcosts(x,\lambda_{t+1})$}
-				\Let{$P[x,t+1]$}{$P[x+1,t+1]$ and $C[x,t+1]\gets C[x+1,t+1]$}
+				\Let{$S[x,t+1]$}{$S[x+1,t+1]$ and $C[x,t+1]\gets C[x+1,t+1]$}
 			\Else
-				\Let{$P[x,t+1]$}{$x$ and $C[x,t+1]\gets C[x,t]+\opcosts(x,\lambda_{t+1})$}
+				\Let{$S[x,t+1]$}{$x$ and $C[x,t+1]\gets C[x,t]+\opcosts(x,\lambda_{t+1})$}
 			\EndIf
 		\EndFor
 	\EndFor
-	\State \Return{$(C,P)$}
+	\State \Return{$(C,S)$}
   \EndFunction
   \Statex
-  \Function{extract\_schedule}{$P,T$}
+  \Function{extract\_schedule}{$S,T$}
 	\Blet{$\mx[1\dotso T]$}{a new array}
-    	\Let{$\mx[T]$}{$P[0,T]$}\Comment{Get best choice for last time slot}
-        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
-		\Let{$\mx[t]$}{$P\bigl[\mx[t+1],t\bigr]$}
+    	\Let{$\mx[T]$}{$S[0,T]$}\Comment{Get best selection for last time slot}
+        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from selection table}
+		\Let{$\mx[t]$}{$S\bigl[\mx[t+1],t\bigr]$}
 	\EndFor
 	\State \Return{$\mx$}
   \EndFunction
@@ -350,12 +350,12 @@ For this, it consolidates the costs and predecessors of the nodes $v_{x,t\downar
 \end{algorithm}
 The correctness of Algorithm~\ref{alg:opt_offline_pseudo_linear} directly follows from Theorem~\ref{thm:opt_sched_reasn_path} and the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\parencite{intro-algo}).
 
-For our runtime analysis, we take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ steps for its initialization and $\Theta(2Tm)$ steps for the iterative calculation of the predecessors and costs. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a runtime of 
+For our runtime analysis, we take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ steps for its initialization and $\Theta(2Tm)$ steps for the iterative calculation of the selections and costs. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, Algorithm~\ref{alg:opt_offline_pseudo_linear} has a time complexity of
 \begin{equation*}
 	\Theta(m+2Tm+T)=\Theta(Tm)
 \end{equation*}
 The runtime is linear in the numeric value of $m$ and $T$; however, it is exponential in the size of the input since, as we saw in~\eqref{eq:inp_size}, we only need $\log_2(m)$ bits to encode $m$. Thus, the algorithm is pseudo-linear, which is an improvement over the pseudo-polynomial complexity $\Theta(Tm^2)$ of Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 
-Our memory demand is defined by the size of the tables $C$ and $P$. As both tables are of size $\Theta(Tm)$, we have a memory complexity of $\Theta(Tm)$; thus, the memory complexity does not change in comparison to Algorithm~\ref{alg:opt_offline_pseudo_poly}.
+Our memory demand is defined by the size of the array $\mx$ and the size of the tables $C$ and $S$. The former is of size $\Theta(T)$, and the latter are of size $\Theta(Tm)$. Thus, Algorithm~\ref{alg:opt_offline_pseudo_linear} has a memory complexity of $\Theta(T+2Tm)=\Theta(Tm)$, which shows that the memory complexity does not change in comparison to Algorithm~\ref{alg:opt_offline_pseudo_poly}.
 
 Although we have achieved a notable improvement compared to our initial approach, we shall not stop here. Our runtime is, strictly speaking, still exponential; hence, a large value of $m$ may cause undesired long execution times. Our next goal is therefore the reduction of our runtime to sub-exponential complexity.
