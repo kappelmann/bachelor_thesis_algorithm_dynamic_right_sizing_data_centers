@@ -195,12 +195,12 @@ Again, due to our invariant, we know that setting $x_i'\coloneqq x_{i+1}'\colone
 where the last inequality follows from $u'\le2x_{j+1}$. Thus, our invariant at time $j+1$ is satisfied. Further, we can use the difference $\beta(2x_{j+1}-u)-\beta(u'-u)=\beta(2x_{j+1}-u')$ as our new credit for subsequent operations. 
 	
 Finally, we have to consider case~\ref{itm:schedule_behavior_down_up}. As we have seen in Example~\ref{exmpl:oscillating_schedule}, this case turns out to be slightly more complicated, since simply following an oscillating behavior of $\mx$ can lead to a cost explosion for $\mx'$. Nevertheless, we can solve this issue by considering two different strategies for $\mx_{i,j}'$, namely
-\begin{align*}
-	\mx_{i,j}^u&\coloneqq(x_i^u\coloneqq u,\dotsc,x_j^u\coloneqq u)\\
-	\mx_{i,j}^{\hat{u}}&\coloneqq(x_i^{\hat{u}}\coloneqq\hat{u},\dotsc,x_j^{\hat{u}}\coloneqq\hat{u})
-\end{align*}
-where $\hat{u}\coloneqq\min\{2^{\ceil{\log_2(u+1)}},m\}\in B$. Due to our invariant and the fact that $\mx$ descends at time $i$, we know that $x_{i-1}'\ge \hat{u}\ge u$, and thus both strategies do no incur switching costs up to time $j$ (but possibly at time $j+1$). Both strategies are illustrated in Figure~\ref{fig:schedule_behavior_down_up}.
-\begin{figure}[H]
+\begin{flalign*}
+	&&\mx_{i,j}^u&\coloneqq\bigl(x_i^u,\dotsc,x_j^u\bigr),&&\text{where}&x_t^u\coloneqq u,\,\text{for } i\le t\le j&&&&\\
+	&&\text{and}\quad\mx_{i,j}^{\hat{u}}&\coloneqq\bigl(x_i^{\hat{u}},\dotsc,x_j^{\hat{u}}\bigr),&&\text{where}&x_t^{\hat{u}}\coloneqq \hat{u},\,\text{for } i\le t\le j&&&&
+\end{flalign*}
+with $\hat{u}\coloneqq\min\{2u,m\}\in B$. Both strategies are illustrated in Figure~\ref{fig:schedule_behavior_down_up}.
+\begin{figure}[ht]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.48\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_1}
@@ -214,30 +214,31 @@ where $\hat{u}\coloneqq\min\{2^{\ceil{\log_2(u+1)}},m\}\in B$. Due to our invari
 \caption{The original schedule (case~\ref{itm:schedule_behavior_down_up}) comes from above, stays between $[l,u)$, and then rises to $[l',u')$. The approximative schedule has two different possibilities.}
 \label{fig:schedule_behavior_down_up}
 \end{figure}
-We are now going to prove that either the costs of $\mx_{i,j}^u$ or of $\mx_{i,j}^{\hat{u}}$, including possible switching costs to satisfy our invariant at time $j+1$, must be 2-competitive. 
+Due to our invariant and the fact that $\mx$ descends at time $i$, we know that $x_{i-1}'\ge \hat{u}\ge u$, and thus both strategies do no incur switching costs up to time $j$ (but possibly at time $j+1$). 
+We are now going to prove that either the cost of $\mx_{i,j}^u$ or of $\mx_{i,j}^{\hat{u}}$, including possible switching costs to satisfy our invariant at time $j+1$, must be 2-approximative. 
 First, we examine the switching costs of $\mx$ from $i$ up to $j+1$. To do so, we set $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to refer to the smallest number of active servers used by $\mx_{i,j}$. Then, since $\mx$ has to power on at least $x_{j+1}-d$ servers between $i$ and $j+1$, we can give a lower bound for its switching costs:
 \begin{equation*}
 	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta(x_{j+1}-d)
 \end{equation*}
-The next idea is to split $\mx_{i,j}$ and its associated switching costs at the final switching step into two parts; more precisely, we split $\beta(x_{j+1}-d)$ into $\beta(x_{j+1}-u)$ and $\beta(u-d)$. It then suffices to show that either $\mx_{i,j}^u$ or $\mx_{i,j}^{\hat{u}}$ can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\hat{u}$ with 2-competitive costs under the assumption that $\mx_{i,j}$ only switches to $u$ as a first step. This is due to the fact that the remaining switching costs to ascend to $u'$ are 2-competitive anyway:
+The next idea is to split $\mx_{i,j}$ and its associated switching costs at the final switching step into two parts; more precisely, we split $\beta(x_{j+1}-d)$ into $\beta(x_{j+1}-u)$ and $\beta(u-d)$. It then suffices to show that either $\mx_{i,j}^u$ or $\mx_{i,j}^{\hat{u}}$ can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\hat{u}$ with 2-approximative costs under the assumption that $\mx_{i,j}$ only switches to $u$ as a first step. This is due to the fact that the remaining switching costs to ascend from $\hat{u}$ to $u'$ are then 2-approximative anyway:
 \begin{equation*}
 	\beta(u'-\hat{u})\le\beta(2x_{j+1}-\hat{u})=\beta(2x_{j+1}-2u)=2\beta(x_{j+1}-u)
 \end{equation*}
-where we assumed that $\hat{u}=2u$ holds; otherwise, we have $u'=\hat{u}=m$ and the inequality trivially holds. Further, if $\hat{u}=2u$, we can once more use the difference $2\beta(x_{j+1}-u)-\beta(u'-\hat{u})=\beta(2x_{j+1}-u')$ as a switching cost credit for subsequent operations. If $\hat{u}\neq2u$, no further credit is needed, since we already reached the limit of servers $m$.
+where we assumed that $\hat{u}=2u$ holds; otherwise, we have $u'=\hat{u}=m$ and the inequality trivially holds. Further, if $\hat{u}=2u$, we can again use the difference of costs \makebox{$2\beta(x_{j+1}-u)-\beta(u'-\hat{u})=\beta(2x_{j+1}-u')$} as a credit for subsequent operations. If $\hat{u}=m$, no further credit is needed, since we already reached the limit of servers $m$.
 
-To proceed, we notice that if $\hat{u}-u\le2(u-d)$ holds, strategy $\mx_{i,j}^u$ has 2-competitive switching costs:
+To proceed, we notice that if $\hat{u}-u\le2(u-d)$ holds, strategy $\mx_{i,j}^u$ has 2-approximative switching costs:
 \begin{equation*}
 	\beta(\hat{u}-u)\le2\beta(u-d)
 \end{equation*}
-Further, as in the previous cases, the operating costs of $\mx_{i,j}^u$ are 2-competitive, and thus $\mx_{i,j}^u$ is 2-competitive if $\hat{u}-u\le2(u-d)$. Hence, we subsequently assume that 
+Further, as in the previous cases, the operating costs of $\mx_{i,j}^u$ are 2-approximative, and thus~$\mx_{i,j}^u$ is 2-approximative if $\hat{u}-u\le2(u-d)$ holds. Hence, we subsequently assume that 
 \begin{align}\label{eq:proof_2_competitive_asm_dist_pos}
 	\hat{u}-u>2(u-d)&&\text{or equivalently}&&\hat{u}-3u+2d>0
 \end{align}
-Next, by the law of excluded middle, either $\mx_{i,j}^u$ is 2-competitive, or it is not 2-competitive. If it is 2-competitive, we are done; hence, from now on, we assume that $\mx_{i,j}^u$ is not 2-competitive, that is we have 
+Next, by the law of excluded middle, the schedule $\mx_{i,j}^u$ is either 2-approximative, or it is not \makebox{2-approximative}. If it is 2-approximative, we are done; hence, from now on, we assume that $\mx_{i,j}^u$ is not 2-approximative, that is we have 
 \begin{equation*}
 	\opcosts(\mx_{i,j}^u)+\beta(\hat{u}-u)>2\bigl(\opcosts(\mx_{i,j})+\beta(u-d)\bigr)
 \end{equation*}
-We then need to show that $\mx_{i,j}^{\hat{u}}$ is 2-competitive.
+We then need to show that $\mx_{i,j}^{\hat{u}}$ is 2-approximative.
 First note that $\mx_{i,j}^u$ uses at most twice as many active servers as $\mx_{i,j}$, and therefore $\mx_{i,j}^u$ incurs at most twice as much operating costs as $\mx_{i,j}$. Consequently, the switching costs of $\mx_{i,j}^u$ must significantly outweigh those of $\mx_{i,j}$. Hence, it seems interesting to get an estimation for $\beta$. Rearranging the previous inequality gives us
 \begin{align*}
 	&&\opcosts(\mx_{i,j}^u)+\beta(\hat{u}-u)&>2\bigl(\opcosts(\mx_{i,j})+\beta(u-d)\bigr)&\\
@@ -245,55 +246,56 @@ First note that $\mx_{i,j}^u$ uses at most twice as many active servers as $\mx_
 	&\stackrel{\hat{u}-3u+2d>0}{\iff}&\beta&>\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}
 \end{align*}
 where the last step is justified by Assumption~\eqref{eq:proof_2_competitive_asm_dist_pos}.
-This allows us to find a lower bound for the costs of using $\mx_{i,j}$:
+This allows us to find a lower bound for the cost of $\mx_{i,j}$:
 \begin{align*}
 	\opcosts(\mx_{i,j})+\beta(u-d)&>\opcosts(\mx_{i,j})+\frac{2\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}(u-d)\\
 	&=\frac{(\hat{u}-3u+2d)\opcosts(\mx_{i,j})+2(u-d)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}\\
 	&=\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}
 \end{align*}
-Next, since we want to prove that $\opcosts(\mx_{i,j}^{\hat{u}})$ is 2-competitive, we have to show that the following cost difference is non-negative:
+Next, since we want to prove that $\mx_{i,j}^{\hat{u}}$ is 2-approximative, we have to show that the following cost difference is non-negative:
 \begin{align*}
 	2\bigl(\opcosts(\mx_{i,j})+\beta(u-d)\bigr)-\opcosts(\mx_{i,j}^{\hat{u}})
 \end{align*}
-We can use our just derived lower bound for $\opcosts(\mx_{i,j})+\beta(u-d)$ to estimate the difference:
+Recall that $\mx_{i,j}^{\hat{u}}$ does not incur switching costs to move to $\hat{u}$ at time $i$, and thus we only have to consider its operating costs.
+We can now use our just derived lower bound for $\opcosts(\mx_{i,j})+\beta(u-d)$ to estimate the difference:
 \begin{align*}
-	2\bigl(\opcosts(\mx_{i,j})+\beta(u-d)\bigr)-\opcosts(\mx_{i,j}^{\hat{u}})>2\Bigl(\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}\Bigr)-\opcosts(\mx_{i,j}^{\hat{u}})
+	2\bigl(\opcosts(\mx_{i,j})+\beta(u-d)\bigr)-\opcosts(\mx_{i,j}^{\hat{u}})>2\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}-\opcosts(\mx_{i,j}^{\hat{u}})
 \end{align*}
 Thus, it suffices to show that
 \begin{align*}
-	2\Bigl(\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}\Bigr)-\opcosts(\mx_{i,j}^{\hat{u}})\ge 0
+	2\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}-\opcosts(\mx_{i,j}^{\hat{u}})\ge 0
 \end{align*}
 which, using Assumption~\eqref{eq:proof_2_competitive_asm_dist_pos}, that is $\hat{u}-3u+2d>0$, can be simplified to
 \begin{equation*}
 	2(\hat{u}-u)\opcosts(\mx_{i,j})-2(u-d)\opcosts(\mx_{i,j}^u)-(\hat{u}-3u+2d)\opcosts(\mx_{i,j}^{\hat{u}})\ge 0
 \end{equation*}
-To show this inequality, we have to take a closer look on the the schedules' operating costs:
+To show this inequality, we have to take a closer look on the schedules' operating costs:
 \begin{align*}
 	&&&2(\hat{u}-u)\opcosts(\mx_{i,j})-2(u-d)\opcosts(\mx_{i,j}^u)-(\hat{u}-3u+2d)\opcosts(\mx_{i,j}^{\hat{u}})\\
-	&\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{\hat{u}}\Bigr)\Bigr)
+	&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}&&\sum\limits_{t=i}^j\left(2(\hat{u}-u)x_tf\left(\frac{\lambda_t}{x_t}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{\hat{u}}\right)\right)
 \end{align*}
 First, we notice that $u\le\hat{u}$ and $x_t<u$ for $i\le t\le j$. Together with the fact that $f$ is monotonically increasing, we infer that
 \begin{align*}
-	&&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{\hat{u}}\Bigr)\Bigr)\\
-	&\ge&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)
+	&&&\sum\limits_{t=i}^j\left(2(\hat{u}-u)x_tf\left(\frac{\lambda_t}{x_t}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{\hat{u}}\right)\right)\\
+	&\ge&&\sum\limits_{t=i}^j\left(2(\hat{u}-u)x_tf\left(\frac{\lambda_t}{u}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{u}\right)\right)
 \end{align*}
 Since $d$ is the smallest number of active servers scheduled by $\mx$, and $f$ is non-negative, we can conclude that
 \begin{align*}
-	&&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
-	&\ge&&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(df\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)
+	&&&\sum\limits_{t=i}^j\left(2(\hat{u}-u)x_tf\left(\frac{\lambda_t}{u}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{u}\right)\right)\\
+	&\ge&&\sum\limits_{t=i}^j\left(2(\hat{u}-u)df\left(\frac{\lambda_t}{u}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{u}\right)\right)
 \end{align*}
 Hence, to finish the case, it suffices to show that
-\begin{align*}
-	2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(df\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\ge 0
-\end{align*}
+\begin{equation*}
+	\sum\limits_{t=i}^j\left(2(\hat{u}-u)df\left(\frac{\lambda_t}{u}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{u}\right)\right)\ge 0
+\end{equation*}
 Further rearranging the left hand side gives us
 \begin{align*}
-	&2(\hat{u}-u)\sum\limits_{t=i}^j\Bigl(df\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-2(u-d)\sum\limits_{t=i}^j\Bigl(uf\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-(\hat{u}-3u+2d)\sum\limits_{t=i}^j\Bigl(\hat{u}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
-	=&\sum\limits_{t=i}^j\Bigl((2d\hat{u}-2du)f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl(2u^2-2du)f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)-\sum\limits_{t=i}^j\Bigl((\hat{u}^2-3u\hat{u}+2d\hat{u})f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
-	=&\sum\limits_{t=i}^j\Bigl((2d\hat{u}-2du-2u^2+2du-\hat{u}^2+3u\hat{u}-2d\hat{u})f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)\\
-	=&\sum\limits_{t=i}^j\Bigl((-\hat{u}^2+3u\hat{u}-2u^2)f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr)=\sum\limits_{t=i}^j\Bigl(\underbrace{-(u-\hat{u})(2u-\hat{u})}_{g(\hat{u})\coloneqq}f\Bigl(\frac{\lambda_t}{u}\Bigr)\Bigr) 
+	&&&\sum\limits_{t=i}^j\left(2(\hat{u}-u)df\left(\frac{\lambda_t}{u}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{u}\right)\right)\\
+	&=&&\sum\limits_{t=i}^j\left(\Bigl(2(\hat{u}-u)d-2(u-d)u-(\hat{u}-3u+2d)\hat{u}\Bigr)f\left(\frac{\lambda_t}{u}\right)\right)\\
+	&=&&\sum\limits_{t=i}^j\left(\Bigl(2d\hat{u}-2du-2u^2+2du-\hat{u}^2+3u\hat{u}-2d\hat{u}\Bigr)f\left(\frac{\lambda_t}{u}\right)\right)\\
+	&=&&\sum\limits_{t=i}^j\left(\left(-\hat{u}^2+3u\hat{u}-2u^2\right)f\left(\frac{\lambda_t}{u}\right)\right)=\sum\limits_{t=i}^j\left(-(u-\hat{u})(2u-\hat{u})f\left(\frac{\lambda_t}{u}\right)\right) 
 \end{align*}
-Now, since $f$ is non-negative, we just have to verify that $g(\hat{u})\ge0$ for all possible values of $\hat{u}$, namely $\hat{u}\in[u,2u]$. We notice that $g(\hat{u})$ is an inverted parabola with roots $u$ and $2u$. Thus, we know that $g(u)=g(2u)=0$ and $g(\hat{u})>0$ for $u<\hat{u}<2u$, which finishes the case.
+Now let $g(\hat{u})\coloneqq-(u-\hat{u})(2u-\hat{u})$. Since $f$ is non-negative, we just have to verify that $g(\hat{u})\ge0$ for all possible values of $\hat{u}$, namely $\hat{u}\in[u,2u]$. We notice that $g(\cdot)$ is an inverted parabola with roots $u$ and $2u$. Thus, we know that $g(u)=g(2u)=0$ and $g(\hat{u})>0$ for $u<\hat{u}<2u$, which finishes the case.
 
 By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
 \end{proof}
@@ -487,7 +489,7 @@ First, we examine the switching costs of $\mx$ from $i$ up to $j+1$. To do so, w
 \begin{equation*}
 	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta(x_{j+1}-d)
 \end{equation*}
-The next idea is to split $\mx_{i,j}$ and its associated switching costs at the final switching step into two parts; more precisely, we split $\beta(x_{j+1}-d)$ into $\beta(x_{j+1}-\frac{\floor{\hat{u}}}{y})$ and $\beta(\frac{\floor{\hat{u}}}{y}-d)$. It then suffices to show that either $\mx_{i,j}^u$ or $\mx_{i,j}^{\hat{u}}$ can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\floor{\hat{u}}$ with $y$-competitive costs under the assumption that $\mx_{i,j}$ only switches to $\frac{\floor{\hat{u}}}{y}$ as a first step. This is due to the fact that the remaining switching costs to ascend to $\floor{u'}$ are then $y$-competitive anyway:
+The next idea is to split $\mx_{i,j}$ and its associated switching costs at the final switching step into two parts; more precisely, we split $\beta(x_{j+1}-d)$ into $\beta(x_{j+1}-\frac{\floor{\hat{u}}}{y})$ and $\beta(\frac{\floor{\hat{u}}}{y}-d)$. It then suffices to show that either $\mx_{i,j}^u$ or $\mx_{i,j}^{\hat{u}}$ can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\floor{\hat{u}}$ with $y$-competitive costs under the assumption that $\mx_{i,j}$ only switches to $\frac{\floor{\hat{u}}}{y}$ as a first step. This is due to the fact that the remaining switching costs to ascend from $u$ to $\floor{u'}$ are then $y$-competitive anyway:
 \begin{equation*}
 	\beta(\floor{u'}-\floor{\hat{u}})\le\beta(yx_{j+1}-\hat{u})=y\beta\Bigl(x_{j+1}-\frac{\floor{\hat{u}}}{y}\Bigr)
 \end{equation*}
