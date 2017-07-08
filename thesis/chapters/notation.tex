@@ -3,42 +3,55 @@
 
 \addchap{Notation}
 Below, we give an overview of the definitions and conventions commonly referred to in our paper.
-\section*{Input}
-\begin{itemize}
-	\item $m\in\mathbb{N}$\ldots number of homogeneous servers
-	\item $T\in\mathbb{N}$\ldots number of time slots
-	\item $\lambda_1,\ldots,\lambda_{T}\in[0,m]$\ldots arrival rates
-	\item $\Lambda\coloneqq(\lambda_1,\ldots,\lambda_T)$\ldots sequence of arrival rates
-	\item $\beta\in\mathbb{R}_{\ge 0}$\ldots switching costs of a server
-	\item $f:[0,1]\rightarrow\mathbb{R}$\ldots convex operating costs function of a server. Note that for Chapter~\ref{chap:approx_offline_scheduling}, $f$ is further assumed to be non-negative and monotonically increasing.	
-	\item $\inp\coloneqq(m,T,\Lambda,\beta,f)$\ldots input of a problem instance
-\end{itemize}
 
-\section*{Problem statement}
-\begin{itemize}
-	\item $s_{i,t}\in\{0,1\}$\ldots state of server $i$ at time $t$, i.e.\ sleeping (0) or active(1)
-	\item $S_i\coloneqq(s_{i,1},\ldots,s_{i,T})$\ldots sequence of states for server $i$
-	\item $\lambda_{i,t}\in[0,1]$\ldots assigned load for server $i$ at time $t$
-	\item $L_i\coloneqq(\lambda_{i,1},\ldots,\lambda_{i,T})$\ldots sequence of assigned loads for server $i$
-	\item $\mathcal{S}\coloneqq(S_1,\ldots,S_m)$\ldots sequence of all state changes
-	\item $\mathcal{L}\coloneqq(L_1,\ldots,L_m)$\ldots sequence of all assigned loads
-	\item $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$\ldots schedule for a problem instance $\inp$.
-\end{itemize}
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{ | >{\centering\arraybackslash}X | >{\arraybackslash}m{0.7\textwidth} | }
+  \hline \multicolumn{2}{|c|}{\textbf{\large Input}} \\  
+  \hline $m\in\mathbb{N}$ & Number of homogeneous servers \\
+  \hline $T\in\mathbb{N}$& Number of time slots\\
+  \hline $\lambda_1,\dotsc,\lambda_{T}\in[0,m]$& Arrival rates\\
+  \hline $\Lambda\coloneqq(\lambda_1,\dotsc,\lambda_T)$& Sequence of arrival rates\\
+  \hline $\beta\in\mathbb{R}_{\ge 0}$& Switching costs of a server\\
+  \hline $f:[0,1]\rightarrow\mathbb{R}$& Convex operating cost function of a server. For Chapter~\ref{chap:approx_offline_scheduling}, $f$ is assumed to be non-negative and monotonically increasing.\\
+  \hline $\inp\coloneqq(m,T,\Lambda,\beta,f)$& Input of a problem instance\\
+  \hline
+\end{tabularx}
+\end{table}
 
-\section*{Miscellaneous}
-\begin{itemize}
-	\item $[n]$\ldots$\fromto{1}{n}\subset\mathbb{N}$
-	\item $[n]_0$\ldots$\fromto{0}{n}\subset\mathbb{N}_0$
-	\item $x_t\in[m]_0$\ldots number of active servers at time $t$
-	\item $\mx\coloneqq(x_1,\ldots,x_T)$\ldots sequence of numbers of active servers. Note that due to Chapter~\ref{chap:preliminaries}, $\mx$ can be interpreted as a schedule.
-	\item $\opcosts(x,\lambda)$\ldots costs of processing $\lambda$ with $x$ servers.
-	\item $\swcosts(x_{t-1},x_{t})$\ldots costs of switching from $x_{t-1}$ to $x_t$ servers.
-	\item $\costs(x_{t-1},x_{t},\lambda_t)$\ldots costs of switching from $x_{t-1}$ to $x_t$ servers and processing $\lambda_t$ with $x_t$ servers.
-	\item $\costs(\mx)$\ldots costs of a schedule.
-\end{itemize}
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{ | >{\centering\arraybackslash}X | >{\arraybackslash}m{0.7\textwidth} | }
+  \hline \multicolumn{2}{|c|}{\textbf{\large Problem Statement}} \\  
+  \hline $s_{i,t}\in\{0,1\}$& State of server $i$ at time $t$; either sleeping (0) or active (1)\\
+  \hline $S_i\coloneqq(s_{i,1},\dotsc,s_{i,T})$& Sequence of states for server $i$\\
+  \hline $\lambda_{i,t}\in[0,1]$& Assigned load for server $i$ at time $t$\\
+  \hline $L_i\coloneqq(\lambda_{i,1},\dotsc,\lambda_{i,T})$& Sequence of assigned loads for server $i$\\
+  \hline $\mathcal{S}\coloneqq(S_1,\dotsc,S_m)$& Sequence of all state changes\\
+  \hline $\mathcal{L}\coloneqq(L_1,\dotsc,L_m)$& Sequence of all assigned loads\\
+  \hline $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$& Schedule for a problem instance $\inp$\\
+  \hline $x_t\in[m]_0$& Number of active servers at time $t$\\
+  \hline $\mx\coloneqq(x_1,\ldots,x_T)$& Sequence of the number of active servers. Note that due to Chapter~\ref{chap:preliminaries}, $\mx$ can be interpreted as a schedule.\\
+  \hline $\opcosts(x,\lambda)$& Costs of processing $\lambda$ with $x$ servers (operating costs)\\
+  \hline $\swcosts(x_{t-1},x_{t})$& Costs of switching from $x_{t-1}$ to $x_t$ servers (switching costs)\\
+  \hline $\costs(x_{t-1},x_{t},\lambda_t)$& Costs of switching from $x_{t-1}$ to $x_t$ servers and processing $\lambda_t$ with $x_t$ servers\\
+  \hline $\costs(\mx)$& Costs of a schedule\\
+  \hline
+\end{tabularx}
+\end{table}
 
-\section*{Conventions}
-\begin{itemize}
-	\item $\lambda_{t}=0$ for all $t\notin[T]$, i.e.\ there is no load before and after the scheduling process
-	\item $s_{i,t}=0$ for all $t\notin[T]$, i.e.\ all servers are powered down before and after the scheduling process
-\end{itemize}
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{ | >{\centering\arraybackslash}X | >{\arraybackslash}m{0.65\textwidth} | }
+  \hline \multicolumn{2}{|c|}{\textbf{\large Conventions}} \\  
+  \hline $\forall t\notin[T]:\lambda_t=0$ & There are no loads before and after the scheduling process.\\  
+  \hline $\forall t\notin[T]:s_{i,t}=x_t=0$ & All servers are shut down before and after the scheduling process.\\  
+  \hline
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{ | >{\centering\arraybackslash}X | >{\arraybackslash}m{0.65\textwidth} | }
+  \hline \multicolumn{2}{|c|}{\textbf{\large Miscellaneous}} \\  
+  \hline $[n]\coloneqq\fromto{1}{n}\subset\mathbb{N}$&Natural numbers from $1$ to $n$\\
+  \hline $[n]_0\coloneqq\fromto{0}{n}\subset\mathbb{N}_0$&Integers from $0$ to $n$\\
+  \hline
+\end{tabularx}
+\end{table}
