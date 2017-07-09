@@ -354,8 +354,8 @@ We saw in this section that our reduction to logarithmic steps allows us to deri
   \label{alg:approx_2_offline_linear}
   \begin{algorithmic}[1]
   \Function{2\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
-	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
-	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T,m$}}
+	  \Let{$(C,S)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f$}}
+	  \Let{$\mx$}{\Call{extract\_schedule}{$S,T,m$}}
 	  \State \Return{$\mx$}
   \EndFunction
   \Statex
@@ -365,41 +365,41 @@ We saw in this section that our reduction to logarithmic steps allows us to deri
   \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
 	\Let{$b$}{$\ceil{\log_2(m)}$}
-	\LineComment{Allocate nodes' costs and predecessor tables}
-	\Blet{$C[0\dotso b+1,1\dotso T]$ and $P[0\dotso b+1,1\dotso T]$}{new tables}
-	\Let{$P[b+1,1]$}{$b+1$ and $C[b+1,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
+	\Blet{$C[0\dotso b+1,1\dotso T]$ and $S[0\dotso b+1,1\dotso T]$}{new tables}
+	\Statex \Comment{Allocate cost and selection tables}
+	\Let{$S[b+1,1]$}{$b+1$ and $C[b+1,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
 	\For{$i \gets b \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
 		\If {$C[i+1,1]<\costs\bigl(0,\Call{node}{i,m},\lambda_1\bigr)$}
-			\Let{$P[i,1]$}{$P[i+1,1]$ and $C[i,1]\gets C[i+1,1]$}
+			\Let{$S[i,1]$}{$S[i+1,1]$ and $C[i,1]\gets C[i+1,1]$}
 		\Else
-			\Let{$P[i,1]$}{$i$ and $C[i,1]\gets\costs\bigl(0,\Call{node}{i,m},\lambda_1\bigr)$}
+			\Let{$S[i,1]$}{$i$ and $C[i,1]\gets\costs\bigl(0,\Call{node}{i,m},\lambda_1\bigr)$}
 		\EndIf
 	\EndFor
-	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and predecessors}
+	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and selections}
 		\For{$i \gets 1 \textrm{ to } b+1$}\Comment{Upward minimization step}
 			\If {$C[i-1,t]+\beta\bigl(\Call{node}{i,m}-\Call{node}{i-1,m}\bigr)<C[i,t]$}
-			    \Let{$P[i,t]$}{$P[i-1,t]$}
+			    \Let{$S[i,t]$}{$S[i-1,t]$}
 			    \Let{$C[i,t]$}{$C[i-1,t]+\beta\bigl(\Call{node}{i,m}-\Call{node}{i-1,m}\bigr)$}
 			\EndIf
 		\EndFor
-		\Let{$P[b+1,t+1]$}{$b+1$ and $C[b+1,t+1]\gets C[b+1,t]+\opcosts(m,\lambda_{t+1})$}
+		\Let{$S[b+1,t+1]$}{$b+1$ and $C[b+1,t+1]\gets C[b+1,t]+\opcosts(m,\lambda_{t+1})$}
 		\For{$i \gets b \textrm{ to } 0$}\Comment{Downward minimization step}
 			\If {$C[i+1,t+1]<C[i,t]+\opcosts\bigl(\Call{node}{i,m},\lambda_{t+1}\bigr)$}
-				\Let{$P[i,t+1]$}{$P[i+1,t+1]$ and $C[i,t+1]\gets C[i+1,t+1]$}
+				\Let{$S[i,t+1]$}{$S[i+1,t+1]$ and $C[i,t+1]\gets C[i+1,t+1]$}
 			\Else
-				\Let{$P[i,t+1]$}{$i$ and $C[i,t+1]\gets C[i,t]+\opcosts\bigl(\Call{node}{i,m},\lambda_{t+1}\bigr)$}
+				\Let{$S[i,t+1]$}{$i$ and $C[i,t+1]\gets C[i,t]+\opcosts\bigl(\Call{node}{i,m},\lambda_{t+1}\bigr)$}
 			\EndIf
 		\EndFor
 	\EndFor
-	\State \Return{$(C,P)$}
+	\State \Return{$(C,S)$}
   \EndFunction
   \Statex
-  \Function{extract\_schedule}{$P,T,m$}
+  \Function{extract\_schedule}{$S,T,m$}
 	\Blet{$\mx[1\dotso T]$}{a new array}
-	\Let{$i$}{$P[0,T]$}\Comment{Get index of best choice for last time slot}
-    	\Let{$\mx[T]$}{$\Call{node}{i,m}$}\Comment{Calculate best choice for last time slot}
-        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
-		\Let{$i$}{$P[i,t]$}
+	\Let{$i$}{$S[0,T]$}\Comment{Get index of best selection for last time slot}
+    	\Let{$\mx[T]$}{$\Call{node}{i,m}$}\Comment{Calculate best selection for last time slot}
+        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from selection table}
+		\Let{$i$}{$S[i,t]$}
 		\Let{$\mx[t]$}{$\Call{node}{i,m}$}	
 	\EndFor
 	\State \Return{$\mx$}
@@ -577,7 +577,7 @@ By iteratively applying above procedure to $\mx$, starting with $i=1$ and stoppi
   \label{alg:approx_1_eps_offline_linear}
   \begin{algorithmic}[1]
   \Function{$(1+\beps)$\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f,\beps$}
-	  \Let{$(C,P)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f,1+\beps$}}
+	  \Let{$(C,S)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f,1+\beps$}}
 	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T,m,1+\beps$}}
 	  \State \Return{$\mx$}
   \EndFunction
@@ -619,7 +619,7 @@ By iteratively applying above procedure to $\mx$, starting with $i=1$ and stoppi
 			\EndIf
 		\EndFor
 	\EndFor
-	\State \Return{$(C,P)$}
+	\State \Return{$(C,S)$}
   \EndFunction
   \Statex
   \Function{extract\_schedule}{$P,T,m,y$}
