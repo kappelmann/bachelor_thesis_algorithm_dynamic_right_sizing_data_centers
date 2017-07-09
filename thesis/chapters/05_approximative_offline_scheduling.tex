@@ -409,6 +409,37 @@ We saw in this section that our reduction to logarithmic steps allows us to deri
 
 \section{A $(1+\beps)$-Optimal Linear-Time Algorithm}
 TODO text + graph
+\begin{align*}
+	b&\coloneqq\floor{\log_y(m)}\\
+	B&\coloneqq\left\{0,\floor{y^0},\floor{y^1},\dotsc,\floor{y^b},m\right\}
+\end{align*}
+where $B$ will subsequently represent the set of possible scheduling choices at each time slot. Using this set of possible choices, we can then consider the following adaption of our former graph:
+\begin{align*}
+	V&\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in B,t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in B, t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
+	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in B\bigr\}\\
+	E_\downarrow&\coloneqq\bigl\{(v_{\floor{y^i},t\downarrow},v_{\floor{y^{i-1}},t\downarrow})\mid i\in[b],t\in[T]\bigr\}\dotcup\bigl\{(v_{\floor{y^0},t\downarrow},v_{0,t\downarrow})\mid t\in[T]\bigr\}\dotcup\\
+	&\phantom{{}\coloneqq{}}\bigl\{(v_{m,t\downarrow},v_{\floor{y^b},t\downarrow})\mid t\in[T]\bigr\}\\
+	E_\uparrow&\coloneqq\bigl\{(v_{\floor{y^{i-1}},t\uparrow},v_{\floor{y^i},t\uparrow})\mid i\in[b],t\in[T-1]\bigr\}\dotcup\bigl\{(v_{0,t\uparrow},v_{\floor{y^0},t\uparrow})\mid t\in[T-1]\bigr\}\dotcup\\
+	&\phantom{{}\coloneqq{}}\bigl\{(v_{\floor{y^b},t\uparrow},v_{m,t\uparrow})\mid t\in[T-1]\bigr\}\\
+	E_{\downarrow\uparrow}&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in B,t\in[T-1]\bigr\}\\
+	E_{\uparrow\downarrow}&\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in B,t\in[T-1]\bigr\}\\
+	E&\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
+	c_G(e)&\coloneqq
+	\begin{cases}
+		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1\downarrow})\in E_s$}\\
+		\opcosts(x,\lambda_{t+1}), & \text{if $e=(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$}\\
+		(x'-x)\beta, & \text{if $e=(v_{x,t\uparrow},v_{x',t\uparrow})\in E_\uparrow$}\\
+		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow})$}
+	\end{cases}\\
+	G&\coloneqq(V,E,c_G)
+\end{align*}
+Unnecessary loops can again simply be ignored for our following works.
+A graphical representation of $G$ can be found in the following figure.
+\begin{figure}[H]
+\includestandalone[width=\textwidth]{../figures/graph_lin_approx_y}
+\caption{Graph for a $y$-optimal linear-time offline algorithm; the path of the topological sorting is highlighted in red.}
+\label{fig:graph_lin_approx_y}
+\end{figure}
 
 \begin{defn}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T]$. We say that $\mx$ changes its \emph{$y$-state} at time $t$ if $x_t$ lies between a different pair of powers of $y$ than its predecessor, that is $x_t$ satisfies
