@@ -42,8 +42,8 @@
 
   \path[every node/.style={font=\sffamily\small}]
     (1) edge[red] node[black,above left] {$\costs(0,m,\lambda_1)$} (2)
-	edge node[label={[xshift=0.8cm, yshift=-0.9cm]$\costs\bigl(0,\floor{y^b},\lambda_1\bigr)$}] {} (5)
-	edge node[above right=-0.13cm] {$\costs\bigl(0,\floor{y^0},\lambda_1\bigr)$} (3)
+	edge node[label={[xshift=0.8cm, yshift=-1cm]$\costs\bigl(0,\floor{y^b},\lambda_1\bigr)$}] {} (5)
+	edge node[above right=-0.28cm] {$\costs\bigl(0,\floor{y^0},\lambda_1\bigr)$} (3)
 	edge node[below left] {$\costs(0,0,\lambda_1)$} (4)
     (1) edge ($(1)!.82!(22)$)
 
@@ -88,14 +88,14 @@
 
 
     (14) edge[red] node[label={[black,xshift=0cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
-    (15) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^0},\lambda_3\bigr)$}] {} ($(15)!.4!(19)$)
+    (15) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^0},\lambda_3\bigr)$}] {} ($(15)!.4!(19)$)
     (16) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
-    (17) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^b},\lambda_3\bigr)$}] {} ($(17)!.4!(21)$)
+    (17) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^b},\lambda_3\bigr)$}] {} ($(17)!.4!(21)$)
 
     ($(14)!.6!(18)$) edge[red] node[black,above] {$\opcosts(m,\lambda_T)$} (18)
-    ($(15)!.6!(19)$) edge node[above] {$\opcosts\bigl(\floor{y^0},\lambda_T\bigr)$} (19)
+    ($(15)!.6!(19)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^0},\lambda_T\bigr)$}] {} (19)
     ($(16)!.6!(20)$) edge node[above] {$\opcosts(0,\lambda_T)$} (20)
-    ($(17)!.6!(21)$) edge node[above] {$\opcosts\bigl(\floor{y^b},\lambda_T\bigr)$} (21)
+    ($(17)!.6!(21)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^b},\lambda_T\bigr)$}] {} (21)
 
     (18) edge[red] node[black,right] {$0$} (21)
     (19) edge[red] node[black,right] {$0$} (20)

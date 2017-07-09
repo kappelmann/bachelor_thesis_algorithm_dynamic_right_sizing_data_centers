@@ -153,8 +153,7 @@ as well as to the lower and upper bound of $\mx$ at time $j+1$:
 &&\text{and}&&u'\coloneqq\min\bigl\{2l',m\bigr\}&&&
 \end{flalign*}
 Note that $l,u,l',u'\in B$ and that $x_t\le u\le 2x_t$ holds for any $i\le t\le j$ since $\mx$ does not change its 2-state between $i$ and $j$. 
-	
-	
+
 As an \emph{invariant} of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most twice as much switching costs as $\mx$ if we set $x_i'\coloneqq u$ -- whether this step will be taken in the end or not. Further, we are going to ensure that $x_t'\ge u$ holds for any $i\le t\le j$ after every transformation step. 
 	
 First, we have to check that our invariant initially holds. For the initial start-up process \makebox{(i.e.\ $i=1$)}, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq u\in B$. Since we know that $x_1'\le2x_1$, we can conclude that $\beta x_1'\le\beta 2x_1$, which shows that $\mx'$ has 2-approximative start-up switching costs. Thus, the invariant initially holds. Moreover, we can use the difference of switching costs $\beta(2x_1-x_1')=\beta(2x_1-u)$ as a credit for our amortized analysis.
@@ -441,31 +440,35 @@ A graphical representation of $G$ can be found in the following figure.
 \label{fig:graph_lin_approx_y}
 \end{figure}
 
-\begin{defn}
-Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T]$. We say that $\mx$ changes its \emph{$y$-state} at time $t$ if $x_t$ lies between a different pair of powers of $y$ than its predecessor, that is $x_t$ satisfies
+\begin{defn}[y-state changes]
+Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T+1]$. We say that $\mx$ changes its \emph{$y$-state} at time $t$ if $\mx$ satisfies the formula
 \begin{equation*}
-	x_{t-1}\neq x_t\land \Bigl(x_t\notin\bigl[y^{\ceil{\log_y(x_{t-1})}-1},y^{\ceil{\log_y(x_{t-1})}}\bigr)\lor x_{t-1}=0\Bigr)
+	x_{t-1}\neq x_t\land \left(x_{t-1}=0 \lor x_t\notin\left[y^{\floor{\log_y(x_{t-1})}},y^{\floor{\log_y(x_{t-1})}+1}\right)\right)
 \end{equation*}
 \end{defn}
-Now we are geared up to deal with the main work of this section.
+The proof of the next lemma will be very similar to that done in Lemma~\ref{lem:transform_schedule_approx_2}.
 \begin{lem}
 Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le y\costs(\mx)$}.
 \end{lem}
 \begin{proof}
-Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le y\costs(\mx)$}. The construction will be similar to that done in Lemma~\ref{lem:transform_schedule_approx_2}. As a first step, we can again assume that $\mx$ is feasible and never powers down all its servers.  
-Next, we show that every period between two $y$-state changes of $\mx$ can be iteratively transformed to a $y$-competitive period in $\mx'$. For this, let $i\in[T]$ and $j+1\in\fromto{2}{T+1}$ with $i<j+1$ be the first unprocessed timeslots at which $\mx$ changes its $y$-state. We define the lower and upper bound of $\mx_{i,j}$ as
+Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le y\costs(\mx)$}. By following the same reasoning as done for Lemma~\ref{lem:transform_schedule_approx_2}, we can again assume that $\mx$ is feasible and never shuts down all its servers. We then have to show that every period between two $y$-state changes of $\mx$ can be iteratively transformed to a $y$-approximative period in $\mx'$. Let $i$ and $j+1$ with \makebox{$i,j\in[T]$} and $i\le j$ be the first unprocessed timeslots at which $\mx$ changes its \makebox{$y$-state}. We define the lower and upper bound of $\mx_{i,j}$ as
 \begin{flalign*}
-	&&l\coloneqq y^{\ceil{\log_y(x_i)}-1}&&\text{and}&&u\coloneqq\min\bigl\{y^{\ceil{\log_y(x_i)}},m\bigr\}&&&
+	&&l\coloneqq y^{\floor{\log_y(x_i)}}&&\text{and}&&u\coloneqq\min\bigl\{yl,m\bigr\}&&&
 \end{flalign*}
 and the lower and upper bound of $\mx$ at time $j+1$ as
 \begin{flalign*}
 	&&l'\coloneqq\begin{cases}
-		y^{\ceil{\log_y(x_{j+1})}-1}, & \text{if $x_{j+1}\neq 0$}\\
+		y^{\floor{\log_y(x_{j+1})}}, & \text{if $x_{j+1}\neq 0$}\\
 		0, & \text{if $x_{j+1}=0$}
 	\end{cases}
-&&\text{and}&&u'\coloneqq\min\bigl\{y^{\ceil{\log_y(x_{j+1})}},m\bigr\}&&&
+&&\text{and}&&u'\coloneqq\min\bigl\{yl',m\bigr\}&&&
 \end{flalign*}
-As an invariant of the following transformations, we are going to ensure that $\mx'$ can potentially move to $\floor{u}$ at time $i$ in a $y$-competitive manner, that is we ensure that we can set $x_i'\coloneqq \floor{u}$ with $y$-competitive switching costs -- whether this step will be taken in the end or not. Further, we ensure that $x_t'\ge \floor{u}$ holds for any $i\le t\le j$ after every transformation step. For the initial start-up process (i.e.\ $i=1$), we can simply move to the next power of $y$ larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq \floor{u} \in B$. Since $x_1'\le yx_1$, we know that $\beta x_1'\le\beta yx_1$; thus, the start-up switching costs of $\mx'$ are $y$-competitive and the invariant initially holds. Moreover, we can (and indeed will have to) use the difference of switching costs $\beta(yx_1-x_1')=\beta(yx_1-\floor{u})$ as a switching cost credit to compensate for subsequent, more expensive switching steps.
+We adapt our invariant in that we are going to ensure that $\mx'$ can potentially move to $\floor{u}$ at time $i$ in a $y$-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most $y$ times as much switching costs as $\mx$ if we set $x_i'\coloneqq \floor{u}$. Further, we are going to ensure that $x_t'\ge \floor{u}$ holds for any $i\le t\le j$ after every transformation step. 
+
+For the initial start-up process (i.e.\ $i=1$), we can simply set $x_1'\coloneqq \floor{u} \in B$. Since we know that $x_1'\le yx_1$, we can conclude that $\beta x_1'\le\beta yx_1$; thus, the start-up switching costs of $\mx'$ are $y$-competitive and the invariant initially holds. The difference of switching costs $\beta(yx_1-x_1')=\beta(yx_1-\floor{u})$ as a credit for our amortized analysis.
+
+To finish the proof, we need to show that any case can be transformed to a $y$-approximative period in $\mx'$ while ensuring that our invariant will hold at the beginning of the next period. Additionally, we again have to conduct an amortized analysis using the accounting method for the switching costs of $\mx'$. This time, we will show that our credit will be greater than or equal to $\beta(yx_{j+1}-\floor{u'})$ if $\mx$ exits $[l,u)$ by ascending to $[l',u')$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(yx_i-\floor{u})$ if $\mx$ enters $[l,u)$ from below. We already showed that this claim holds for our initial start-up process.
+
 
 Now, let us have a closer look on the possible behaviors of $\mx$ between its $y$-state changes. We will classify the behaviors based on how $\mx$ enters and leaves the interval $[l,u)$. First, we consider the cases where $\mx$ leaves the interval $[l,u)$ by turning off servers, as depicted in Figure~\ref{todo}.
 \begin{figure}[H]
