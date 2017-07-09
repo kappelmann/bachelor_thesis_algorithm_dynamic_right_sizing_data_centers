@@ -54,7 +54,7 @@ Let $\inp=\bigl(m=4,T=5,\Lambda=(3,3,3,3,3),\beta=0,f\bigr)$ be the input for a 
 	\costs(\mx)&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_tf(\lambda_t/x_t)}^{3(3/3-1)^2}+\overbrace{\swcosts(x_{t-1},x_t)}^{0\max\{\,\cdots\}}\bigr)=5\cdot3\left(\frac{3}{3}-1\right)^2=0\\
 	\costs(\mx')&\stackrel{\eqref{eq:mx_schedule_total_costs}}{=}\sum\limits_{t=1}^{5}\bigl(\overbrace{x_t'f(\lambda_t/x_t')}^{4(3/4-1)^2}+\overbrace{\swcosts(x_{t-1}',x_t')}^{0\max\{\,\cdots\}}\bigr)=5\cdot4\left(\frac{3}{4}-1\right)^2=\frac{20}{16} 
 \end{align*}
-Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation estimation. Naturally, we may ask ourselves how this explosion of costs is even possible. Evidently, the switching costs are not the root of this explosion since $\beta=0$. Thus, we shall take a closer look on the used operating cost function. The optimal schedule $\mx$ evenly distributes every load $\lambda_t=3$ to $x_t=3$ servers. Hence, every active server has to process a load of $\frac{\lambda_t}{x_t}=1$ at every time step, incurring costs of $f(1)=0$. On the other hand, the approximative schedule $\mx'$ is able to distribute every load to 4 active machines. Thus, every machine incurs costs of $f(3/4)=\frac{1}{16}$. This observation seems rather surprising: Although every server has to process a smaller load using $\mx'$, the incurring operating costs of each server turn out to be higher. Intuitively, however, we would expect that a less stressed machine would incur less costs. This surprising behavior is due to the fact that our operating cost function $f$ is not monotonically increasing, as one can see in the following figure.
+Albeit our approximative schedule uses only one server in addition, the schedule's cost is already inestimably higher than that of an optimal schedule $\mx$, preventing any sensible approximation estimation. Naturally, we may ask ourselves how this explosion of costs is even possible. Evidently, the switching costs are not the root of this explosion since $\beta=0$. Thus, we shall take a closer look on the used operating cost function. The optimal schedule $\mx$ evenly distributes every load $\lambda_t=3$ to $x_t=3$ servers. Hence, every active server has to process a load of $\lambda_t/x_t=1$ at every time step, incurring costs of $f(1)=0$. On the other hand, the approximative schedule $\mx'$ is able to distribute every load to 4 active machines. Thus, every machine incurs costs of $f(3/4)=\frac{1}{16}$. This observation seems rather surprising: Although every server has to process a smaller load using $\mx'$, the incurring operating costs of each server turn out to be higher. Intuitively, however, we would expect that a less stressed machine would incur less costs. This surprising behavior is due to the fact that our operating cost function $f$ is not monotonically increasing, as one can see in the following figure.
 \begin{figure}[H]
 \centering
 \includestandalone{../figures/non_mono_incr_f_1}
@@ -339,9 +339,18 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By using a small adaption of Proposition~\ref{prop:path_to_reasn_path} that uses logarithmic instead of incremental switching steps, we can transform $P$ to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to a 2-optimal, \makebox{$B$-restricted} schedule $\mx$ with $\costs(\mx)=\costs(P')=\costs(P)$ by Theorem~\ref{thm:approx_2}, which finishes the proof.
 \end{proof}
-In the following, we give an algorithm based on our just verified constructions. Naturally, since we did not change the graph's overall structure and working principle, a small adaption of Algorithm~\ref{alg:opt_offline_pseudo_linear} will serve its purpose. To account for the logarithmic steps in our graph, we introduce an auxiliary function \textproc{nodes}, which calculates the number of servers associated to an given index $i$ in our tables $C$ and $P$. As a matter of implementation convenience, the variable $b$ is defined as $\log_2(\ceil{m})$ instead of $\log_2(\floor{m})$ in the following algorithm.
+To finish this section, we give an algorithm based on verified constructions. Naturally, since we did not change the graph's overall structure and working principle, a small adaption of Algorithm~\ref{alg:opt_offline_pseudo_linear} will serve its purpose. To account for the logarithmic steps in our graph, we introduce an auxiliary function \textproc{nodes}, which calculates the number of servers associated to an given index $i$ in our tables $C$ and $S$. As a matter of implementation convenience, the variable $b$ is defined as $\ceil{\log_2(m)}$ instead of $\floor{\log_2(m)}$ in Algorithm~\ref{alg:approx_2_offline_linear}.
+The correctness of the algorithm directly follows from Theorem~\ref{thm:approx_2} and the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\parencite[Section~24.2]{intro-algo}).\unsure{always cite this?}
+
+For our runtime analysis, we again take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} requires $\Theta\bigl(\log_2(m)\bigr)$ steps for its initialization and \makebox{$\Theta\bigl(2T\log_2(m)\bigr)$} steps for the iterative calculation of the selections and costs\unsure{Repetitive? Same words as in chapter 3}. Further, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a time complexity of
+\begin{equation*}
+	\Theta\bigl(\log_2(m)+2T\log_2(m)+T\bigr)=\Theta(T\log_2(m))
+\end{equation*}
+To our great joy, the runtime is linear in the size of the input. Similarly, our memory demand is reduced to linear space $\Theta\bigl(T\log_2(m)\bigr)$, since the size of the tables $C$ and $S$ shrinked to $\Theta\bigl(T\log_2(m)\bigr)$.
+
+We saw in this section that our reduction to logarithmic steps allows us to derive a 2-optimal linear algorithm. In our approach, we chose the base two logarithm for our step sizes. It seems like an interesting question whether this approach can be generalized to arbitrary bases, allowing for more precise approximations. The answer of this question shall be final task of this thesis.
 \begin{algorithm}[H]
-  \caption{Linear 2-competitive offline scheduling}
+  \caption{2-optimal linear-time offline scheduling}
   \label{alg:approx_2_offline_linear}
   \begin{algorithmic}[1]
   \Function{2\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f$}
@@ -353,12 +362,7 @@ In the following, we give an algorithm based on our just verified constructions.
   \Function{node}{$i,m$}
 	  \State \Return{$\min\bigl\{m,\floor{2^{i-1}}\bigr\}$}
   \EndFunction
-  \algstore{lin2opt}
-  \end{algorithmic}
-\end{algorithm}
-\begin{algorithm}[H]
-  \begin{algorithmic}[1]
-  \algrestore{lin2opt}
+  \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f$}
 	\Let{$b$}{$\ceil{\log_2(m)}$}
 	\LineComment{Allocate nodes' costs and predecessor tables}
@@ -402,15 +406,6 @@ In the following, we give an algorithm based on our just verified constructions.
   \EndFunction
   \end{algorithmic}
 \end{algorithm}
-The correctness of Algorithm~\ref{alg:approx_2_offline_linear} directly follows from Theorem~\ref{thm:approx_2} and the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\parencite[Section~24.2]{intro-algo}).
-
-For our runtime analysis, we again take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} needs $\Theta\bigl(\log_2(m)\bigr)$ iterations for its initialization and $\Theta\bigl(2T\log_2(m)\bigr)$ steps for the iterative calculation of predecessors and costs\unsure{Repetitive? Same words as in chapter 3}. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a runtime of 
-\begin{equation*}
-	\Theta\bigl(\log_2(m)+2T\log_2(m)+T\bigr)=\Theta(T\log_2(m))
-\end{equation*}
-To our great joy, the runtime is linear in the size of the input. Similarly, our memory demand is reduced to linear space $\Theta\bigl(T\log_2(m)\bigr)$, since the algorithm's memory demand is defined by the size of the tables $C$ and $P$, both being of size $\Theta\bigl(T\log_2(m)\bigr)$.
-
-In this section, we saw that our reduction to logarithmic steps allows us to derive a linear algorithm that guarantees 2-competitive results. In our approach, we chose the base two logarithm for our step sizes. It seems like an interesting question, if this approach can be generalized to arbitrary bases, allowing for more precise approximations. This shall be final task of our work.
 
 \section{A $(1+\beps)$-Optimal Linear-Time Algorithm}
 TODO text + graph

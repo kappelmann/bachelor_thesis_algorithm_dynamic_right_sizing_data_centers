@@ -112,7 +112,7 @@ For this, we first need to consider the size of our input $\inp=(m,T,\Lambda,\be
 	&\le\Theta\bigl(\log_2(m)+\log_2(T)+\log_2(\beta)\bigr)+\mathcal{O}\bigl(T\log_2(m)\bigr)\nonumber\\
 	&\le\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)\label{eq:inp_size}
 \end{align}
-For our runtime analysis, we assume that calling the operating cost function $f(\cdot)$, and as a consequence also $\costs(\cdot,\cdot,\cdot)$, incurs constant cost. Subroutine \textproc{shortest\_paths} requires $\Theta(m)$ steps for its initialization and $\Theta(Tm^2)$ steps for the iterative calculation of the predecessors and costs. In addition, \textproc{extract\_schedule} needs $\Theta(m)$ steps for its initial minimization search and $\Theta(T)$ iterations for its schedule retrieval. Thus, Algorithm~\ref{alg:opt_offline_pseudo_poly} has a time complexity of
+For our runtime analysis, we assume that calling the operating cost function $f(\cdot)$, and as a consequence also $\costs(\cdot,\cdot,\cdot)$, incurs constant cost. Subroutine \textproc{shortest\_paths} requires $\Theta(m)$ steps for its initialization and $\Theta(Tm^2)$ steps for the iterative calculation of the nodes' predecessors and costs. In addition, \textproc{extract\_schedule} needs $\Theta(m)$ steps for its initial minimization search and $\Theta(T)$ iterations for its schedule retrieval. Thus, Algorithm~\ref{alg:opt_offline_pseudo_poly} has a time complexity of
 \begin{equation*}
 	\Theta(m+Tm^2+m+T)=\Theta(Tm^2)
 \end{equation*}
@@ -350,7 +350,7 @@ Like in Section~\ref{sec:opt_offline_pseudo_poly}, we next give an algorithm bas
 \end{algorithm}
 The correctness of Algorithm~\ref{alg:opt_offline_pseudo_linear} directly follows from Theorem~\ref{thm:opt_sched_reasn_path} and the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\parencite[Section~24.2]{intro-algo}).
 
-For our runtime analysis, we take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ steps for its initialization and $\Theta(2Tm)$ steps for the iterative calculation of the selections and costs. In addition, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Thus, Algorithm~\ref{alg:opt_offline_pseudo_linear} has a time complexity of
+For our runtime analysis, we take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ steps for its initialization and $\Theta(2Tm)$ steps for the iterative calculation of the selections and costs. In addition, \textproc{extract\_schedule} requires $\Theta(T)$ iterations for its schedule retrieval. Thus, Algorithm~\ref{alg:opt_offline_pseudo_linear} has a time complexity of
 \begin{equation*}
 	\Theta(m+2Tm+T)=\Theta(Tm)
 \end{equation*}
