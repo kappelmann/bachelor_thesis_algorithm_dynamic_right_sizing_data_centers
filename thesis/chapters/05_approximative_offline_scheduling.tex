@@ -5,8 +5,8 @@
 Heretofore, we have derived two optimal offline algorithms for our scheduling problem. Unfortunately, the algorithms' time complexities are exponential in the input size of the number of servers $m$. Needless to say, we want to reduce this exponential runtime. For this, we must slightly loosen our aspirations, that is we move to approximative methods. 
 Further, in the course of the next section, we will see that we need to assume that our convex operating cost function $f$ is non-negative and monotonically increasing; however, this restriction is of no great significance in practice, as will be discussed later.
 
-In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-optimal offline algorithm with linear time complexity. To clarify, given a number $y\in\mathbb{R}$, we say that a scheduling algorithm is \emph{$y$-optimal} if its calculated solution incurs at most $y$ times as much cost as an optimal solution does. Similarly, we say that a schedule/operation is \emph{$y$-approximative} if its cost is at most $y$ times as much as much as the original schedule's/operation's cost.\unsure{definition $y$-approx/opt.\ okay?}
-As a final step of this thesis, we will generalize this approach to derive an $(1+\beps)$-optimal algorithm with TODO time complexity.
+In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-optimal offline algorithm with linear time complexity. To clarify, given a number $y\in\mathbb{R}$, we say that a scheduling algorithm is \emph{$y$-optimal} if its calculated solution incurs at most $y$ times as much cost as an optimal solution does. Similarly, we say that a schedule/operation is \emph{$y$-approximative} if its cost is at most $y$ times as much as much as the original schedule's/operation's cost. \unsure{definition $y$-approx/opt.\ okay?}
+As a final step of this thesis, we will generalize the 2-optimal algorithm to derive an $(1+\beps)$-optimal algorithm with TODO time complexity.
 
 \section{A 2-Optimal Linear-Time Algorithm}
 Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's time complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Since we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, i.e.\ the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
@@ -36,7 +36,7 @@ where $B$ will subsequently represent the set of possible scheduling choices at 
 	\end{cases}\\
 	G&\coloneqq(V,E,c_G)
 \end{align*}
-If $m$ is a power of two, i.e.\ $m=2^b$, it happens that we add unnecessary loops in~$E_\downarrow$ and~$E_\uparrow$, which we can simply ignore for our following works.
+If $m$ is a power of two, i.e.\ $m=2^b$, it happens that we add unnecessary loops in~$E_\downarrow$ and~$E_\uparrow$ with cost $0$, which we can simply ignore for our following works.
 A graphical representation of $G$ can be found in the following figure.
 \begin{figure}[H]
 \includestandalone[width=\textwidth]{../figures/graph_lin_approx_2}
@@ -134,7 +134,7 @@ For example, the schedule $\mx=(5,4,8,7,8,15,10,16)$ changes its 2-state at time
 Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le2\costs(\mx)$}.
 \end{lem}
 \begin{proof}
-Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}.
+Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le2\costs(\mx)$}. \unsure{Is the lemma's structure (e.g.\ the use of the credit) clearer than before?}
 First, if $\mx$ is not feasible, we have $\costs(\mx)=\infty$, and thus any arbitrary $B$-restricted schedule $\mx'$ satisfies $\costs(\mx')\le2\costs(\mx)$; hence, assume that $\mx$ is feasible. Next, we notice that if $\mx$ shuts down all its servers at some timeslot $t\in[T]$ (i.e.\ $x_t=0$), we can split $\mx$ into two subschedules \makebox{$\mx_1\coloneqq(x_1,\dotsc,x_{t-1})$} and \makebox{$\mx_2\coloneqq(x_{t+1},\dotsc,x_T)$}. It then suffices to prove the claim for $\mx_1$ and $\mx_2$, since we can then construct the 2-approximative schedule by setting $x_t'\coloneqq 0$ and $\mx'\coloneqq(\mx_1',x_t',\mx_2')$. Thus, by recursively applying this method, we can reduce our proof to a list of subschedules $\mx_1,\dotsc,\mx_N$ that never shut down all servers. Consequently, without loss of generality, we subsequently assume that $\mx$ never powers down all its servers, that is $x_t>0$ for all $t\in[T]$. 
 	
 Next, we show that we can iteratively construct $\mx'$ by transforming every period between two 2-state changes of $\mx$ to a 2-approximative period in $\mx'$. 
@@ -152,9 +152,9 @@ as well as to the lower and upper bound of $\mx$ at time $j+1$:
 	\end{cases}
 &&\text{and}&&u'\coloneqq\min\bigl\{2l',m\bigr\}&&&
 \end{flalign*}
-Note that $l,u,l',u'\in B$ and that $x_t\le u\le 2x_t$ holds for any $i\le t\le j$ since $\mx$ does not change its 2-state between $i$ and $j$. 
+Note that $u,u'\in B$ and that $x_t\le u\le 2x_t$ holds for any $i\le t\le j$ since $\mx$ does not change its 2-state between $i$ and $j$.
 
-As an \emph{invariant} of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most twice as much switching costs as $\mx$ if we set $x_i'\coloneqq u$ -- whether this step will be taken in the end or not. Further, we are going to ensure that $x_t'\ge u$ holds for any $i\le t\le j$ after every transformation step. 
+As an \emph{invariant} of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most twice as much switching costs as $\mx$ if we set $x_i'\coloneqq u$ -- whether this step will be taken in the end or not. Further, we are going to ensure that $x_t'\ge u$ holds for any $i\le t\le j$ after every transformation step. Since $x_t\le u$, this guarantees that $\mx'$ will be feasible.
 	
 First, we have to check that our invariant initially holds. For the initial start-up process \makebox{(i.e.\ $i=1$)}, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq u\in B$. Since we know that $x_1'\le2x_1$, we can conclude that $\beta x_1'\le\beta 2x_1$, which shows that $\mx'$ has 2-approximative start-up switching costs. Thus, the invariant initially holds. Moreover, we can use the difference of switching costs $\beta(2x_1-x_1')=\beta(2x_1-u)$ as a credit for our amortized analysis.
 
@@ -165,7 +165,7 @@ Now, let us have a closer look on the possible behaviors of $\mx$ between its 2-
 	\item $\mx$ enters $[l,u)$ from below and then ascends to $[l',u')$.\label{itm:schedule_behavior_up_up} 
 	\item $\mx$ enters $[l,u)$ from above and then ascends to $[l',u')$.\label{itm:schedule_behavior_down_up} 
 \end{enumerate}
-To finish the proof, we need to show that any case can be transformed to a 2-approximative period in $\mx'$ while ensuring that our invariant will hold at the beginning of the next period, i.e.\ that we can set $x_{j+1}\coloneqq u'$ with 2-approximative switching costs. Additionally, we have to verify that the credit of our amortized analysis stays non-negative. In particular, we will show that our credit will be greater than or equal to $\beta(2x_{j+1}-u')$ if $\mx$ exits $[l,u)$ by ascending to $[l',u')$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(2x_i-u)$ if $\mx$ enters $[l,u)$ from below. Note that we already showed that this claim holds for our initial start-up process.
+To finish the proof, we need to show that any case can be transformed to a 2-approximative period in $\mx'$ while ensuring that our invariant will hold at the beginning of the next period, i.e.\ that we can set $x_{j+1}\coloneqq u'$ with 2-approximative switching costs. Additionally, we have to verify that the credit of our amortized analysis stays non-negative. In particular, we will show that our credit will be greater than or equal to $\beta(2x_{j+1}-u')$ if $\mx$ exits $[l,u)$ by ascending to $[l',u')$ at time $j+1$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(2x_i-u)$ if $\mx$ enters $[l,u)$ at time~$i$ from below. Note that we already showed that this claim holds for our initial start-up process.
 	
 We begin with cases~\ref{itm:schedule_behavior_up_down} and~\ref{itm:schedule_behavior_down_down}, which are both depicted in Figure~\ref{fig:schedule_behavior_down}.
 \begin{figure}[ht]
@@ -205,7 +205,7 @@ Finally, we have to consider case~\ref{itm:schedule_behavior_down_up}. As we hav
 	&&\text{and}\quad\mx_{i,j}^{\hat{u}}&\coloneqq\bigl(x_i^{\hat{u}},\dotsc,x_j^{\hat{u}}\bigr),&&\text{where}&x_t^{\hat{u}}\coloneqq \hat{u},\,\text{for } i\le t\le j&&&&
 \end{flalign*}
 with $\hat{u}\coloneqq\min\{2u,m\}\in B$. Both strategies are illustrated in Figure~\ref{fig:schedule_behavior_down_up}.
-\begin{figure}[ht]
+\begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.48\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_1}
@@ -239,7 +239,7 @@ Further, as in the previous cases, the operating costs of $\mx_{i,j}^u$ are 2-ap
 \begin{align}\label{eq:proof_2_competitive_asm_dist_pos}
 	\hat{u}-u>2(u-d)&&\text{or equivalently}&&\hat{u}-3u+2d>0
 \end{align}
-Next, by the law of excluded middle, the schedule $\mx_{i,j}^u$ is either 2-approximative, or it is not \makebox{2-approximative}. If it is 2-approximative, we are done; hence, from now on, we assume that $\mx_{i,j}^u$ is not 2-approximative\footnote{Note that due to this step, our procedure is not completely constructive anymore, but rather it becomes an existential assertion. Since we are not going to use the proof's procedure for our algorithm, we shall not worry about that.}, that is we have 
+Next, by the law of excluded middle, the schedule $\mx_{i,j}^u$ is either 2-approximative, or it is not \makebox{2-approximative}. If it is 2-approximative, we are done; hence, from now on, we assume that $\mx_{i,j}^u$ is not 2-approximative, that is
 \begin{equation*}
 	\opcosts(\mx_{i,j}^u)+\beta(\hat{u}-u)>2\bigl(\opcosts(\mx_{i,j})+\beta(u-d)\bigr)
 \end{equation*}
@@ -264,11 +264,11 @@ Next, since we want to prove that $\mx_{i,j}^{\hat{u}}$ is 2-approximative, we h
 Recall that $\mx_{i,j}^{\hat{u}}$ does not incur switching costs to move to $\hat{u}$, and thus we only have to consider its operating costs.
 We can now use our just derived lower bound for \makebox{$\opcosts(\mx_{i,j})+\beta(u-d)$} to estimate the difference:
 \begin{align*}
-	2\bigl(\opcosts(\mx_{i,j})+\beta(u-d)\bigr)-\opcosts(\mx_{i,j}^{\hat{u}})>2\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}-\opcosts(\mx_{i,j}^{\hat{u}})
+	2\bigl(\opcosts(\mx_{i,j})+\beta(u-d)\bigr)-\opcosts(\mx_{i,j}^{\hat{u}})>2\,\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}-\opcosts(\mx_{i,j}^{\hat{u}})
 \end{align*}
 Thus, it suffices to show that
 \begin{align*}
-	2\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}-\opcosts(\mx_{i,j}^{\hat{u}})\ge 0
+	2\,\frac{(\hat{u}-u)\opcosts(\mx_{i,j})-(u-d)\opcosts(\mx_{i,j}^u)}{\hat{u}-3u+2d}-\opcosts(\mx_{i,j}^{\hat{u}})\ge 0
 \end{align*}
 which, using Assumption~\eqref{eq:proof_2_competitive_asm_dist_pos}, that is $\hat{u}-3u+2d>0$, can be simplified to
 \begin{equation*}
@@ -341,7 +341,7 @@ In turn, $P'$ corresponds to a 2-optimal, \makebox{$B$-restricted} schedule $\mx
 To finish this section, we give an algorithm based on verified constructions. Naturally, since we did not change the graph's overall structure and working principle, a small adaption of Algorithm~\ref{alg:opt_offline_pseudo_linear} will serve its purpose. To account for the logarithmic steps in our graph, we introduce an auxiliary function \textproc{nodes}, which calculates the number of servers associated to an given index $i$ in our tables $C$ and $S$. As a matter of implementation convenience, the variable $b$ is defined as $\ceil{\log_2(m)}$ instead of $\floor{\log_2(m)}$ in Algorithm~\ref{alg:approx_2_offline_linear}.
 The correctness of the algorithm directly follows from Theorem~\ref{thm:approx_2} and the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\parencite[Section~24.2]{intro-algo}).\unsure{always cite this?}
 
-For our runtime analysis, we again take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} requires $\Theta\bigl(\log_2(m)\bigr)$ steps for its initialization and \makebox{$\Theta\bigl(2T\log_2(m)\bigr)$} steps for the iterative calculation of the selections and costs\unsure{Repetitive? Same words as in chapter 3}. Further, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a time complexity of
+For our runtime analysis, we again take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} requires $\Theta\bigl(\log_2(m)\bigr)$ steps for its initialization and \makebox{$\Theta\bigl(2T\log_2(m)\bigr)$} steps for the iterative calculation of the selections and costs\unsure{Repetitive? Same words as in chapter 4}. Further, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a time complexity of
 \begin{equation*}
 	\Theta\bigl(\log_2(m)+2T\log_2(m)+T\bigr)=\Theta(T\log_2(m))
 \end{equation*}
@@ -407,12 +407,13 @@ We saw in this section that our reduction to logarithmic steps allows us to deri
 \end{algorithm}
 
 \section{A $(1+\beps)$-Optimal Linear-Time Algorithm}
-TODO text + graph
+TODO text
 \begin{align*}
+	y&\coloneqq1+\beps\\
 	b&\coloneqq\floor{\log_y(m)}\\
 	B&\coloneqq\left\{0,\floor{y^0},\floor{y^1},\dotsc,\floor{y^b},m\right\}
 \end{align*}
-where $B$ will subsequently represent the set of possible scheduling choices at each time slot. Using this set of possible choices, we can then consider the following adaption of our former graph:
+where $B$ represents the set of possible scheduling choices at each time slot. We can then consider the following adaption of our graph:
 \begin{align*}
 	V&\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in B,t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in B, t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
 	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in B\bigr\}\\
@@ -433,13 +434,13 @@ where $B$ will subsequently represent the set of possible scheduling choices at 
 	G&\coloneqq(V,E,c_G)
 \end{align*}
 Unnecessary loops can again simply be ignored for our following works.
-A graphical representation of $G$ can be found in the following figure.
+A graphical representation of $G$ can be found in Figure~\ref{fig:graph_lin_approx_y}.
 \begin{figure}[H]
 \includestandalone[width=\textwidth]{../figures/graph_lin_approx_y}
 \caption{Graph for a $y$-optimal linear-time offline algorithm; the path of the topological sorting is highlighted in red.}
 \label{fig:graph_lin_approx_y}
 \end{figure}
-
+TODO text
 \begin{defn}[y-state changes]
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T+1]$. We say that $\mx$ changes its \emph{$y$-state} at time $t$ if $\mx$ satisfies the formula
 \begin{equation*}
@@ -451,7 +452,8 @@ The proof of the next lemma will be very similar to that done in Lemma~\ref{lem:
 Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le y\costs(\mx)$}.
 \end{lem}
 \begin{proof}
-Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le y\costs(\mx)$}. By following the same reasoning as done for Lemma~\ref{lem:transform_schedule_approx_2}, we can again assume that $\mx$ is feasible and never shuts down all its servers. We then have to show that every period between two $y$-state changes of $\mx$ can be iteratively transformed to a $y$-approximative period in $\mx'$. Let $i$ and $j+1$ with \makebox{$i,j\in[T]$} and $i\le j$ be the first unprocessed timeslots at which $\mx$ changes its \makebox{$y$-state}. We define the lower and upper bound of $\mx_{i,j}$ as
+Let $\mx=(x_1,\dotsc,x_T)$ be a schedule for $\inp$. We need to construct a $B$-restricted schedule $\mx'=(x_1',\dotsc,x_T')$ such that \makebox{$\costs(\mx')\le y\costs(\mx)$}. By following the same reasoning as done for Lemma~\ref{lem:transform_schedule_approx_2}, we can again assume that $\mx$ is feasible and never shuts down all its servers. We then have to show that every period between two $y$-state changes of $\mx$ can be iteratively transformed to a $y$-approximative period in $\mx'$. 
+The proof will again require an amortized analysis for the switching costs of $\mx'$ using the accounting method. For our iterative transformation, let $i$ and $j+1$ with \makebox{$i,j\in[T]$} and $i\le j$ be the first unprocessed timeslots at which $\mx$ changes its \makebox{$y$-state}. We define the lower and upper bound of $\mx_{i,j}$ as
 \begin{flalign*}
 	&&l\coloneqq y^{\floor{\log_y(x_i)}}&&\text{and}&&u\coloneqq\min\bigl\{yl,m\bigr\}&&&
 \end{flalign*}
@@ -463,209 +465,179 @@ and the lower and upper bound of $\mx$ at time $j+1$ as
 	\end{cases}
 &&\text{and}&&u'\coloneqq\min\bigl\{yl',m\bigr\}&&&
 \end{flalign*}
-We adapt our invariant in that we are going to ensure that $\mx'$ can potentially move to $\floor{u}$ at time $i$ in a $y$-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most $y$ times as much switching costs as $\mx$ if we set $x_i'\coloneqq \floor{u}$. Further, we are going to ensure that $x_t'\ge \floor{u}$ holds for any $i\le t\le j$ after every transformation step. 
+In the proof for our 2-approximation, we knew that $u$ and $u'$ must be integer, and thus we were able to simply assign $u$ or $u'$ servers for $\mx'$. However, as $y$ is not necessarily integer anymore, $u$ and $u'$ can also be non-integer, and thus $\mx'$ may not be able to schedule~$u$ or~$u'$ servers. Nevertheless, we can solve this issue by using $\floor{u}\in B$ and $\floor{u'}\in B$ servers instead.
+Note that $\mx$ does not change its $y$-state between $i$ and $j$, which means that $l\le x_t\le u$ holds for $i\le t\le j$. Since $x_t$ is integer and $\floor{u}$ is the largest integer contained in~$[l,u]$, we can even refine our upper bound to $x_t\le\floor{u}$. Further, by using the fact that $u\le yl$, we can conclude that $x_t\le\floor{u}\le yx_t$ holds for any $i\le t\le j$.
 
-For the initial start-up process (i.e.\ $i=1$), we can simply set $x_1'\coloneqq \floor{u} \in B$. Since we know that $x_1'\le yx_1$, we can conclude that $\beta x_1'\le\beta yx_1$; thus, the start-up switching costs of $\mx'$ are $y$-competitive and the invariant initially holds. The difference of switching costs $\beta(yx_1-x_1')=\beta(yx_1-\floor{u})$ as a credit for our amortized analysis.
+We adapt the invariant used in Lemma~\ref{lem:transform_schedule_approx_2} in that we are going to ensure that $\mx'$ can potentially move to $\floor{u}$ at time $i$ in a $y$-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most $y$ times as much switching costs as $\mx$ if we set $x_i'\coloneqq \floor{u}$. Further, we are going to ensure that $x_t'\ge \floor{u}$ holds for any $i\le t\le j$ after every transformation step. Since $x_t\le \floor{u}$, this guarantees that $\mx'$ will be feasible.
 
-To finish the proof, we need to show that any case can be transformed to a $y$-approximative period in $\mx'$ while ensuring that our invariant will hold at the beginning of the next period. Additionally, we again have to conduct an amortized analysis using the accounting method for the switching costs of $\mx'$. This time, we will show that our credit will be greater than or equal to $\beta(yx_{j+1}-\floor{u'})$ if $\mx$ exits $[l,u)$ by ascending to $[l',u')$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(yx_i-\floor{u})$ if $\mx$ enters $[l,u)$ from below. We already showed that this claim holds for our initial start-up process.
+For the initial start-up process (i.e.\ $i=1$), we can simply set $x_1'\coloneqq \floor{u} \in B$. Since we know that $x_1'\le yx_1$, we can conclude that $\beta x_1'\le\beta yx_1$; thus, the start-up switching costs of $\mx'$ are $y$-competitive and the invariant initially holds. The difference of switching costs $\beta(yx_1-x_1')=\beta(yx_1-\floor{u})$ can be used as a credit for our amortized analysis.
 
+Now, let us have a closer look on the possible behaviors of $\mx$ between its $y$-state changes. Recall the four possible cases:
+\begin{enumerate}[label=(\alph*)]
+	\item $\mx$ enters $[l,u)$ from below and then descends to $[l',u')$.\label{itm:schedule_behavior_up_down_y}
+	\item $\mx$ enters $[l,u)$ from above and then descends to $[l',u')$.\label{itm:schedule_behavior_down_down_y}
+	\item $\mx$ enters $[l,u)$ from below and then ascends to $[l',u')$.\label{itm:schedule_behavior_up_up_y} 
+	\item $\mx$ enters $[l,u)$ from above and then ascends to $[l',u')$.\label{itm:schedule_behavior_down_up_y} 
+\end{enumerate}
+To finish the proof, we need to show that any case can be transformed to a $y$-approximative period in $\mx'$ while ensuring that our invariant will hold at the beginning of the next period. Additionally, we have to verify that the credit of our amortized analysis stays non-negative. We will in particular show that our credit will be greater than or equal to $\beta(yx_{j+1}-\floor{u'})$ if $\mx$ exits $[l,u)$ by ascending to $[l',u')$ at time $j+1$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(yx_i-\floor{u})$ if $\mx$ enters $[l,u)$ at time~$i$ from below. We already showed that this claim holds for our initial start-up process.
 
-Now, let us have a closer look on the possible behaviors of $\mx$ between its $y$-state changes. We will classify the behaviors based on how $\mx$ enters and leaves the interval $[l,u)$. First, we consider the cases where $\mx$ leaves the interval $[l,u)$ by turning off servers, as depicted in Figure~\ref{todo}.
-\begin{figure}[H]
-\captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.49\textwidth}
-\includestandalone[width=\textwidth]{../figures/schedule_behavior_down_down}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.49\textwidth}
-\includestandalone[width=\textwidth]{../figures/schedule_behavior_up_down}
-\end{subfigure}
-\caption{The original schedule comes from above or below, stays between $[l,u)$, and then descends to $[l',u')$. The approximative schedule stays put at $\floor{u}$ for timeslots $i\le t\le j$.}
-\end{figure}
-Due to our invariant, we know that we can set $x_i'\coloneqq \floor{u}$ with $y$-competitive switching costs. Consequently, setting $x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq \floor{u}\in B$ gives us a strategy with $y$-competitive switching costs between $i$ and $j$. Further, since $x_t\le \floor{u}\le yx_t$ for any $i\le t\le j$, and $f$ is non-negative and monotonically increasing, the operating costs of $\mx'_{i,j}$ can be estimated by
-\begin{equation*}
-	\opcosts(\mx_{i,j}')\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}\sum\limits_{t=i}^j\Bigl(\floor{u} f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\Bigr)\le\sum\limits_{t=i}^j\Bigl(yx_tf\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\Bigr)\le y\sum\limits_{t=i}^j\Bigl(x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)\Bigr)\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}y\opcosts(\mx_{i,j})
-\end{equation*}
-Thus, the operating costs of $\mx_{i,j}'$ are $y$-competitive. Further, since $\floor{u'}<\floor{u}$, we do not need to account for additional switching costs to satisfy our invariant at time $j+1$; however, we want to stress that one cannot tell at this step if we should indeed set $x_{j+1}\coloneqq \floor{u'}$ (c.f. Figure~\ref{todo} and its related case). 
+We start with cases~\ref{itm:schedule_behavior_up_down_y} and~\ref{itm:schedule_behavior_down_down_y}. Due to our invariant, we know that we can set $x_i'\coloneqq \floor{u}$ with $y$-approximative switching costs. Consequently, setting $x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq \floor{u}\in B$ gives us a strategy with $y$-approximative switching costs between $i$ and $j$. Further, since $x_t\le \floor{u}\le yx_t$ for any $i\le t\le j$, and $f$ is non-negative and monotonically increasing, the operating costs of $\mx'_{i,j}$ can be estimated by
+\begin{align*}
+	\opcosts(\mx_{i,j}')&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}\sum\limits_{t=i}^j\left(\floor{u} f\left(\frac{\lambda_t}{\floor{u}}\right)\right)\le\sum\limits_{t=i}^j\left(yx_tf\left(\frac{\lambda_t}{\floor{u}}\right)\right)\le y\sum\limits_{t=i}^j\left(x_tf\left(\frac{\lambda_t}{x_t}\right)\right)\\
+	&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}y\opcosts(\mx_{i,j})
+\end{align*}
+Thus, the operating costs of $\mx_{i,j}'$ are $y$-approximative. Further, since $\floor{u'}<\floor{u}$, we do not need to account for additional switching costs to satisfy our invariant at time $j+1$. Lastly, the credit of our amortized analysis stays untouched, i.e.\ it stays non-negative.
 	
-Next, we consider the case where $\mx$ rises to $[l,u)$ and then further ascends to $[l',u')$, as illustrated in Figure~\ref{todo}.
-\begin{figure}[H]
-\centering
-\includestandalone[width=0.5\textwidth]{../figures/schedule_behavior_up_up}	
-\caption{The original schedule comes from below, stays between $[l,u)$, and then rises to $[l',u')$. The approximative schedule stays put at $u$ for timeslots $i\le t\le j$ and rises to $u'$ at time $j+1$.}
-\end{figure}
-In this case, we set $x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq \floor{u}\in B$ and $x_{j+1}'\coloneqq \floor{u'}\in B$. Evidently, as in the previous case, the operating costs of $\mx_{i,j}'$ are $y$-competitive. Further, due to our invariant, we can again safely move to $\floor{u}$ with $y$-competitive switching costs. Lastly, we need to ensure that our invariant at time $j+1$ holds. Since $\mx$ has to power on at least $x_{j+1}-x_i$ servers between $i$ and $j+1$, it suffices to show that $\beta(\floor{u'}-\floor{u})\le y\beta(x_{j+1}-x_i)$ holds. Using an amortized analysis, that is using our switching cost credit, we can see that this is indeed the case:
+For case~\ref{itm:schedule_behavior_up_up_y}, we again know that setting \makebox{$x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq \floor{u}\in B$} gives us a strategy with $y$-approximative switching costs due to our invariant. Moreover, as in the previous case, the operating costs of $\mx_{i,j}'$ are $y$-approximative. To verify our invariant at time $j+1$, we use the fact that $\mx$ has to power on at least $x_{j+1}-x_i$ servers between~$i$ and $j+1$. Thus, we would have to show that $\beta(\floor{u'}-\floor{u})\le y\beta(x_{j+1}-x_i)$ holds. However, since we entered $[l,u)$ from below, we can additionally use our credit to compensate for our costs:
 \begin{align*}
 	y\beta(x_{j+1}-x_i)+\overbrace{\beta(yx_i-\floor{u})}^{\text{credit}}=\beta(yx_{j+1}-\floor{u})\ge\beta(\floor{u'}-\floor{u})
 \end{align*}
-where the last inequality follows from $\floor{u'}\le yx_{j+1}$. Thus, our invariant at time $j+1$ is satisfied. Note again that the difference $\beta(yx_{j+1}-\floor{u'})-\beta(\floor{u'}-\floor{u})=\beta(yx_{j+1}-\floor{u'})$ can be used as a switching cost credit for subsequent operations. 
+where the last inequality follows from $\floor{u'}\le yx_{j+1}$. Thus, our invariant at time $j+1$ is satisfied. The difference $\beta(yx_{j+1}-\floor{u})-\beta(\floor{u'}-\floor{u})=\beta(yx_{j+1}-\floor{u'})$ can further be used as our new credit. 
 	
-Finally, we have to consider the case where $\mx$ descends to $[l,u)$ and then ascends to $[l',u')$. We can solve this issue by considering two different strategies for $\mx_{i,j}'$, namely
-\begin{align*}
-	\mx_{i,j}^{\floor{u}}&\coloneqq(x_i^{\floor{u}}\coloneqq\floor{u},\dotsc,x_j^{\floor{u}}\coloneqq\floor{u})\\
-	\mx_{i,j}^{\floor{\hat{u}}}&\coloneqq(x_i^{\floor{\hat{u}}}\coloneqq\floor{\hat{u}},\dotsc,x_j^{\floor{\hat{u}}}\coloneqq\floor{\hat{u}})
-\end{align*}
-where $\hat{u}\coloneqq\min\{y^{\log_y(u)+1},m\}\in B$. Due to our invariant and the fact that $\mx$ descends at time $i$, we know that $x_{i-1}'\ge \hat{u}\ge u$, and thus both strategies do no incur switching costs up to time $j$ (but possibly at time $j+1$). Both strategies are illustrated in Figure~\ref{todo}.
-\begin{figure}[H]
-\captionsetup[subfigure]{labelformat=empty}
-\begin{subfigure}[b]{0.49\textwidth}
-\includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_1}
-\caption{Strategy $\mx_{i,j}^u$ stays put at $u$ for $i\le t\le j$\\and then rises to $u'$.}
-\end{subfigure}
-\hfill
-\begin{subfigure}[b]{0.49\textwidth}
-\includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_2}
-\caption{Strategy $\mx_{i,j}^{\hat{u}}$ stays put at $\hat{u}$ for $i\le t\le j$ and then rises to $u'$.}
-\end{subfigure}
-\caption{The original schedule comes from above, stays between $[l,u)$, and then rises to $[l',u')$. The approximative schedule has two different possibilities.}
-\end{figure}
-We are now going to prove that either the costs of $\mx_{i,j}^{\floor{u}}$ or of $\mx_{i,j}^{\floor{\hat{u}}}$, including possible switching costs to satisfy our invariant at time $j+1$, must be $y$-competitive. 
-First, we examine the switching costs of $\mx$ from $i$ up to $j+1$. To do so, we set $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to refer to the smallest number of active servers used by $\mx_{i,j}$. Then, since $\mx$ has to power on at least $x_{j+1}-d$ servers between $i$ and $j+1$, we can give a lower bound for its switching costs:
+Finally, we have to consider case~\ref{itm:schedule_behavior_down_up_y}, for which we again consider two different strategies, namely
+\begin{flalign*}
+	&&\mx_{i,j}^{\floor{u}}&\coloneqq\bigl(x_i^{\floor{u}},\dotsc,x_j^{\floor{u}}\bigr),&&\text{where}&x_t^{\floor{u}}\coloneqq \floor{u},\,\text{for } i\le t\le j&&&&\\
+	&&\text{and}\quad\mx_{i,j}^{\floor{\hat{u}}}&\coloneqq\bigl(x_i^{\floor{\hat{u}}},\dotsc,x_j^{\floor{\hat{u}}}\bigr),&&\text{where}&x_t^{\floor{\hat{u}}}\coloneqq \floor{\hat{u}},\,\text{for } i\le t\le j&&&&
+\end{flalign*}
+with $\hat{u}\coloneqq\min\{yu,m\}$. Due to our invariant and the fact that $\mx$ descends at time $i$, we know that $x_{i-1}'\ge\floor{\hat{u}}\ge\floor{u}$, and thus both strategies do no incur switching costs up to time $j$.
+We are now going to prove that either the cost of $\mx_{i,j}^{\floor{u}}$ or of $\mx_{i,j}^{\floor{\hat{u}}}$, including possible switching costs to satisfy our invariant at time $j+1$, must be $y$-approximative. 
+First, we define $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to be the smallest number of active servers used by $\mx_{i,j}$. We can use $d$ to give a lower bound for the switching costs of $\mx$ between $i$ and~$j+1$:
 \begin{equation*}
 	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta(x_{j+1}-d)
 \end{equation*}
-The next idea is to split $\mx_{i,j}$ and its associated switching costs at the final switching step into two parts; more precisely, we split $\beta(x_{j+1}-d)$ into $\beta(x_{j+1}-\frac{\floor{\hat{u}}}{y})$ and $\beta(\frac{\floor{\hat{u}}}{y}-d)$. It then suffices to show that either $\mx_{i,j}^u$ or $\mx_{i,j}^{\hat{u}}$ can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\floor{\hat{u}}$ with $y$-competitive costs under the assumption that $\mx_{i,j}$ only switches to $\frac{\floor{\hat{u}}}{y}$ as a first step. This is due to the fact that the remaining switching costs to ascend from $u$ to $\floor{u'}$ are then $y$-competitive anyway:
-\begin{equation*}
-	\beta(\floor{u'}-\floor{\hat{u}})\le\beta(yx_{j+1}-\hat{u})=y\beta\Bigl(x_{j+1}-\frac{\floor{\hat{u}}}{y}\Bigr)
-\end{equation*}
-TODO where we assumed that $\hat{u}=2u$ holds; otherwise, we have $u'=\hat{u}=m$ and the inequality trivially holds. Further, if $\hat{u}=2u$, we can once more use the difference $y\beta(x_{j+1}-\frac{\floor{\hat{u}}}{y})-\beta(\floor{u'}-\floor{\hat{u}})=\beta(yx_{j+1}-\floor{u'})$ as a switching cost credit for subsequent operations. If $\hat{u}\neq2u$, no further credit is needed, since we already reached the limit of servers $m$.
+Then, we again split $\mx_{i,j}$ and its associated switching costs at the final switching step into two parts. This time, we split $\beta(x_{j+1}-d)$ into $\beta(x_{j+1}-\frac{\floor{\hat{u}}}{y})$ and $\beta(\frac{\floor{\hat{u}}}{y}-d)$. We have to check that this split is ``well-defined'', i.e.\ that $d\le	\frac{\floor{\hat{u}}}{y}\le x_{j+1}$ holds. Since $u\le x_{j+1}$ and $\hat{u}\le yu$, we have $\frac{\floor{\hat{u}}}{y}\le x_{j+1}$.
 
-To proceed, we notice that if $\floor{\hat{u}}-\floor{u}\le y(\frac{\floor{\hat{u}}}{y}-d)$ holds, strategy $\mx_{i,j}^u$ has $y$-competitive switching costs:
+The single step that fails. \unsure{what if $d>\floor{\hat{u}}/y$?}
+	
+It now suffices to show that either $\mx_{i,j}^u$ or $\mx_{i,j}^{\hat{u}}$ can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\floor{\hat{u}}$ with $y$-approximative costs under the assumption that $\mx_{i,j}$ only switches to~$\frac{\floor{\hat{u}}}{y}$ as a first step. This is due to the fact that the remaining switching costs to ascend from $\floor{\hat{u}}$ to $\floor{u'}$ are then $y$-competitive anyway:
 \begin{equation*}
-	\beta(\floor{\hat{u}}-\floor{u})\le y\beta\Bigl(\frac{\floor{\hat{u}}}{y}-d\Bigr)
+	\beta(\floor{u'}-\floor{\hat{u}})\le\beta(yx_{j+1}-\floor{\hat{u}})=y\beta\left(x_{j+1}-\frac{\floor{\hat{u}}}{y}\right)
 \end{equation*}
-Further, as in the previous cases, the operating costs of $\mx_{i,j}^u$ are $y$-competitive, and thus $\mx_{i,j}^u$ is $y$-competitive if $\floor{\hat{u}}-\floor{u}\le y(\frac{\floor{\hat{u}}}{y}-d)$. Hence, we subsequently assume that 
-\begin{align}\label{eq:proof_y_competitive_asm_dist_pos}
-	\floor{\hat{u}}-\floor{u}>y\Bigl(\frac{\floor{\hat{u}}}{y}-d\Bigr)&&\text{or equivalently}&&yd-\floor{u}>0
-\end{align}
-Next, by the law of excluded middle, either $\mx_{i,j}^u$ is $y$-competitive, or it is not $y$-competitive. If it is $y$-competitive, we are done; hence, from now on, we assume that $\mx_{i,j}^{\floor{u}}$ is not $y$-competitive, that is we have 
+Further, we can then again use the difference of costs for our credit:
 \begin{equation*}
-	\opcosts(\mx_{i,j}^{\floor{u}})+\beta(\floor{\hat{u}}-\floor{u})>y\Bigl(\opcosts(\mx_{i,j})+\beta\Bigl(\frac{\floor{\hat{u}}}{y}-d\Bigr)\Bigr)
+	y\beta\left(x_{j+1}-\frac{\floor{\hat{u}}}{y}\right)-\beta(\floor{u'}-\floor{\hat{u}})=\beta(yx_{j+1}-\floor{u'})
 \end{equation*}
-We then need to show that $\mx_{i,j}^{\floor{\hat{u}}}$ is $y$-competitive.
+To proceed, we can assume that $\mx_{i,j}^{\floor{u}}$ is not $y$-approximative; otherwise, we are already done. Hence, assume that 
+\begin{equation*}
+	\opcosts(\mx_{i,j}^{\floor{u}})+\beta(\floor{\hat{u}}-\floor{u})>y\left(\opcosts(\mx_{i,j})+\beta\left(\frac{\floor{\hat{u}}}{y}-d\right)\right)
+\end{equation*}
+We then have to show that $\mx_{i,j}^{\floor{\hat{u}}}$ is $y$-approximative.
 Rearranging the previous inequality gives us an estimation for $\beta$:
 \begin{align*}
-	&&\opcosts(\mx_{i,j}^{\floor{u}})+\beta(\floor{\hat{u}}-\floor{u})&>y\Bigl(\opcosts(\mx_{i,j})+\beta\Bigl(\frac{\floor{\hat{u}}}{y}-d\Bigr)\Bigr)
+	&&\opcosts(\mx_{i,j}^{\floor{u}})+\beta(\floor{\hat{u}}-\floor{u})&>y\left(\opcosts(\mx_{i,j})+\beta\left(\frac{\floor{\hat{u}}}{y}-d\right)\right)
 &\\
 	&\stackrel{\phantom{yd-\floor{u}>0}}{\iff}&\beta(yd-\floor{u})&>y\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^{\floor{u}})&\\
 	&\stackrel{yd-\floor{u}>0}{\iff}&\beta&>\frac{y\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}
 \end{align*}
-where the last step is justified by Assumption~\eqref{eq:proof_y_competitive_asm_dist_pos}.
-This allows us to find a lower bound for the costs of using $\mx_{i,j}$:
+where the last step is justified since $l\le d\le u\le yl$.
+This allows us to find a lower bound for the cost of $\mx_{i,j}$:
 \begin{align*}
-	\opcosts(\mx_{i,j})+\beta\Bigl(\frac{\floor{\hat{u}}}{y}-d\Bigr)&>\opcosts(\mx_{i,j})+\frac{y\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}\Bigl(\frac{\floor{\hat{u}}}{y}-d\Bigr)\\
-	&=\frac{(yd-\floor{u})\opcosts(\mx_{i,j})+(\floor{\hat{u}}-yd)\opcosts(\mx_{i,j})-(\frac{\floor{\hat{u}}}{y}-d)\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}\\
-	&=\frac{(\floor{\hat{u}}-\floor{u})\opcosts(\mx_{i,j})-(\frac{\floor{\hat{u}}}{y}-d)\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}
+	\opcosts(\mx_{i,j})+\beta\left(\frac{\floor{\hat{u}}}{y}-d\right)&>\opcosts(\mx_{i,j})+\frac{y\opcosts(\mx_{i,j})-\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}\left(\frac{\floor{\hat{u}}}{y}-d\right)\\
+	&=\frac{(yd-\floor{u})\opcosts(\mx_{i,j})+(\floor{\hat{u}}-yd)\opcosts(\mx_{i,j})-\left(\frac{\floor{\hat{u}}}{y}-d\right)\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}\\
+	&=\frac{(\floor{\hat{u}}-\floor{u})\opcosts(\mx_{i,j})-\left(\frac{\floor{\hat{u}}}{y}-d\right)\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}
 \end{align*}
-Next, since we want to prove that $\opcosts(\mx_{i,j}^{\floor{\hat{u}}})$ is $y$-competitive, we have to show that the following cost difference is non-negative:
+Next, since we want to prove that $\opcosts(\mx_{i,j}^{\floor{\hat{u}}})$ is $y$-approximative, we have to show that the following cost difference is non-negative:
 \begin{align*}
-	y\Bigl(\opcosts(\mx_{i,j})+\beta\Bigl(\frac{\floor{\hat{u}}}{y}-d\Bigr)\Bigr)-\opcosts(\mx_{i,j}^{\floor{\hat{u}}})
+	y\left(\opcosts(\mx_{i,j})+\beta\left(\frac{\floor{\hat{u}}}{y}-d\right)\right)-\opcosts(\mx_{i,j}^{\floor{\hat{u}}})
 \end{align*}
-We can use our just derived lower bound for $\opcosts(\mx_{i,j})+\beta(u-d)$ to estimate the difference:
+Recall that $\mx_{i,j}^{\floor{\hat{u}}}$ does not incur switching costs to move to $\floor{\hat{u}}$. We can now use our just derived lower bound for $\opcosts(\mx_{i,j})+\beta(u-d)$ to estimate the difference:
 \begin{align*}
-	&y\Bigl(\opcosts(\mx_{i,j})+\beta\Bigl(\frac{\floor{\hat{u}}}{y}-d\Bigr)\Bigr)-\opcosts(\mx_{i,j}^{\floor{\hat{u}}})\\
-	>\quad&y\frac{(\floor{\hat{u}}-\floor{u})\opcosts(\mx_{i,j})-(\frac{\floor{\hat{u}}}{y}-d)\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}-\opcosts(\mx_{i,j}^{\floor{\hat{u}}})
+	&y\left(\opcosts(\mx_{i,j})+\beta\left(\frac{\floor{\hat{u}}}{y}-d\right)\right)-\opcosts(\mx_{i,j}^{\floor{\hat{u}}})\\
+	>\quad&y\, \frac{(\floor{\hat{u}}-\floor{u})\opcosts(\mx_{i,j})-\left(\frac{\floor{\hat{u}}}{y}-d\right)\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}-\opcosts(\mx_{i,j}^{\floor{\hat{u}}})
 \end{align*}
 Thus, it suffices to show that
 \begin{align*}
-	y\frac{(\floor{\hat{u}}-\floor{u})\opcosts(\mx_{i,j})-(\frac{\floor{\hat{u}}}{y}-d)\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}-\opcosts(\mx_{i,j}^{\floor{\hat{u}}})\ge 0
+	y\,\frac{(\floor{\hat{u}}-\floor{u})\opcosts(\mx_{i,j})-\left(\frac{\floor{\hat{u}}}{y}-d\right)\opcosts(\mx_{i,j}^{\floor{u}})}{yd-\floor{u}}-\opcosts(\mx_{i,j}^{\floor{\hat{u}}})\ge 0
 \end{align*}
-which, by Assumption~\eqref{eq:proof_y_competitive_asm_dist_pos}, that is $yd-\floor{u}>0$, can be simplified to
+which can be simplified to
 \begin{equation*}
 	y(\floor{\hat{u}}-\floor{u})\opcosts(\mx_{i,j})-(\floor{\hat{u}}-yd)\opcosts(\mx_{i,j}^{\floor{u}})-(yd-\floor{u})\opcosts(\mx_{i,j}^{\floor{\hat{u}}})\ge 0
 \end{equation*}
 To show this inequality, we have to take a closer look on the the schedules' operating costs:
 \begin{align*}
 	&&&y(\floor{\hat{u}}-\floor{u})\opcosts(\mx_{i,j})-(\floor{\hat{u}}-yd)\opcosts(\mx_{i,j}^{\floor{u}})-(yd-\floor{u})\opcosts(\mx_{i,j}^{\floor{\hat{u}}})\\
-	&\stackrel{\eqref{eq:mx_schedule_op_costs}}{=}&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)-(\floor{\hat{u}}-yd)\floor{u}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(yd-\floor{u})\floor{\hat{u}}f\Bigl(\frac{\lambda_t}{\floor{\hat{u}}}\Bigr)\right)
+	&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})x_tf\left(\frac{\lambda_t}{x_t}\right)-(\floor{\hat{u}}-yd)\floor{u}f\left(\frac{\lambda_t}{\floor{u}}\right)-(yd-\floor{u})\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)
 \end{align*}
 First, we notice that $\floor{u}\le\floor{\hat{u}}$ and $x_t\le\floor{u}$ for $i\le t\le j$. Together with the fact that $f$ is monotonically increasing, we infer that
 \begin{align*}
-	&&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})x_tf\Bigl(\frac{\lambda_t}{x_t}\Bigr)-(\floor{\hat{u}}-yd)\floor{u}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(yd-\floor{u})\floor{\hat{u}}f\Bigl(\frac{\lambda_t}{\floor{\hat{u}}}\Bigr)\right)\\
-	&\ge&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})x_tf\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(\floor{\hat{u}}-yd)\floor{u}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(yd-\floor{u})\floor{\hat{u}}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\right)
+	&&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})x_tf\left(\frac{\lambda_t}{x_t}\right)-(\floor{\hat{u}}-yd)\floor{u}f\left(\frac{\lambda_t}{\floor{u}}\right)-(yd-\floor{u})\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)\\
+	&\ge&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})x_tf\left(\frac{\lambda_t}{\floor{u}}\right)-(\floor{\hat{u}}-yd)\floor{u}f\left(\frac{\lambda_t}{\floor{u}}\right)-(yd-\floor{u})\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{u}}\right)\right)
 \end{align*}
 Since $d$ is the smallest number of active servers scheduled by $\mx$, and $f$ is non-negative, we can conclude that
 \begin{align*}
-	&&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})x_tf\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(\floor{\hat{u}}-yd)\floor{u}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(yd-\floor{u})\floor{\hat{u}}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\right)\\
-	&\ge&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})df\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(\floor{\hat{u}}-yd)\floor{u}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(yd-\floor{u})\floor{\hat{u}}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\right)
+	&&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})x_tf\left(\frac{\lambda_t}{\floor{u}}\right)-(\floor{\hat{u}}-yd)\floor{u}f\left(\frac{\lambda_t}{\floor{u}}\right)-(yd-\floor{u})\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{u}}\right)\right)\\
+	&\ge&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})df\left(\frac{\lambda_t}{\floor{u}}\right)-(\floor{\hat{u}}-yd)\floor{u}f\left(\frac{\lambda_t}{\floor{u}}\right)-(yd-\floor{u})\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{u}}\right)\right)
 \end{align*}
 Hence, to finish the case, it suffices to show that
 \begin{align*}
-	\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})df\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(\floor{\hat{u}}-yd)\floor{u}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(yd-\floor{u})\floor{\hat{u}}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\right)\ge 0
+	\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})df\left(\frac{\lambda_t}{\floor{u}}\right)-(\floor{\hat{u}}-yd)\floor{u}f\left(\frac{\lambda_t}{\floor{u}}\right)-(yd-\floor{u})\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{u}}\right)\right)\ge 0
 \end{align*}
 Further rearranging the left hand side gives us
 \begin{align*}
-	&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})df\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(\floor{\hat{u}}-yd)\floor{u}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)-(yd-\floor{u})\floor{\hat{u}}f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\right)\\
-	=&\sum\limits_{t=i}^j\left(\Bigl(y(\floor{\hat{u}}-\floor{u})d-(\floor{\hat{u}}-yd)\floor{u}-(yd-\floor{u})\floor{\hat{u}}\Bigr)f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\right)\\
-	=&\sum\limits_{t=i}^j\left(\Bigl(yd\floor{\hat{u}}-yd\floor{u}-\floor{u}\floor{\hat{u}}+yd\floor{u}-yd\floor{\hat{u}}+\floor{u}\floor{\hat{u}}\Bigr)f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\right)\\
-	=&\sum\limits_{t=i}^j\left(0\cdot f\Bigl(\frac{\lambda_t}{\floor{u}}\Bigr)\right)=0
+	&&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})df\left(\frac{\lambda_t}{\floor{u}}\right)-(\floor{\hat{u}}-yd)\floor{u}f\left(\frac{\lambda_t}{\floor{u}}\right)-(yd-\floor{u})\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{u}}\right)\right)\\
+	&=&&\sum\limits_{t=i}^j\left(\Bigl(y(\floor{\hat{u}}-\floor{u})d-(\floor{\hat{u}}-yd)\floor{u}-(yd-\floor{u})\floor{\hat{u}}\Bigr)f\left(\frac{\lambda_t}{\floor{u}}\right)\right)\\
+	&=&&\sum\limits_{t=i}^j\left(\Bigl(yd\floor{\hat{u}}-yd\floor{u}-\floor{u}\floor{\hat{u}}+yd\floor{u}-yd\floor{\hat{u}}+\floor{u}\floor{\hat{u}}\Bigr)f\left(\frac{\lambda_t}{\floor{u}}\right)\right)\\
+	&=&&\sum\limits_{t=i}^j\left(0\cdot f\left(\frac{\lambda_t}{\floor{u}}\right)\right)=0
 \end{align*}
 which finishes the case.
 
 By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le y\costs(\mx)$.
 \end{proof}
 
-
 \begin{algorithm}[H]
-  \caption{Linear $(1+\beps)$-competitive offline scheduling}
-  \label{alg:approx_1_eps_offline_linear}
+  \caption{$(1+\beps)$-optimal linear-time offline scheduling}
+  \label{alg:approx_2_offline_linear}
   \begin{algorithmic}[1]
   \Function{$(1+\beps)$\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f,\beps$}
 	  \Let{$(C,S)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f,1+\beps$}}
-	  \Let{$\mx$}{\Call{extract\_schedule}{$P,T,m,1+\beps$}}
+	  \Let{$\mx$}{\Call{extract\_schedule}{$S,T,m,1+\beps$}}
 	  \State \Return{$\mx$}
   \EndFunction
   \Statex
   \Function{node}{$i,m,y$}
 	  \State \Return{$\min\bigl\{m,\floor{y^{i-1}}\bigr\}$}
   \EndFunction
-  \algstore{lin2opt}
-  \end{algorithmic}
-\end{algorithm}
-\begin{algorithm}[H]
-  \begin{algorithmic}[1]
-  \algrestore{lin2opt}
+  \Statex
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f,y$}
 	\Let{$b$}{$\ceil{\log_y(m)}$}
-	\LineComment{Allocate nodes' costs and predecessor tables}
-	\Blet{$C[0\dotso b+1,1\dotso T]$ and $P[0\dotso b+1,1\dotso T]$}{new tables}
-	\Let{$P[b+1,1]$}{$b+1$ and $C[b+1,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
+	\Blet{$C[0\dotso b+1,1\dotso T]$ and $S[0\dotso b+1,1\dotso T]$}{new tables}
+	\Statex \Comment{Allocate cost and selection tables}
+	\Let{$S[b+1,1]$}{$b+1$ and $C[b+1,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node in first layer}
 	\For{$i \gets b \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
 		\If {$C[i+1,1]<\costs\bigl(0,\Call{node}{i,m,y},\lambda_1\bigr)$}
-			\Let{$P[i,1]$}{$P[i+1,1]$ and $C[i,1]\gets C[i+1,1]$}
+			\Let{$S[i,1]$}{$S[i+1,1]$ and $C[i,1]\gets C[i+1,1]$}
 		\Else
-			\Let{$P[i,1]$}{$i$ and $C[i,1]\gets\costs\bigl(0,\Call{node}{i,m,y},\lambda_1\bigr)$}
+			\Let{$S[i,1]$}{$i$ and $C[i,1]\gets\costs\bigl(0,\Call{node}{i,m,y},\lambda_1\bigr)$}
 		\EndIf
 	\EndFor
-	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and predecessors}
+	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and selections}
 		\For{$i \gets 1 \textrm{ to } b+1$}\Comment{Upward minimization step}
 			\If {$C[i-1,t]+\beta\bigl(\Call{node}{i,m,y}-\Call{node}{i-1,m,y}\bigr)<C[i,t]$}
-			    \Let{$P[i,t]$}{$P[i-1,t]$}
+			    \Let{$S[i,t]$}{$S[i-1,t]$}
 			    \Let{$C[i,t]$}{$C[i-1,t]+\beta\bigl(\Call{node}{i,m,y}-\Call{node}{i-1,m,y}\bigr)$}
 			\EndIf
 		\EndFor
-		\Let{$P[b+1,t+1]$}{$b+1$ and $C[b+1,t+1]\gets C[b+1,t]+\opcosts(m,\lambda_{t+1})$}
+		\Let{$S[b+1,t+1]$}{$b+1$ and $C[b+1,t+1]\gets C[b+1,t]+\opcosts(m,\lambda_{t+1})$}
 		\For{$i \gets b \textrm{ to } 0$}\Comment{Downward minimization step}
 			\If {$C[i+1,t+1]<C[i,t]+\opcosts\bigl(\Call{node}{i,m,y},\lambda_{t+1}\bigr)$}
-				\Let{$P[i,t+1]$}{$P[i+1,t+1]$ and $C[i,t+1]\gets C[i+1,t+1]$}
+				\Let{$S[i,t+1]$}{$S[i+1,t+1]$ and $C[i,t+1]\gets C[i+1,t+1]$}
 			\Else
-				\Let{$P[i,t+1]$}{$i$ and $C[i,t+1]\gets C[i,t]+\opcosts\bigl(\Call{node}{i,m,y},\lambda_{t+1}\bigr)$}
+				\Let{$S[i,t+1]$}{$i$ and $C[i,t+1]\gets C[i,t]+\opcosts\bigl(\Call{node}{i,m,y},\lambda_{t+1}\bigr)$}
 			\EndIf
 		\EndFor
 	\EndFor
 	\State \Return{$(C,S)$}
   \EndFunction
   \Statex
-  \Function{extract\_schedule}{$P,T,m,y$}
+  \Function{extract\_schedule}{$S,T,m,y$}
 	\Blet{$\mx[1\dotso T]$}{a new array}
-	\Let{$i$}{$P[0,T]$}\Comment{Get index of best choice for last time slot}
-    	\Let{$\mx[T]$}{$\Call{node}{i,m,y}$}\Comment{Calculate best choice for last time slot}
-        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain a schedule by using the predecessors}
-		\Let{$i$}{$P[i,t]$}
-		\Let{$\mx[t]$}{$\Call{node}{i,m,y}$}
+	\Let{$i$}{$S[0,T]$}\Comment{Get index of best selection for last time slot}
+    	\Let{$\mx[T]$}{$\Call{node}{i,m,y}$}\Comment{Calculate best selection for last time slot}
+        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from selection table}
+		\Let{$i$}{$S[i,t]$}
+		\Let{$\mx[t]$}{$\Call{node}{i,m,y}$}	
 	\EndFor
 	\State \Return{$\mx$}
   \EndFunction
   \end{algorithmic}
 \end{algorithm}
-
