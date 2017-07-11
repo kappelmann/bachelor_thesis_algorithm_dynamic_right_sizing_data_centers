@@ -1,0 +1,42 @@
+\documentclass{standalone}
+\usepackage{tikz}
+\begin{document}
+\begin{tikzpicture}
+	\begin{axis}[%
+	    xlabel=Time $t$,
+	    ylabel=Active servers,
+	    axis x line = bottom,axis y line = left,
+	    ytick={2,7,12,17,26,34,46},
+	    yticklabels={$1$,$l$,$o$,$\floor{u}$,$\floor{\hat{u}}$,$l'$,$u'$},
+	    xtick={0,1,2,6,7},
+	    xticklabels={$i-1$,$i$,$i+1$,$j$,$j+1$},
+	    ymin=0,
+	    ymax=50, % or enlarge y limits=upper
+	    xmax=7.9,
+	    legend pos=outer north east
+	    ]
+	\addplot+[const plot, no marks, thick, color=red] coordinates {(1,19) (1,14) (2,16) (3,8) (4,10) (4.5,10)};
+	\addplot+[forget plot, const plot, no marks, thick, color=red] coordinates {(5.5,16) (6,9) (7,40) (7.5,40)};
+	\addlegendentry{$x_t$};
+	\addplot+[const plot, no marks, thick, color=blue] coordinates {(1,17) (7,17)};
+	\addlegendentry{$x_t'$};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,2) (7.8,2)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,7) (7.8,7)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,12) (7.8,12)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,17) (1,17)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(7,17) (7.8,17)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,26) (7.8,26)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,34) (7.8,34)};
+	\addplot+[const plot, no marks, thick, dashed, color=black] coordinates {(0,46) (7.8,46)};
+	\end{axis}
+	\node (1) at (3.5,3.45) {\vdots};
+	\node [right=1.5cm of 1] {\vdots};
+	\node [left=1.5cm of 1] {\vdots};
+	\node (2) [below=2.05cm of 1] {\vdots};
+	\node [right=1.5cm of 2] {\vdots};
+	\node [left=1.5cm of 2] {\vdots};
+	\node [red] at (4.3,1.6) {$\,\dotso$};
+	\node [red] at (0.86,2.55) {\vdots};
+	\node [below=3.25cm of 1] {$\,\dotso$};
+\end{tikzpicture}
+\end{document}
