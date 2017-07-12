@@ -161,6 +161,6 @@ Lastly, we can define the cost function $\costs(x_{t-1},x_t,\lambda_t)$, which d
 \end{equation}
 The optimization conditions for a schedule now simplify to one single minimization:
 \begin{align}
-	\text{minimize}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq:mx_schedule_total_costs}
+	\underset{\mx}{\text{minimize}}\quad \costs(\mx)\coloneqq\sum\limits_{t=1}^{T}\costs(x_{t-1},x_{t},\lambda_t)\label{eq:mx_schedule_total_costs}
 \end{align}
 We subsequently call a schedule $\mx$ \emph{optimal} if it satisfies~\eqref{eq:mx_schedule_total_costs}. Having greatly simplified our optimization conditions, we next approach the first main goal of our work: the development of an optimal offline algorithm.
