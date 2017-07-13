@@ -669,7 +669,23 @@ We plug in definition~\ref{eq:mx_schedule_op_costs_complete} of $\opcosts(\cdot)
 \begin{align}
 	\sum\limits_{t=i}^{j}\biggl((yd-\floor{\hat{u}})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)<\beta\bigl(yd-\floor{\hat{u}}\bigr)&&\stackrel{yd>\floor{\hat{u}}}{\iff}&&\sum\limits_{t=i}^{j}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)<\beta
 \end{align}
-Next, with the help of this estimation, we prove that $\mx_{i,j}^{\ceil{\hat{u}}}$ is $y$-approximative.
+We now prove that $\mx_{i,j}^{\ceil{\hat{u}}}$ is $y$-approximative. 
+First note that $\mx$ descends at time $h$ to $[u,\hat{u})$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_2} and at time $i$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Hence, we know that $\hat{u}=yu$; otherwise, we have $\hat{u}=m$, and $\mx$ would consequently not be able to descend at time $h$ or $i$, respectively. Next, we show that $\mx_{i,j}^{\ceil{\hat{u}}}$ does not incur switching costs to move to $\ceil{\hat{u}}$ at time $i$. This is evidently true for case~\ref{itm:schedule_behavior_down_up_y_subcase_3} as $\mx$ descends at time $i$ from a region above $[u,\hat{u})$. For case~\ref{itm:schedule_behavior_down_up_y_subcase_2}, we first notice that $\hat{u}\neq\floor{\hat{u}}$ since $yd\le yu$ and, by our assumption, $yd>\floor{\hat{u}}=\floor{yu}$. 
+Further, we can can conclude that $u\neq\floor{u}$; otherwise, we know that $d\le u-1$, since $d$ must be smaller than $u$ and integer, and derive
+\begin{flalign*}
+	&&yd&>\floor{\hat{u}}&\stackrel{u-1\ge d}{\implies}&&y(u-1)&>\floor{\hat{u}}&\stackrel{\hat{u}=yd}{\iff}&&y(u-1)&>\floor{yu}&&\\
+	&&&&\iff&&yu-\floor{yu}&>y\quad\lightning
+\end{flalign*}
+
+If we further assume that $u\neq\floor{u}$, we can conclude that
+\begin{flalign*}
+	&&yd&>\floor{\hat{u}}&\stackrel{\hat{u}\neq\floor{\hat{u}}}{\iff}&&yd&>\ceil{\hat{u}}-1&\stackrel{\floor{u}\ge d}{\implies}&&y\floor{u}&>\ceil{\hat{u}}-1&&\\
+	\stackrel{u\neq\floor{u}}{\iff}&&y(\ceil{u}-1)&>\ceil{\hat{u}}-1&\iff&&y\ceil{u}&>\ceil{\hat{u}}+y-1&\stackrel{y>1}{\implies}&&y\ceil{u}&>\ceil{\hat{u}}&&
+\end{flalign*}
+
+
+
+
 \begin{equation*}
 	y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\floor{u'}-\ceil{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\ceil{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}\ge0
 \end{equation*}
@@ -683,9 +699,9 @@ daljl
 	&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\ceil{\hat{u}}-yd)\\
 	=&\sum\limits_{t=i}^{j}\left(yx_tf\left(\frac{\lambda_t}{x_t}\right)-\ceil{\hat{u}}f\left(\frac{\lambda_t}{\ceil{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
 	\ge&\sum\limits_{t=i}^{j}\left(ydf\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)-\ceil{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
-	=&\sum\limits_{t=i}^{j}\left((yd-\floor{\hat{u}})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
-	=&\sum\limits_{t=i}^{j}\left(-(\floor{\hat{u}}-yd)f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
-	=&\Biggl(\underbrace{\beta-\sum\limits_{t=i}^{j}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)}_{>0}\Biggr)(\underbrace{\floor{\hat{u}}-yd}_{>0})>0
+	=&\sum\limits_{t=i}^{j}\left((yd-\ceil{\hat{u}})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
+	=&\sum\limits_{t=i}^{j}\left(-(\ceil{\hat{u}}-yd)f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
+	=&\Biggl(\underbrace{\beta-\sum\limits_{t=i}^{j}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)}_{\ge 0}\Biggr)(\underbrace{\ceil{\hat{u}}-yd}_{\ge 0})\ge 0
 \end{align*}
 
 
