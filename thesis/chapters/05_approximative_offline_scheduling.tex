@@ -532,14 +532,11 @@ First, we define $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to be the smallest numb
 	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta(x_{j+1}-d)
 \end{equation*}
 Next, we have to conduct another case distinction; namely, either $yd\le\floor{\hat{u}}$ or $yd>\floor{\hat{u}}$. We begin with the former, for which we proceed analogous as in the proof of Lemma~\ref{lem:transform_schedule_approx_2}. We again split $\mx_{i,j}$ and its associated switching costs at the final switching step into two parts. This time, we split $\beta(x_{j+1}-d)$ into $\beta(x_{j+1}-\floor{\hat{u}}/y)$ and $\beta(\hat{u}/y-d)$. It now suffices to show that either $\mx_{i,j}^{\floor{u}}$ or $\mx_{i,j}^{\floor{\hat{u}}}$ -- strategy $\mx_{i,j}^{\ceil{\hat{u}}}$ will not be needed in this case -- can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\floor{\hat{u}}$ with $y$-approximative costs under the assumption that $\mx_{i,j}$ only moves to~$\floor{\hat{u}}/y$ as a first step. 
-This is because the remaining switching costs to ascend from $\floor{\hat{u}}$ to $\floor{u'}$ are then $y$-approximative anyway:
-\begin{equation*}
-	\beta(\floor{u'}-\floor{\hat{u}})\le\beta(yx_{j+1}-\floor{\hat{u}})=y\beta\left(x_{j+1}-\frac{\floor{\hat{u}}}{y}\right)
-\end{equation*}
-Further, we can then again use the difference of costs for our credit:
-\begin{equation*}
-	\beta(yx_{j+1}-\floor{\hat{u}})-\beta(\floor{u'}-\floor{\hat{u}})=\beta(yx_{j+1}-\floor{u'})
-\end{equation*}
+This is because the remaining switching costs $\beta(x_{j+1}-\floor{\hat{u}}/y)$ of $\mx$ already suffice to compensate for the remaining switching costs $\beta(\floor{u'}-\floor{\hat{u}})$ of $\mx'$ and the costs to satisfy the invariant:
+\begin{align*}
+	&y\beta(x_{j+1}-\floor{\hat{u}}/y)-\beta(\floor{u'}-\floor{\hat{u}})-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}\\
+	=\quad&\beta(yx_{j+1}-\floor{\hat{u}}-\floor{u'}+\floor{\hat{u}}-yx_{j+1}+\floor{u'})=0
+\end{align*}
 To proceed, we notice that if $yd=\floor{u}$ holds, strategy $\mx_{i,j}^u$ has $y$-approximative switching costs:
 \begin{equation*}
 	\beta(\floor{\hat{u}}-\floor{u})=\beta(\floor{\hat{u}}-yd)=y\beta\left(\frac{\floor{\hat{u}}}{y}-d\right)
