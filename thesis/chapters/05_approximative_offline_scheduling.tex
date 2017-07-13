@@ -602,25 +602,31 @@ Further rearranging the left hand side gives us
 	&=&&\sum\limits_{t=i}^j\left(\Bigl(yd\floor{\hat{u}}-yd\floor{u}-\floor{u}\floor{\hat{u}}+yd\floor{u}-yd\floor{\hat{u}}+\floor{u}\floor{\hat{u}}\Bigr)f\left(\frac{\lambda_t}{\floor{u}}\right)\right)\\
 	&=&&\sum\limits_{t=i}^j\left(0\cdot f\left(\frac{\lambda_t}{\floor{u}}\right)\right)=0
 \end{align*}
-which finishes the case with assumption $yd\le\floor{\hat{u}}$. We are left with case $yd>\floor{\hat{u}}$. For this case, we have to analyze the behavior of $\mx$ more precisely.
-
+which finishes the case with assumption $yd\le\floor{\hat{u}}$. We are left with case $yd>\floor{\hat{u}}$. For this case, we have to analyze the behavior of $\mx$ more precisely. There are three possible behaviors of $\mx$ which can lead to case~\ref{itm:schedule_behavior_down_up_y}. 
+\begin{enumerate}[label=(\roman*)]
+	\item $\mx$ ascends to $[u,\hat{u})$ and then descends to $[l,u)$ at time $i$.
+	\item $\mx$ descends to $[u,\hat{u})$ and then descends to $[l,u)$ at time $i$.
+	\item $\mx$ descends to $[l,u)$ at time $i$ from a region above $[u,\hat{u})$.
+\end{enumerate}
+All three possibilities are illustrated in Figure~\ref{fig:schedule_behavior_down_up_y}.
 \begin{figure}[H]
-\captionsetup[subfigure]{labelformat=empty}
+\renewcommand\thesubfigure{\roman{subfigure}}
+\captionsetup[subfigure]{labelformat=parens}
 \begin{subfigure}[b]{0.31\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_y_1}
-\caption{Blub}
+\caption{$\mx$ ascends to $[u,\hat{u})$ and then descends to $[l,u)$.}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.31\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_y_2}
-\caption{Blab}
+\caption{$\mx$ descends to $[u,\hat{u})$ and then descends to $[l,u)$.}
 \end{subfigure}
 \hfill
 \begin{subfigure}[b]{0.31\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_y_3}
-\caption{Blab}
+\caption{$\mx$ descends to $[l,u)$ from a region above $[u,\hat{u})$.}
 \end{subfigure}
-\caption{blub}
+\caption{The three different possible behaviors of $\mx$ to reach case~\ref{itm:schedule_behavior_down_up_y}}
 \label{fig:schedule_behavior_down_up_y}
 \end{figure}
 
