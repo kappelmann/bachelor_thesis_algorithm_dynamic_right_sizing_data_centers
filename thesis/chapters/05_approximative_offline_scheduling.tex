@@ -195,7 +195,7 @@ Next, we consider case~\ref{itm:schedule_behavior_up_up}, which is illustrated i
 \end{figure}
 Again, due to our invariant, we know that setting $x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq u\in B$ gives us a strategy with \makebox{2-approximative} switching costs. Moreover, as in the previous case, the operating costs of~$\mx_{i,j}'$ are \makebox{2-approximative}. To verify the invariant at time $j+1$, we have to show that $\mx'$ can potentially move to $u'$ at time $j+1$ with 2-approximative costs, and, since $\mx$ ascends at time $j+1$, we also need to account for the new credit required by the invariant. To compensate for these costs, we notice that $\mx$ has to power on at least $x_{j+1}-x_i$ servers between $i$ and $j+1$. Further, as $\mx$ ascends at time $i$, we can use the old credit guaranteed by our invariant to compensate for the costs. Putting it all together, we have
 \begin{align*}
-	&2\overbrace{\beta(x_{j+1}-x_i)}^{\text{sw.\ cost }\mx}+\overbrace{\beta(2x_i-u)}^{\text{old credit}}-\overbrace{\beta(u'-u)}^{\text{sw.\ cost }\mx'}-\overbrace{\beta(2x_{j+1}-u')}^{\text{new credit}}\\
+	&2\overbrace{\beta(x_{j+1}-x_i)}^{\text{sw.\ costs }\mx}+\overbrace{\beta(2x_i-u)}^{\text{old credit}}-\overbrace{\beta(u'-u)}^{\text{sw.\ costs }\mx'}-\overbrace{\beta(2x_{j+1}-u')}^{\text{new credit}}\\
 	=\quad&\beta(2x_{j+1}-2x_i+2x_i-u-u'+u-2x_{j+1}+u')=0
 \end{align*}
 that is, the cost difference is non-negative, and thus our invariant at time $j+1$ is satisfied.
@@ -515,7 +515,7 @@ which shows that $\mx_{i,j}^{\ceil{u}}$ is $y$-approximative. Next, if $y\ceil{l
 For case~\ref{itm:schedule_behavior_up_up_y}, we know that setting \makebox{$x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq \floor{u}\in B$} gives us a strategy with $y$-approximative switching costs due to our invariant. Moreover, as in the previous cases, the operating costs of $\mx_{i,j}'$ are $y$-approximative. 
 To verify our invariant at time~$j+1$, we have to show that we can account for the switching costs to move to $u'$ and for the new credit required by the invariant. For this, we use the fact that $\mx$ has to power on at least $x_{j+1}-x_i$ servers between~$i$ and~$j+1$, and that we can use our old credit to compensate for our costs, since we entered $[l,u)$ from below:
 \begin{align*}
-	&y\overbrace{\beta(x_{j+1}-x_i)}^{\text{sw.\ cost }\mx}+\overbrace{\beta(yx_i-\floor{u})}^{\text{old credit}}-\overbrace{\beta(\floor{u'}-\floor{u})}^{\text{sw.\ cost }\mx'}-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}=\beta(yx_{j+1}-\floor{u})\\
+	&y\overbrace{\beta(x_{j+1}-x_i)}^{\text{sw.\ costs }\mx}+\overbrace{\beta(yx_i-\floor{u})}^{\text{old credit}}-\overbrace{\beta(\floor{u'}-\floor{u})}^{\text{sw.\ costs }\mx'}-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}=\beta(yx_{j+1}-\floor{u})\\
 	=\quad&\beta(yx_{j+1}-yx_i+yx_i-\floor{u}-\floor{u'}+\floor{u}-yx_{j+1}+\floor{u'})=0
 \end{align*}
 that is, the cost difference is non-negative, and thus our invariant at time $j+1$ is satisfied.
@@ -612,7 +612,7 @@ which finishes the case with assumption $yd\le\floor{\hat{u}}$. We are left with
 	\item $\mx$ descends to $[u,\hat{u})$ at time $h$ and then descends to $[l,u)$ at time $i$.\label{itm:schedule_behavior_down_up_y_subcase_2}
 	\item $\mx$ descends to $[l,u)$ at time $i$ from a region above $[u,\hat{u})$.\label{itm:schedule_behavior_down_up_y_subcase_3}
 \end{enumerate}
-All three possibilities are illustrated in Figure~\ref{fig:schedule_behavior_down_up_y}. For each possibility, we have to show that at least one of our three strategies is fitting, i.e.\ incurs $y$-approximative costs including the cost to satisfy the invariant at time $j+1$ and the credit $\beta(yx_{j+1}-\floor{u''})$ for the next step.
+All three possibilities are illustrated in Figure~\ref{fig:schedule_behavior_down_up_y}. For each case, we have to show that at least one of our three strategies satisfies our conditions, to wit, it incurs $y$-approximative costs including the costs to satisfy the invariant at time $j+1$.
 \begin{figure}[ht]
 \renewcommand\thesubfigure{\roman{subfigure}}
 \captionsetup[subfigure]{labelformat=parens}
@@ -633,42 +633,45 @@ All three possibilities are illustrated in Figure~\ref{fig:schedule_behavior_dow
 \caption{The three different possible behaviors of $\mx$ to reach case~\ref{itm:schedule_behavior_down_up_y}}
 \label{fig:schedule_behavior_down_up_y}
 \end{figure}
-We begin with case~\ref{itm:schedule_behavior_down_up_y_subcase_1}. Since $\mx$ ascends to $[u,\hat{u})$ at time~$h$ and descends to $[l,u)$ at time~$i$, we know from case~\ref{itm:schedule_behavior_up_down_y} that we have some remaining credit $\beta(x_h-\floor{\hat{u}})$.
+We begin with case~\ref{itm:schedule_behavior_down_up_y_subcase_1}. Since $\mx$ ascends to $[u,\hat{u})$ at time~$h$ and descends to $[l,u)$ at time~$i$, we know from case~\ref{itm:schedule_behavior_up_down_y} that we have some remaining credit $\beta(yx_h-\floor{\hat{u}})$. Since $x_t\ge\ceil{u}$, this credit amounts to at least $\beta(y\ceil{u}-\floor{\hat{u}})$. We use this credit to show that strategy $\mx_{i,j}^{\floor{\hat{u}}}$ is $y$-approximative, that is we have to verify that the following cost difference is non-negative:
+\begin{align*}
+	&y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)+\overbrace{\beta(y\ceil{u}-\floor{\hat{u}})}^{\text{old credit}}-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta(\floor{u'}-\floor{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\floor{\hat{u}}}}\bigr)\\
+	-&\underbrace{\beta(yx_{j+1}-\floor{u'})}_{\text{new credit}}
+\end{align*}
+which can be simplified to
+\begin{align*}
+	&&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta\bigl(yx_{j+1}-yd+y\ceil{u}-\floor{\hat{u}}-\floor{u'}+\floor{\hat{u}}-yx_{j+1}+\floor{u'}\bigr)\\
+	&\stackrel{\phantom{\eqref{eq:mx_schedule_op_costs_complete}}}{=}&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\underbrace{\beta\bigl(y\ceil{u}-yd\bigr)}_{\ge 0}\ge y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)
+\end{align*}
+where we used that $d\le \floor{u}\le \ceil{u}$. Thus it suffices to show that
+\begin{align*}
+	y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&\ge 0
+\end{align*}
+Further modifying the left hand side as done in previous cases reveals
+\begin{align*}
+	y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}\sum\limits_{t=i}^{j}\left(yx_tf\left(\frac{\lambda_t}{x_t}\right)-\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)\\
+	&\stackrel{\phantom{\eqref{eq:mx_schedule_op_costs_complete}}}{\ge}\sum\limits_{t=i}^{j}\left(ydf\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)-\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)\\
+	&\stackrel{\phantom{\eqref{eq:mx_schedule_op_costs_complete}}}{=}\sum\limits_{t=i}^{j}\biggl((\underbrace{yd-\floor{\hat{u}}}_{>0})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)\ge 0
+\end{align*}
+where $yd-\floor{\hat{u}}>0$ follows from our assumption $yd>\floor{\hat{u}}$. Hence, strategy $\mx_{i,j}^{\floor{\hat{u}}}$ is $y$-approximative.
 
-TODO
+Lastly, we consider cases~\ref{itm:schedule_behavior_down_up_y_subcase_2} and~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Assume that $\mx_{i,j}^{\floor{\hat{u}}}$ is not $y$-approximative, that is
 \begin{align*}
-	y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx_{i,j}}\bigr)&-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta(\floor{u'}-\floor{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\floor{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{credit for next step}}\\
-	&+\underbrace{\beta(y\ceil{u}-\floor{\hat{u}})}_{\text{credit from previous step}}\ge 0
+	y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)&-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta(\floor{u'}-\floor{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\floor{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}<0
 \end{align*}
-blub
-\begin{align*}
-	&&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta\bigl(yx_{j+1}-yd-\floor{u'}+\floor{\hat{u}}-yx_{j+1}+\floor{u'}+y\ceil{u}-\floor{\hat{u}}\bigr)\\
-	&=&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta\bigl(y\ceil{u}-yd\bigr)\\
-	&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}&&\sum\limits_{t=i}^{j}\left(yx_tf\left(\frac{\lambda_t}{x_t}\right)-\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta\bigl(y\ceil{u}-yd\bigr)
-\end{align*}
-what
-\begin{align*}
-	\sum\limits_{t=i}^{j}\left(yx_tf\left(\frac{\lambda_t}{x_t}\right)-\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)&\ge\sum\limits_{t=i}^{j}\left(ydf\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)-\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)\\
-	&=\sum\limits_{t=i}^{j}\biggl((\underbrace{yd-\floor{\hat{u}}}_{>0})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)
-\end{align*}
-BLub next
-assume
-\begin{align*}
-	y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx_{i,j}}\bigr)&-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta(\floor{u'}-\floor{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\floor{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{credit for next step}}<0
-\end{align*}
-rearranging
+Intuitively, we can spot that this negative difference must be caused by the switching costs of $\mx_{i,j}^{\floor{\hat{u}}}$, since by our assumption $yd>\floor{\hat{u}}$, and thus the operating costs of $\mx_{i,j}^{\floor{\hat{u}}}$ would turn out to be $y$-approximative. Hence, we want to rearrange the previous inequality to get an estimation for $\beta$:
 \begin{align*}
 	&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&<-\beta\bigl(yx_{j+1}-yd-\floor{u'}+\floor{\hat{u}}-yx_{j+1}+\floor{u'}\bigr)\\
-	\iff&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&<\beta\bigl(yd-\floor{\hat{u}}\bigr)\\
+	\iff&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&<-\beta\bigl(-yd+\floor{\hat{u}}\bigr)\\
 	\iff&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&<\beta\bigl(yd-\floor{\hat{u}}\bigr)
 \end{align*}
-lhs
+We plug in definition~\ref{eq:mx_schedule_op_costs_complete} of $\opcosts(\cdot)$ to obtain
 \begin{align}
 	\sum\limits_{t=i}^{j}\biggl((yd-\floor{\hat{u}})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)<\beta\bigl(yd-\floor{\hat{u}}\bigr)&&\stackrel{yd>\floor{\hat{u}}}{\iff}&&\sum\limits_{t=i}^{j}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)<\beta
 \end{align}
-then next
+Next, with the help of this estimation, we prove that $\mx_{i,j}^{\ceil{\hat{u}}}$ is $y$-approximative.
 \begin{equation*}
-	y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx_{i,j}}\bigr)-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\floor{u'}-\ceil{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\ceil{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{credit for next step}}\ge0
+	y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\floor{u'}-\ceil{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\ceil{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}\ge0
 \end{equation*}
 dkd
 \begin{align*}
