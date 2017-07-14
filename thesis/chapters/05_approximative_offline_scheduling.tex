@@ -638,15 +638,15 @@ We begin with case~\ref{itm:schedule_behavior_down_up_y_subcase_1}. Since $\mx$ 
 	&y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)+\overbrace{\beta(y\ceil{u}-\floor{\hat{u}})}^{\text{old credit}}-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta(\floor{u'}-\floor{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\floor{\hat{u}}}}\bigr)\\
 	-&\underbrace{\beta(yx_{j+1}-\floor{u'})}_{\text{new credit}}
 \end{align*}
-which can be simplified to
+This difference can be simplified to
 \begin{align*}
 	&&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta\bigl(yx_{j+1}-yd+y\ceil{u}-\floor{\hat{u}}-\floor{u'}+\floor{\hat{u}}-yx_{j+1}+\floor{u'}\bigr)\\
 	&\stackrel{\phantom{\eqref{eq:mx_schedule_op_costs_complete}}}{=}&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\underbrace{\beta\bigl(y\ceil{u}-yd\bigr)}_{\ge 0}\ge y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)
 \end{align*}
-where we used that $d\le \floor{u}\le \ceil{u}$. Thus it suffices to show that
-\begin{align*}
-	y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&\ge 0
-\end{align*}
+where $y\ceil{u}-yd\ge 0$ follows from $d\le \floor{u}\le \ceil{u}$. Thus, it suffices to show that
+\begin{align}
+	y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&\ge 0\label{eq:op_cost_floor_u_hat_y_approx}
+\end{align}
 Further modifying the left hand side as done in previous cases reveals
 \begin{align*}
 	y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}\sum\limits_{t=i}^{j}\left(yx_tf\left(\frac{\lambda_t}{x_t}\right)-\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)\\
@@ -655,55 +655,52 @@ Further modifying the left hand side as done in previous cases reveals
 \end{align*}
 where $yd-\floor{\hat{u}}>0$ follows from our assumption $yd>\floor{\hat{u}}$. Hence, strategy $\mx_{i,j}^{\floor{\hat{u}}}$ is $y$-approximative.
 
-Lastly, we consider cases~\ref{itm:schedule_behavior_down_up_y_subcase_2} and~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Assume that $\mx_{i,j}^{\floor{\hat{u}}}$ is not $y$-approximative, that is
+Lastly, we consider cases~\ref{itm:schedule_behavior_down_up_y_subcase_2} and~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Assume for these cases that $\mx_{i,j}^{\floor{\hat{u}}}$ is not $y$-approxi\-mative, that is
 \begin{align*}
 	y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)&-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta(\floor{u'}-\floor{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\floor{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}<0
 \end{align*}
-Intuitively, we can spot that this negative difference must be caused by the switching costs of $\mx_{i,j}^{\floor{\hat{u}}}$, since by our assumption $yd>\floor{\hat{u}}$, and thus the operating costs of $\mx_{i,j}^{\floor{\hat{u}}}$ would turn out to be $y$-approximative. Hence, we want to rearrange the previous inequality to get an estimation for $\beta$:
+We already know from Inequality~\eqref{eq:op_cost_floor_u_hat_y_approx} that the operating costs of $\mx_{i,j}^{\floor{\hat{u}}}$ are $y$-approximative. However, as the total difference of costs is still negative, it seems interesting to get an estimation for $\beta$ by rearranging the previous inequality:
 \begin{align*}
 	&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&<-\beta\bigl(yx_{j+1}-yd-\floor{u'}+\floor{\hat{u}}-yx_{j+1}+\floor{u'}\bigr)\\
 	\iff&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&<-\beta\bigl(-yd+\floor{\hat{u}}\bigr)\\
 	\iff&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&<\beta\bigl(yd-\floor{\hat{u}}\bigr)
 \end{align*}
-We plug in definition~\ref{eq:mx_schedule_op_costs_complete} of $\opcosts(\cdot)$ to obtain
+We plug in the definition of our operating cost function, and conduct our usual estimations to derive
 \begin{align}
-	\sum\limits_{t=i}^{j}\biggl((yd-\floor{\hat{u}})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)<\beta\bigl(yd-\floor{\hat{u}}\bigr)&&\stackrel{yd>\floor{\hat{u}}}{\iff}&&\sum\limits_{t=i}^{j}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)<\beta
+	&&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)&<\beta\bigl(yd-\floor{\hat{u}}\bigr)\nonumber\\
+	\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{\iff}&&\sum\limits_{t=i}^{j}\biggl(yx_tf\left(\frac{\lambda_t}{x_t}\right)-\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)&<\beta\bigl(yd-\floor{\hat{u}}\bigr)\nonumber\\
+	\implies&&\sum\limits_{t=i}^{j}\biggl(ydf\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)-\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)&<\beta\bigl(yd-\floor{\hat{u}}\bigr)\nonumber\\
+	\iff&&\sum\limits_{t=i}^{j}\biggl((yd-\floor{\hat{u}})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)&<\beta\bigl(yd-\floor{\hat{u}}\bigr)\nonumber\\
+	\stackrel{yd>\floor{\hat{u}}}{\iff}&&\sum\limits_{t=i}^{j}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)&<\beta\label{eq:beta_greater_sum_op_floor_u_hat}
 \end{align}
 We now prove that $\mx_{i,j}^{\ceil{\hat{u}}}$ is $y$-approximative. 
-First note that $\mx$ descends at time $h$ to $[u,\hat{u})$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_2} and at time $i$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Hence, we know that $\hat{u}=yu$; otherwise, we have $\hat{u}=m$, and $\mx$ would consequently not be able to descend at time $h$ or $i$, respectively. Next, we show that $\mx_{i,j}^{\ceil{\hat{u}}}$ does not incur switching costs to move to $\ceil{\hat{u}}$ at time $i$. This is evidently true for case~\ref{itm:schedule_behavior_down_up_y_subcase_3} as $\mx$ descends at time $i$ from a region above $[u,\hat{u})$. For case~\ref{itm:schedule_behavior_down_up_y_subcase_2}, we first notice that $\hat{u}\neq\floor{\hat{u}}$ since $yd\le yu$ and, by our assumption, $yd>\floor{\hat{u}}=\floor{yu}$. 
-Further, we can can conclude that $u\neq\floor{u}$; otherwise, we know that $d\le u-1$, since $d$ must be smaller than $u$ and integer, and derive
+First note that $\mx$ descends at time $h$ to $[u,\hat{u})$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_2} and at time $i$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Hence, we know that $\hat{u}=yu$; otherwise, we have $\hat{u}=m<yu$, and $\mx$ would consequently not be able to descend at time $h$ or $i$, respectively. Next, we show that $\mx_{i,j}^{\ceil{\hat{u}}}$ does not incur switching costs to move to $\ceil{\hat{u}}$ at time $i$. This is evidently true for case~\ref{itm:schedule_behavior_down_up_y_subcase_3} as $\mx$ descends at time $i$ from a region above $[u,\hat{u})$. Case~\ref{itm:schedule_behavior_down_up_y_subcase_2} requires some more effort. We first infer that $\hat{u}\neq\floor{\hat{u}}$; in other words, $\hat{u}$ is not integer. If $\hat{u}$ would be integer, we could derive that $yd>\floor{\hat{u}}=\floor{yu}=yu$, which leads to a contradiction since $d\le u$. 
+Further, we can can infer that $u\neq\floor{u}$; otherwise, we know that $d\le u-1$ because $d$ must be smaller than $u$ and integer, leading to a contradiction:
 \begin{flalign*}
-	&&yd&>\floor{\hat{u}}&\stackrel{u-1\ge d}{\implies}&&y(u-1)&>\floor{\hat{u}}&\stackrel{\hat{u}=yd}{\iff}&&y(u-1)&>\floor{yu}&&\\
+	&&yd&>\floor{\hat{u}}&\stackrel{u-1\ge d}{\implies}&&y(u-1)&>\floor{\hat{u}}&\stackrel{\hat{u}=yu}{\iff}&&y(u-1)&>\floor{yu}&&\\
 	&&&&\iff&&yu-\floor{yu}&>y\quad\lightning
 \end{flalign*}
-
-If we further assume that $u\neq\floor{u}$, we can conclude that
+The contradiction follows from $1>yu-\floor{yu}$ and $y>1$. We can use these observations to derive
 \begin{flalign*}
 	&&yd&>\floor{\hat{u}}&\stackrel{\hat{u}\neq\floor{\hat{u}}}{\iff}&&yd&>\ceil{\hat{u}}-1&\stackrel{\floor{u}\ge d}{\implies}&&y\floor{u}&>\ceil{\hat{u}}-1&&\\
 	\stackrel{u\neq\floor{u}}{\iff}&&y(\ceil{u}-1)&>\ceil{\hat{u}}-1&\iff&&y\ceil{u}&>\ceil{\hat{u}}+y-1&\stackrel{y>1}{\implies}&&y\ceil{u}&>\ceil{\hat{u}}&&
 \end{flalign*}
-
-
-
-
-\begin{equation*}
-	y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\floor{u'}-\ceil{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\ceil{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}\ge0
-\end{equation*}
-dkd
+Now, recall that in case~\ref{itm:schedule_behavior_down_up_y_subcase_2} the schedule~$\mx$ descended at time $h$ to $[u,\hat{u})$ and further descends at time $i$. This means that we considered case~\ref{itm:schedule_behavior_down_down_y} for the transformation of~$\mx$ between~$h$ and $i-1$. But since $u$ was the lower bound and $\hat{u}$ the upper bound of~$\mx$ between~$h$ and $i-1$, and we proved that $y\ceil{u}>\ceil{\hat{u}}$, we know from case~\ref{itm:schedule_behavior_down_down_y} that $x_{i-1}'=\ceil{\hat{u}}$. Consequently,~$\mx_{i,j}^{\ceil{\hat{u}}}$ does not incur switching costs to move to $\ceil{\hat{u}}$ at time $i$. Thus, to finish the proof, we have to show that the following cost difference is non-negative:
 \begin{align*}
-	&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(yx_{j+1}-yd-\floor{u'}+\ceil{\hat{u}}-yx_{j+1}+\floor{u'})\\
-	=\quad&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\ceil{\hat{u}}-yd)
+	&y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\floor{u'}-\ceil{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\ceil{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}\\
+	\stackrel{\phantom{\eqref{eq:mx_schedule_op_costs_complete}}}{=}\quad&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(yx_{j+1}-yd-\floor{u'}+\ceil{\hat{u}}-yx_{j+1}+\floor{u'})\\
+	\stackrel{\phantom{\eqref{eq:mx_schedule_op_costs_complete}}}{=}\quad&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\ceil{\hat{u}}-yd)\\
+	\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}\quad&\sum\limits_{t=i}^{j}\left(yx_tf\left(\frac{\lambda_t}{x_t}\right)-\ceil{\hat{u}}f\left(\frac{\lambda_t}{\ceil{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)
 \end{align*}
-daljl
-\begin{align*}
-	&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\ceil{\hat{u}}-yd)\\
-	=&\sum\limits_{t=i}^{j}\left(yx_tf\left(\frac{\lambda_t}{x_t}\right)-\ceil{\hat{u}}f\left(\frac{\lambda_t}{\ceil{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
-	\ge&\sum\limits_{t=i}^{j}\left(ydf\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)-\ceil{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
-	=&\sum\limits_{t=i}^{j}\left((yd-\ceil{\hat{u}})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
-	=&\sum\limits_{t=i}^{j}\left(-(\ceil{\hat{u}}-yd)f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)\\
-	=&\Biggl(\underbrace{\beta-\sum\limits_{t=i}^{j}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)}_{\ge 0}\Biggr)(\underbrace{\ceil{\hat{u}}-yd}_{\ge 0})\ge 0
-\end{align*}
-
+We again apply the usual estimations and rewritings to derive
+\begin{flalign*}
+	&&&&&&&\sum\limits_{t=i}^{j}\left(yx_tf\left(\frac{\lambda_t}{x_t}\right)-\ceil{\hat{u}}f\left(\frac{\lambda_t}{\ceil{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)&&&&&\\
+	&&&&\ge&&&\sum\limits_{t=i}^{j}\left(ydf\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)-\ceil{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)&&&&&\\
+	&&&&=&&&\sum\limits_{t=i}^{j}\left((yd-\ceil{\hat{u}})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)&&&&&\\
+	&&&&=&&&\sum\limits_{t=i}^{j}\left(-(\ceil{\hat{u}}-yd)f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)+\beta(\ceil{\hat{u}}-yd)&&&&&\\
+	&&&&=&&&\Biggl(\underbrace{\beta-\sum\limits_{t=i}^{j}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)}_{>0}\Biggr)(\underbrace{\ceil{\hat{u}}-yd}_{\ge 0})\ge 0&&&&&
+\end{flalign*}
+where we used Inequality~\eqref{eq:beta_greater_sum_op_floor_u_hat} as well as $d\le u$ and $\hat{u}=yu$ for the last step. This finishes case~\ref{itm:schedule_behavior_down_up_y}.
 
 By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le y\costs(\mx)$.
 \end{proof}
