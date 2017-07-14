@@ -8,13 +8,12 @@ Further, in the course of the next section, we will see that we need to assume t
 In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-optimal offline algorithm with linear time complexity. To clarify, given a number $y\in\mathbb{R}$, we say that a scheduling algorithm is \emph{$y$-optimal} if its calculated solution incurs at most $y$ times as much cost as an optimal solution does. Similarly, we say that a schedule/operation is \emph{$y$-approximative} if its cost is at most $y$ times as much as much as the original schedule's/operation's cost.
 As a final step of this thesis, we will generalize the 2-optimal algorithm to derive an $(1+\beps)$-optimal algorithm with linear time complexity.
 
-\section{A 2-Optimal Linear-Time Algorithm}
+\section{A 2-Optimal Linear-Time Algorithm}\label{sec:approx_2_opt}
 Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's time complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Since we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, i.e.\ the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
 
 As we saw in Equation~\eqref{eq:inp_size}, the size of our input $\inp$ is given by $\mathcal{O}\bigl(T\log_2(m)+\log_2(\beta)\bigr)$. Consequently, in order to obtain a linear time complexity, we want to reduce the graph's height from $m+1$ to a logarithmic height of $\mathcal{O}\bigl(\log(m)\bigr)$. Given this observation, it seems natural for a computer scientist to choose a logarithmic scale for the number of servers in each layer, to wit, instead of adding a node for each possible number of active servers (i.e.\ $0,1,\dotsc,m$), we only add nodes for logarithmic choices (i.e.\ $0,2^0,2^1,\dotsc,2^{\floor{\log_2(m)}},m$). More formally, given a problem instance $\inp$, we set
 \begin{align*}
-	b&\coloneqq\floor{\log_2(m)}\\
-	B&\coloneqq\{0,2^0,2^1,\dotsc,2^b,m\}
+	b\coloneqq\floor{\log_2(m)}&&\text{and}&&B\coloneqq\{0,2^0,2^1,\dotsc,2^b,m\}
 \end{align*}
 where $B$ will subsequently represent the set of possible scheduling choices at each time slot. Using this set of possible choices, we can then consider the following adaption of our former graph:
 \begin{align*}
@@ -351,7 +350,7 @@ For our runtime analysis, we again take the same assumptions as done for Algorit
 \end{equation*}
 To our great joy, the runtime is linear in the size of the input. Similarly, our memory demand is reduced to linear space $\Theta\bigl(T\log_2(m)\bigr)$, since the size of the tables $C$ and $S$ shrinked to $\Theta\bigl(T\log_2(m)\bigr)$.
 
-We saw in this section that our reduction to logarithmic steps allows us to derive a 2-optimal linear algorithm. In our approach, we chose the base two logarithm for our step sizes. It seems like an interesting question whether this approach can be generalized to arbitrary bases, allowing for more precise approximations. The answer of this question shall be final task of this thesis.
+We saw in this section that our reduction to logarithmic steps allows us to derive a 2-optimal linear-time algorithm. In our approach, we chose the base two logarithm for the graph's step sizes. It seems like an interesting question whether this approach can be generalized to arbitrary bases, allowing for more precise approximations. The answer of this question shall be final task of this thesis.
 \begin{algorithm}[H]
   \caption{2-optimal linear-time offline scheduling}
   \label{alg:approx_2_offline_linear}
@@ -411,15 +410,16 @@ We saw in this section that our reduction to logarithmic steps allows us to deri
 \end{algorithm}
 
 \section{A $(1+\beps)$-Optimal Linear-Time Algorithm}
-TODO text
-Let $\beps\in\mathbb{R}_{>0}$.
+In this section, we will generalize our 2-approximative algorithm from Section~\ref{sec:approx_2_opt} such that for any user-provided positive number $\beps\in\mathbb{R}_{>0}$, our final algorithm will be able to find a $(1+\beps)$-optimal schedule in linear time. Previously, we chose the base two logarithm for the step sizes of our graph and derived an 2-optimal algorithm. Thus, one might conjecture that choosing an arbitrary base $(1+\beps)$ for the graph's logarithmic step sizes will result in an $(1+\beps)$-optimal algorithm. Although this conjecture turns out to be true, it requires some more work than merely changing the base of the graph's step sizes. For the rest of this section, we denote the algorithm's desired precision as $y$, that is we set
+\begin{equation*}
+	y\coloneqq 1+\beps\in\mathbb{R}_{>1}
+\end{equation*}
+Recall the graph's structure from Section~\ref{sec:approx_2_opt}. For any power of two smaller than~$m$, we added a node in our graph. As a result, the approximative schedule's set of possible scheduling choices was given by $B=\{0,2^0,2^1,\dotsc,2^{\floor{\log_2(m)}},m\}$. Now consider an analogous attempt for arbitrary bases $y$, that is $B=\{0,y^0,y^1,\dotsc,y^{\floor{\log_y(m)}},m\}$. Since $y$ is not necessarily integer, an arbitrary power of $y$ can also be non-integer. Consequently, picking a scheduling choice from the new set $B$ potentially fails as one cannot schedule a non-integer number of servers in practice. We thus have to adapt the new set. To do so, we simply round the powers of $y$ to their closest integers. More formally, given an input $\inp$, we set
 \begin{align*}
-	y&\coloneqq1+\beps\\
 	b&\coloneqq\floor{\log_y(m)}\\
-	B&\coloneqq\left\{0,\floor{y^0},\ceil{y^0},\floor{y^1},\ceil{y^1},\dotsc,\floor{y^b},\ceil{y^b},m\right\}
+	\text{and}\qquad B&\coloneqq\left\{0,\floor{y^0},\ceil{y^0},\floor{y^1},\ceil{y^1},\dotsc,\floor{y^b},\ceil{y^b},m\right\}
 \end{align*}
-where $B$ represents the set of possible scheduling choices at each time slot. We can then consider the following adaption of our graph:
-TODO
+We can then consider the following adaption of our graph:
 \begin{align*}
 	V&\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in B,t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in B, t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
 	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in B\bigr\}\\
@@ -447,7 +447,7 @@ A graphical representation of $G$ can be found in Figure~\ref{fig:graph_lin_appr
 \label{fig:graph_lin_approx_y}
 \end{figure}
 TODO text
-\begin{defn}[y-state changes]
+\begin{defn}[y-state changes]\label{defn:y_state_changes}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T+1]$. We say that $\mx$ changes its \emph{$y$-state} at time $t$ if $\mx$ satisfies the formula
 \begin{equation*}
 	x_{t-1}\neq x_t\land \left(x_{t-1}=0 \lor x_t\notin\left[y^{\floor{\log_y(x_{t-1})}},y^{\floor{\log_y(x_{t-1})}+1}\right)\right)
@@ -476,22 +476,22 @@ and the lower and upper bound of $\mx$ at time $j+1$ as
 	\end{cases}
 &&\text{and}&&u'\coloneqq\min\bigl\{yl',m\bigr\}&&&
 \end{flalign*}
-In the proof of Lemma~\ref{lem:transform_schedule_approx_2}, we knew that, for example, $u$ is contained in $B$, and thus we were able to simply use $u$ servers for $\mx'$. However, as $y$ is not necessarily integer anymore, we have to appropriately round our choices, e.g.\ use $\floor{u}\in B$ or $\ceil{u}\in B$ instead of $u$ servers.  
-	Note that $\mx$ does not change its $y$-state between $i$ and $j$, which means that $l\le x_t\le u$ holds for $i\le t\le j$. Since $x_t$ is integer, $\ceil{l}$ is the smallest integer contained in~$[l,u]$, and $\floor{u}$ is the largest integer contained in~$[l,u]$, we can even refine our bounds to $\ceil{l}\le x_t\le\floor{u}$. Further, by using the fact that $u\le yl$, we can infer that $\floor{u}\le yx_t$ holds for any $i\le t\le j$.
+In the proof of Lemma~\ref{lem:transform_schedule_approx_2}, we knew that, for example, $u$ is contained in $B$, and thus we were able to simply use $u$ servers for $\mx'$. This time, however, we have to appropriately round our choices, e.g.\ use $\floor{u}\in B$ or $\ceil{u}\in B$ instead of $u$ servers.  
+Note that $\mx$ does not change its $y$-state between $i$ and $j$, which means that $l\le x_t\le u$ holds for $i\le t\le j$. Since~$x_t$ is integer, $\ceil{l}$ is the smallest integer contained in~$[l,u]$, and $\floor{u}$ is the largest integer contained in~$[l,u]$, we can even refine our bounds to $\ceil{l}\le x_t\le\floor{u}$. Further, by using the fact that $u\le yl$, we can infer that $\floor{u}\le yx_t$ holds for any $i\le t\le j$.
 
 We adapt the invariant used in Lemma~\ref{lem:transform_schedule_approx_2} in that we are going to ensure that $\mx'$ can potentially move to $\floor{u}$ at time $i$ in a $y$-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most $y$ times as much switching costs as $\mx$ if we set $x_i'\coloneqq \floor{u}$. Further, we are going to ensure that $x_t'\ge \floor{u}$ holds for any $i\le t\le j$ after every transformation step. Since $x_t\le \floor{u}$, this guarantees that $\mx'$ will be feasible.
 Moreover, we show that our credit will be greater than or equal to $\beta(yx_{j+1}-\floor{u'})$ if $\mx$ exits $[l,u)$ by ascending to $[l',u')$ at time $j+1$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(yx_i-\floor{u})$ if $\mx$ enters $[l,u)$ at time~$i$ from below.
 
 For the initial start-up process (i.e.\ $i=1$), we can simply set $x_1'\coloneqq \floor{u} \in B$. Since we know that $x_1'\le yx_1$, we can conclude that $\beta x_1'\le\beta yx_1$. Further, we can use the difference of switching costs $\beta(yx_1-x_1')=\beta(yx_1-\floor{u})$ for the credit of our amortized analysis. Thus, the invariant initially holds.
 
-Now, recall the possible behaviors of $\mx$ between its $y$-state changes:
+Now recall the possible behaviors of $\mx$ between its $y$-state changes:
 \begin{enumerate}[label=(\alph*)]
 	\item $\mx$ enters $[l,u)$ from below and then descends to $[l',u')$.\label{itm:schedule_behavior_up_down_y}
 	\item $\mx$ enters $[l,u)$ from above and then descends to $[l',u')$.\label{itm:schedule_behavior_down_down_y}
 	\item $\mx$ enters $[l,u)$ from below and then ascends to $[l',u')$.\label{itm:schedule_behavior_up_up_y} 
 	\item $\mx$ enters $[l,u)$ from above and then ascends to $[l',u')$.\label{itm:schedule_behavior_down_up_y} 
 \end{enumerate}
-To finish the proof, we need to show that any case can be transformed to a $y$-approximative period in $\mx'$ while ensuring that our invariant will not be violated. Additionally, we have to verify that the credit of our amortized analysis stays non-negative.
+We need to show that any case can be transformed to a $y$-approximative period in $\mx'$ while ensuring that our invariant will not be violated. Additionally, we have to verify that the credit of our amortized analysis stays non-negative.
 
 We start with case~\ref{itm:schedule_behavior_up_down_y}. Due to our invariant, we know that we can set $x_i'\coloneqq \floor{u}$ with $y$-approximative switching costs. Consequently, setting $x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq \floor{u}\in B$ gives us a strategy with $y$-approximative switching costs between $i$ and $j$. Further, since $x_t\le \floor{u}\le yx_t$ for any $i\le t\le j$, and $f$ is non-negative and monotonically increasing, the operating costs of $\mx'_{i,j}$ can be estimated by
 \begin{align*}
@@ -510,12 +510,12 @@ Since $\floor{u'}<\floor{u}\le\ceil{u}$, both strategies do not incur switching 
 	\opcosts\bigl(\mx_{i,j}^{\ceil{u}}\bigr)&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}\sum\limits_{t=i}^j\left(\ceil{u} f\left(\frac{\lambda_t}{\ceil{u}}\right)\right)\le\sum\limits_{t=i}^j\left(yx_tf\left(\frac{\lambda_t}{\ceil{u}}\right)\right)\le y\sum\limits_{t=i}^j\left(x_tf\left(\frac{\lambda_t}{x_t}\right)\right)\\
 	&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}y\opcosts\bigl(\mx_{i,j}\bigr)
 \end{align*}
-which shows that $\mx_{i,j}^{\ceil{u}}$ is $y$-approximative. Next, if $y\ceil{l}\le\ceil{u}$, we choose strategy $\mx_{i,j}^{\floor{u}}$, whose cost is $y$-approximative, as we have already seen in case~\ref{itm:schedule_behavior_up_down}.
+which shows that $\mx_{i,j}^{\ceil{u}}$ is $y$-approximative. Next, if $y\ceil{l}\le\ceil{u}$, we choose strategy $\mx_{i,j}^{\floor{u}}$, whose cost, as we have already seen in case~\ref{itm:schedule_behavior_up_down}, is $y$-approximative.
 
 For case~\ref{itm:schedule_behavior_up_up_y}, we know that setting \makebox{$x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq \floor{u}\in B$} gives us a strategy with $y$-approximative switching costs due to our invariant. Moreover, as in the previous cases, the operating costs of $\mx_{i,j}'$ are $y$-approximative. 
 To verify our invariant at time~$j+1$, we have to show that we can account for the switching costs to move to $u'$ and for the new credit required by the invariant. For this, we use the fact that $\mx$ has to power on at least $x_{j+1}-x_i$ servers between~$i$ and~$j+1$, and that we can use our old credit to compensate for our costs, since we entered $[l,u)$ from below:
 \begin{align*}
-	&y\overbrace{\beta(x_{j+1}-x_i)}^{\text{sw.\ costs }\mx}+\overbrace{\beta(yx_i-\floor{u})}^{\text{old credit}}-\overbrace{\beta(\floor{u'}-\floor{u})}^{\text{sw.\ costs }\mx'}-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}=\beta(yx_{j+1}-\floor{u})\\
+	&y\overbrace{\beta(x_{j+1}-x_i)}^{\text{sw.\ costs }\mx}+\overbrace{\beta(yx_i-\floor{u})}^{\text{old credit}}-\overbrace{\beta(\floor{u'}-\floor{u})}^{\text{sw.\ costs }\mx'}-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}\\
 	=\quad&\beta(yx_{j+1}-yx_i+yx_i-\floor{u}-\floor{u'}+\floor{u}-yx_{j+1}+\floor{u'})=0
 \end{align*}
 that is, the cost difference is non-negative, and thus our invariant at time $j+1$ is satisfied.
@@ -526,15 +526,15 @@ Finally, we have to study case~\ref{itm:schedule_behavior_down_up_y}, for which 
 	&&\mx_{i,j}^{\floor{\hat{u}}}&\coloneqq\left(x_i^{\floor{\hat{u}}},\dotsc,x_j^{\floor{\hat{u}}}\right),&&\text{where}&x_t^{\floor{\hat{u}}}&\coloneqq \floor{\hat{u}},\,\text{for } i\le t\le j,&&&\\
 	&&\text{and}\quad\mx_{i,j}^{\ceil{\hat{u}}}&\coloneqq\left(x_i^{\ceil{\hat{u}}},\dotsc,x_j^{\ceil{\hat{u}}}\right),&&\text{where}&x_t^{\ceil{\hat{u}}}&\coloneqq \ceil{\hat{u}},\,\text{for } i\le t\le j&&&
 \end{flalign*}
-with $\hat{u}\coloneqq\min\{yu,m\}$. Notice that due to our invariant and the fact that $\mx$ descends at time $i$, strategies $\mx_{i,j}^{\floor{u}}$ and $\mx_{i,j}^{\floor{\hat{u}}}$ do no incur switching costs up to time $j$, since $x_{i-1}'\ge\floor{\hat{u}}\ge\floor{u}$. We are now going to prove that the cost of at least one of the three schedules, including possible switching costs to satisfy our invariant at time $j+1$, must be $y$-approximative. 
+with $\hat{u}\coloneqq\min\{yu,m\}$. Notice that due to our invariant and the fact that $\mx$ descends at time $i$, strategies $\mx_{i,j}^{\floor{u}}$ and $\mx_{i,j}^{\floor{\hat{u}}}$ do no incur switching costs up to time $j$, since $x_{i-1}'\ge\floor{\hat{u}}\ge\floor{u}$. We are now going to prove that the cost of at least one of the three schedules, including costs to satisfy our invariant at time $j+1$, must be $y$-approximative. 
 First, we define $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to be the smallest number of active servers used by $\mx_{i,j}$. We can use $d$ to give a lower bound for the switching costs of $\mx$ between $i$ and~$j+1$:
 \begin{equation*}
 	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta(x_{j+1}-d)
 \end{equation*}
-Next, we have to conduct another case distinction; namely, either $yd\le\floor{\hat{u}}$ or $yd>\floor{\hat{u}}$. We begin with the former, for which we proceed analogous as in the proof of Lemma~\ref{lem:transform_schedule_approx_2}. We again split $\mx_{i,j}$ and its associated switching costs at the final switching step into two parts. This time, we split $\beta(x_{j+1}-d)$ into $\beta(x_{j+1}-\floor{\hat{u}}/y)$ and $\beta(\hat{u}/y-d)$. It now suffices to show that either $\mx_{i,j}^{\floor{u}}$ or $\mx_{i,j}^{\floor{\hat{u}}}$ -- strategy $\mx_{i,j}^{\ceil{\hat{u}}}$ will not be needed in this case -- can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\floor{\hat{u}}$ with $y$-approximative costs under the assumption that $\mx_{i,j}$ only moves to~$\floor{\hat{u}}/y$ as a first step. 
-This is because the remaining switching costs $\beta(x_{j+1}-\floor{\hat{u}}/y)$ of $\mx$ already suffice to compensate for the remaining switching costs $\beta(\floor{u'}-\floor{\hat{u}})$ of $\mx'$ and the costs to satisfy the invariant:
+Next, we have to conduct another case distinction; namely, either $yd\le\floor{\hat{u}}$ or $yd>\floor{\hat{u}}$. We begin with the former, for which we proceed analogous as in the proof of Lemma~\ref{lem:transform_schedule_approx_2}. We again split the switching costs of $\mx_{i,j}$ (including its final switching step) into two parts. This time, we split $\beta(x_{j+1}-d)$ into $\beta\bigl(x_{j+1}-\floor{\hat{u}}/y\bigr)$ and $\beta\bigl(\hat{u}/y-d\bigr)$. It now suffices to show that either $\mx_{i,j}^{\floor{u}}$ or $\mx_{i,j}^{\floor{\hat{u}}}$ -- strategy $\mx_{i,j}^{\ceil{\hat{u}}}$ will not be needed in this case -- can process the loads $\lambda_i,\dotsc,\lambda_j$ and eventually switch to $\floor{\hat{u}}$ with $y$-approximative costs under the assumption that $\mx_{i,j}$ only incurs~$\beta\bigl(\floor{\hat{u}}/y-d\bigr)$ switching costs in a first step. 
+This is because the remaining switching costs $\beta\bigl(x_{j+1}-\floor{\hat{u}}/y\bigr)$ of $\mx$ already suffice to compensate for the remaining switching costs $\beta(\floor{u'}-\floor{\hat{u}})$ of $\mx'$ and the costs to satisfy the invariant:
 \begin{align*}
-	&y\beta(x_{j+1}-\floor{\hat{u}}/y)-\beta(\floor{u'}-\floor{\hat{u}})-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}\\
+	&y\overbrace{\beta(x_{j+1}-\floor{\hat{u}}/y)}^{\text{remaining sw.\ costs }\mx}-\overbrace{\beta(\floor{u'}-\floor{\hat{u}})}^{\text{rem.\ sw.\ costs }\mx'}-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}\\
 	=\quad&\beta(yx_{j+1}-\floor{\hat{u}}-\floor{u'}+\floor{\hat{u}}-yx_{j+1}+\floor{u'})=0
 \end{align*}
 To proceed, we notice that if $yd=\floor{u}$ holds, strategy $\mx_{i,j}^u$ has $y$-approximative switching costs:
@@ -567,7 +567,7 @@ Next, since we want to prove that $\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\big
 \begin{align*}
 	y\left(\opcosts\bigl(\mx_{i,j}\bigr)+\beta\left(\frac{\floor{\hat{u}}}{y}-d\right)\right)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)
 \end{align*}
-Recall that $\mx_{i,j}^{\floor{\hat{u}}}$ does not incur switching costs to move to $\floor{\hat{u}}$. We can now use our just derived lower bound for $\opcosts\bigl(\mx_{i,j}\bigr)+\beta(\floor{\hat{u}}/y-d)$ to estimate the difference:
+Recall that $\mx_{i,j}^{\floor{\hat{u}}}$ does not incur switching costs to move to $\floor{\hat{u}}$. We can now use our just derived lower bound for $\opcosts\bigl(\mx_{i,j}\bigr)+\beta\bigl(\floor{\hat{u}}/y-d\bigr)$ to estimate the difference:
 \begin{align*}
 	&y\left(\opcosts\bigl(\mx_{i,j}\bigr)+\beta\left(\frac{\floor{\hat{u}}}{y}-d\right)\right)-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)\\
 	\ge\quad&y\, \frac{(\floor{\hat{u}}-\floor{u})\opcosts\bigl(\mx_{i,j}\bigr)-\left(\frac{\floor{\hat{u}}}{y}-d\right)\opcosts\bigl(\mx_{i,j}^{\floor{u}}\bigr)}{yd-\floor{u}}-\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)
@@ -606,14 +606,14 @@ Further rearranging the left hand side gives us
 	&=&&\sum\limits_{t=i}^j\left(\Bigl(yd\floor{\hat{u}}-yd\floor{u}-\floor{u}\floor{\hat{u}}+yd\floor{u}-yd\floor{\hat{u}}+\floor{u}\floor{\hat{u}}\Bigr)f\left(\frac{\lambda_t}{\floor{u}}\right)\right)\\
 	&=&&\sum\limits_{t=i}^j\left(0\cdot f\left(\frac{\lambda_t}{\floor{u}}\right)\right)=0
 \end{align*}
-which finishes the case with assumption $yd\le\floor{\hat{u}}$. We are left with case $yd>\floor{\hat{u}}$. For this case, we have to analyze the behavior of $\mx$ more precisely. To do so, let $h<i$ be the closest time before $i$ at which $\mx$ changes its $y$-state. There are three possible behaviors of $\mx$ that can lead to case~\ref{itm:schedule_behavior_down_up_y}. 
+which finishes the case with assumption $yd\le\floor{\hat{u}}$. We are left with case $yd>\floor{\hat{u}}$. For this case, we have to analyze the behavior of $\mx$ more precisely. To do so, let $h<i$ be the closest time before $i$ at which $\mx$ changes its $y$-state. There are three possible behaviors of $\mx$ that can lead to case~\ref{itm:schedule_behavior_down_up_y}.
 \begin{enumerate}[label=(\roman*)]
 	\item $\mx$ ascends to $[u,\hat{u})$ at time $h$ and then descends to $[l,u)$ at time $i$.\label{itm:schedule_behavior_down_up_y_subcase_1}
 	\item $\mx$ descends to $[u,\hat{u})$ at time $h$ and then descends to $[l,u)$ at time $i$.\label{itm:schedule_behavior_down_up_y_subcase_2}
 	\item $\mx$ descends to $[l,u)$ at time $i$ from a region above $[u,\hat{u})$.\label{itm:schedule_behavior_down_up_y_subcase_3}
 \end{enumerate}
 All three possibilities are illustrated in Figure~\ref{fig:schedule_behavior_down_up_y}. For each case, we have to show that at least one of our three strategies satisfies our conditions, to wit, it incurs $y$-approximative costs including the costs to satisfy the invariant at time $j+1$.
-\begin{figure}[ht]
+\begin{figure}[H]
 \renewcommand\thesubfigure{\roman{subfigure}}
 \captionsetup[subfigure]{labelformat=parens}
 \begin{subfigure}[b]{0.31\textwidth}
@@ -633,7 +633,7 @@ All three possibilities are illustrated in Figure~\ref{fig:schedule_behavior_dow
 \caption{The three different possible behaviors of $\mx$ to reach case~\ref{itm:schedule_behavior_down_up_y}}
 \label{fig:schedule_behavior_down_up_y}
 \end{figure}
-We begin with case~\ref{itm:schedule_behavior_down_up_y_subcase_1}. Since $\mx$ ascends to $[u,\hat{u})$ at time~$h$ and descends to $[l,u)$ at time~$i$, we know from case~\ref{itm:schedule_behavior_up_down_y} that we have some remaining credit $\beta(yx_h-\floor{\hat{u}})$. Since $x_t\ge\ceil{u}$, this credit amounts to at least $\beta(y\ceil{u}-\floor{\hat{u}})$. We use this credit to show that strategy $\mx_{i,j}^{\floor{\hat{u}}}$ is $y$-approximative, that is we have to verify that the following cost difference is non-negative:
+We begin with case~\ref{itm:schedule_behavior_down_up_y_subcase_1}. Since $\mx$ ascends to $[u,\hat{u})$ at time~$h$ and descends to $[l,u)$ at time~$i$, we know from case~\ref{itm:schedule_behavior_up_down_y} that we have some remaining credit $\beta(yx_h-\floor{\hat{u}})$. Since $x_h\ge\ceil{u}$, this credit amounts to at least $\beta(y\ceil{u}-\floor{\hat{u}})$. We use this credit to show that strategy~$\mx_{i,j}^{\floor{\hat{u}}}$ is $y$-approximative, that is we have to verify that the following cost difference is non-negative:
 \begin{align*}
 	&y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)+\overbrace{\beta(y\ceil{u}-\floor{\hat{u}})}^{\text{old credit}}-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta(\floor{u'}-\floor{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\floor{\hat{u}}}}\bigr)\\
 	-&\underbrace{\beta(yx_{j+1}-\floor{u'})}_{\text{new credit}}
@@ -653,9 +653,9 @@ Further modifying the left hand side as done in previous cases reveals
 	&\stackrel{\phantom{\eqref{eq:mx_schedule_op_costs_complete}}}{\ge}\sum\limits_{t=i}^{j}\left(ydf\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)-\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)\\
 	&\stackrel{\phantom{\eqref{eq:mx_schedule_op_costs_complete}}}{=}\sum\limits_{t=i}^{j}\biggl((\underbrace{yd-\floor{\hat{u}}}_{>0})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)\ge 0
 \end{align*}
-where $yd-\floor{\hat{u}}>0$ follows from our assumption $yd>\floor{\hat{u}}$. Hence, strategy $\mx_{i,j}^{\floor{\hat{u}}}$ is $y$-approximative.
+where $yd-\floor{\hat{u}}>0$ follows from assumption $yd>\floor{\hat{u}}$. Hence, strategy $\mx_{i,j}^{\floor{\hat{u}}}$ is $y$-approxi\-mative.
 
-Lastly, we consider cases~\ref{itm:schedule_behavior_down_up_y_subcase_2} and~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Assume for these cases that $\mx_{i,j}^{\floor{\hat{u}}}$ is not $y$-approxi\-mative, that is
+Lastly, we consider cases~\ref{itm:schedule_behavior_down_up_y_subcase_2} and~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Suppose for these cases that $\mx_{i,j}^{\floor{\hat{u}}}$ is not $y$-approxi\-mative, that is
 \begin{align*}
 	y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)&-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)+\beta(\floor{u'}-\floor{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\floor{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}<0
 \end{align*}
@@ -673,9 +673,9 @@ We plug in the definition of our operating cost function, and conduct our usual 
 	\iff&&\sum\limits_{t=i}^{j}\biggl((yd-\floor{\hat{u}})f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\biggr)&<\beta\bigl(yd-\floor{\hat{u}}\bigr)\nonumber\\
 	\stackrel{yd>\floor{\hat{u}}}{\iff}&&\sum\limits_{t=i}^{j}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)&<\beta\label{eq:beta_greater_sum_op_floor_u_hat}
 \end{align}
-We now prove that $\mx_{i,j}^{\ceil{\hat{u}}}$ is $y$-approximative. 
-First note that $\mx$ descends at time $h$ to $[u,\hat{u})$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_2} and at time $i$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Hence, we know that $\hat{u}=yu$; otherwise, we have $\hat{u}=m<yu$, and $\mx$ would consequently not be able to descend at time $h$ or $i$, respectively. Next, we show that $\mx_{i,j}^{\ceil{\hat{u}}}$ does not incur switching costs to move to $\ceil{\hat{u}}$ at time $i$. This is evidently true for case~\ref{itm:schedule_behavior_down_up_y_subcase_3} as $\mx$ descends at time $i$ from a region above $[u,\hat{u})$. Case~\ref{itm:schedule_behavior_down_up_y_subcase_2} requires some more effort. We first infer that $\hat{u}\neq\floor{\hat{u}}$; in other words, $\hat{u}$ is not integer. If $\hat{u}$ would be integer, we could derive that $yd>\floor{\hat{u}}=\floor{yu}=yu$, which leads to a contradiction since $d\le u$. 
-Further, we can can infer that $u\neq\floor{u}$; otherwise, we know that $d\le u-1$ because $d$ must be smaller than $u$ and integer, leading to a contradiction:
+We are now going to prove that $\mx_{i,j}^{\ceil{\hat{u}}}$ is $y$-approximative. The just derived lower bound for~$\beta$ will be needed at the very end of this endeavor.
+First note that $\mx$ descends at time~$h$ to $[u,\hat{u})$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_2} and at time~$i$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Hence, we know that $\hat{u}=yu$; otherwise, we have $\hat{u}=m<yu$, and $\mx$ would consequently not be able to descend at time~$h$ or~$i$, respectively. Next, we show that $\mx_{i,j}^{\ceil{\hat{u}}}$ does not incur switching costs to move to $\ceil{\hat{u}}$ at time $i$. This is evidently true for case~\ref{itm:schedule_behavior_down_up_y_subcase_3} as $\mx$ descends at time $i$ from a region above $[u,\hat{u})$. Case~\ref{itm:schedule_behavior_down_up_y_subcase_2} requires some more effort. We first infer that $\hat{u}\neq\floor{\hat{u}}$; in other words, $\hat{u}$ is not integer. If $\hat{u}$ would be integer, we could derive from our assumption that $yd>\floor{\hat{u}}=\floor{yu}=yu$, which leads to a contradiction since $d\le\floor{u}$. 
+Further, we can can infer that $u\neq\floor{u}$; otherwise, we know that $d\le u-1$ because $d$ is integer and must be smaller than $u$ (by our Definition~\ref{defn:y_state_changes} of $y$-state changes), which again leads to a contradiction:
 \begin{flalign*}
 	&&yd&>\floor{\hat{u}}&\stackrel{u-1\ge d}{\implies}&&y(u-1)&>\floor{\hat{u}}&\stackrel{\hat{u}=yu}{\iff}&&y(u-1)&>\floor{yu}&&\\
 	&&&&\iff&&yu-\floor{yu}&>y\quad\lightning
@@ -685,7 +685,7 @@ The contradiction follows from $1>yu-\floor{yu}$ and $y>1$. We can use these obs
 	&&yd&>\floor{\hat{u}}&\stackrel{\hat{u}\neq\floor{\hat{u}}}{\iff}&&yd&>\ceil{\hat{u}}-1&\stackrel{\floor{u}\ge d}{\implies}&&y\floor{u}&>\ceil{\hat{u}}-1&&\\
 	\stackrel{u\neq\floor{u}}{\iff}&&y(\ceil{u}-1)&>\ceil{\hat{u}}-1&\iff&&y\ceil{u}&>\ceil{\hat{u}}+y-1&\stackrel{y>1}{\implies}&&y\ceil{u}&>\ceil{\hat{u}}&&
 \end{flalign*}
-Now, recall that in case~\ref{itm:schedule_behavior_down_up_y_subcase_2} the schedule~$\mx$ descended at time $h$ to $[u,\hat{u})$ and further descends at time $i$. This means that we considered case~\ref{itm:schedule_behavior_down_down_y} for the transformation of~$\mx$ between~$h$ and $i-1$. But since $u$ was the lower bound and $\hat{u}$ the upper bound of~$\mx$ between~$h$ and $i-1$, and we proved that $y\ceil{u}>\ceil{\hat{u}}$, we know from case~\ref{itm:schedule_behavior_down_down_y} that $x_{i-1}'=\ceil{\hat{u}}$. Consequently,~$\mx_{i,j}^{\ceil{\hat{u}}}$ does not incur switching costs to move to $\ceil{\hat{u}}$ at time $i$. Thus, to finish the proof, we have to show that the following cost difference is non-negative:
+Now recall that in case~\ref{itm:schedule_behavior_down_up_y_subcase_2} the schedule~$\mx$ descended at time $h$ to $[u,\hat{u})$ and further descends at time $i$. This means that we considered case~\ref{itm:schedule_behavior_down_down_y} for the transformation of~$\mx$ between~$h$ and $i-1$. But since $u$ is the lower bound and $\hat{u}$ the upper bound of~$\mx$ between~$h$ and $i-1$, and we proved that $y\ceil{u}>\ceil{\hat{u}}$, we know from case~\ref{itm:schedule_behavior_down_down_y} that $x_{i-1}'=\ceil{\hat{u}}$. Consequently,~$\mx_{i,j}^{\ceil{\hat{u}}}$ does not require switching costs to move to $\ceil{\hat{u}}$ at time $i$. Thus, to finish the proof, it suffices to show that the following cost difference is non-negative:
 \begin{align*}
 	&y\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}\bigr)+\beta(x_{j+1}-d)}^{\text{costs of }\mx}\bigr)-\bigl(\overbrace{\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(\floor{u'}-\ceil{\hat{u}})}^{\text{costs of }\mx_{i,j}^{\ceil{\hat{u}}}}\bigr)-\overbrace{\beta(yx_{j+1}-\floor{u'})}^{\text{new credit}}\\
 	\stackrel{\phantom{\eqref{eq:mx_schedule_op_costs_complete}}}{=}\quad&y\opcosts\bigl(\mx_{i,j}\bigr)-\opcosts\bigl(\mx_{i,j}^{\ceil{\hat{u}}}\bigr)+\beta(yx_{j+1}-yd-\floor{u'}+\ceil{\hat{u}}-yx_{j+1}+\floor{u'})\\
