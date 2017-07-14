@@ -19,10 +19,10 @@ where $B$ will subsequently represent the set of possible scheduling choices at 
 \begin{align*}
 	V&\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in B,t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in B, t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
 	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in B\bigr\}\\
-	E_\downarrow&\coloneqq\bigl\{(v_{2^i,t\downarrow},v_{2^{i-1},t\downarrow})\mid i\in[b],t\in[T]\bigr\}\dotcup\bigl\{(v_{2^0,t\downarrow},v_{0,t\downarrow})\mid t\in[T]\bigr\}\dotcup\\
-	&\phantom{{}\coloneqq{}}\bigl\{(v_{m,t\downarrow},v_{2^b,t\downarrow})\mid t\in[T]\bigr\}\\
-	E_\uparrow&\coloneqq\bigl\{(v_{2^{i-1},t\uparrow},v_{2^i,t\uparrow})\mid i\in[b],t\in[T-1]\bigr\}\dotcup\bigl\{(v_{0,t\uparrow},v_{2^0,t\uparrow})\mid t\in[T-1]\bigr\}\dotcup\\
-	&\phantom{{}\coloneqq{}}\bigl\{(v_{2^b,t\uparrow},v_{m,t\uparrow})\mid t\in[T-1]\bigr\}\\
+	E_\downarrow&\coloneqq\bigl\{(v_{2^i,t\downarrow},v_{2^{i-1},t\downarrow})\mid i\in[b],t\in[T]\bigr\}\dotcup\bigl\{(v_{2^0,t\downarrow},v_{0,t\downarrow})\mid t\in[T]\bigr\}\\
+	&\phantom{{}\coloneqq{}}\dotcup\bigl\{(v_{m,t\downarrow},v_{2^b,t\downarrow})\mid t\in[T]\bigr\}\\
+	E_\uparrow&\coloneqq\bigl\{(v_{2^{i-1},t\uparrow},v_{2^i,t\uparrow})\mid i\in[b],t\in[T-1]\bigr\}\dotcup\bigl\{(v_{0,t\uparrow},v_{2^0,t\uparrow})\mid t\in[T-1]\bigr\}\\
+	&\phantom{{}\coloneqq{}}\dotcup\bigl\{(v_{2^b,t\uparrow},v_{m,t\uparrow})\mid t\in[T-1]\bigr\}\\
 	E_{\downarrow\uparrow}&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in B,t\in[T-1]\bigr\}\\
 	E_{\uparrow\downarrow}&\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in B,t\in[T-1]\bigr\}\\
 	E&\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
@@ -30,7 +30,7 @@ where $B$ will subsequently represent the set of possible scheduling choices at 
 	\begin{cases}
 		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1\downarrow})\in E_s$}\\
 		\opcosts(x,\lambda_{t+1}), & \text{if $e=(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$}\\
-		(x'-x)\beta, & \text{if $e=(v_{x,t\uparrow},v_{x',t\uparrow})\in E_\uparrow$}\\
+		\beta(x'-x), & \text{if $e=(v_{x,t\uparrow},v_{x',t\uparrow})\in E_\uparrow$}\\
 		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow})$}
 	\end{cases}\\
 	G&\coloneqq(V,E,c_G)
@@ -334,7 +334,7 @@ Now let $P$ be a shortest reasonable path, and let $\mx^*$ be an optimal schedul
 and the claim follows.
 \end{proof}
 Again, it is not difficult to show that also shortest paths which are not reasonable can be transformed to a desired 2-optimal schedule.
-\begin{cor}
+\begin{cor}\label{cor:approx_2_sched_short_path}
 Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to a \makebox{2-optimal}, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(P)=\costs(\mx)$.
 \end{cor}
 \begin{proof}
@@ -348,7 +348,7 @@ For our runtime analysis, we again take the same assumptions as done for Algorit
 \begin{equation*}
 	\Theta\bigl(\log_2(m)+2T\log_2(m)+T\bigr)=\Theta(T\log_2(m))
 \end{equation*}
-To our great joy, the runtime is linear in the size of the input. Similarly, our memory demand is reduced to linear space $\Theta\bigl(T\log_2(m)\bigr)$, since the size of the tables $C$ and $S$ shrinked to $\Theta\bigl(T\log_2(m)\bigr)$.
+To our great joy, the runtime is linear in the size of the input. Similarly, our memory demand is reduced to linear space $\Theta\bigl(T\log_2(m)\bigr)$ since the size of the tables $C$ and $S$ shrinked to $\Theta\bigl(T\log_2(m)\bigr)$.
 
 We saw in this section that our reduction to logarithmic steps allows us to derive a 2-optimal linear-time algorithm. In our approach, we chose the base two logarithm for the graph's step sizes. It seems like an interesting question whether this approach can be generalized to arbitrary bases, allowing for more precise approximations. The answer of this question shall be final task of this thesis.
 \begin{algorithm}[H]
@@ -417,16 +417,16 @@ In this section, we will generalize our 2-approximative algorithm from Section~\
 Recall the graph's structure from Section~\ref{sec:approx_2_opt}. For any power of two smaller than~$m$, we added a node in our graph. As a result, the approximative schedule's set of possible scheduling choices was given by $B=\{0,2^0,2^1,\dotsc,2^{\floor{\log_2(m)}},m\}$. Now consider an analogous attempt for arbitrary bases $y$, that is $B=\{0,y^0,y^1,\dotsc,y^{\floor{\log_y(m)}},m\}$. Since $y$ is not necessarily integer, an arbitrary power of $y$ can also be non-integer. Consequently, picking a scheduling choice from the new set $B$ potentially fails as one cannot schedule a non-integer number of servers in practice. We thus have to adapt the new set. To do so, we simply round the powers of $y$ to their closest integers. More formally, given an input $\inp$, we set
 \begin{align*}
 	b&\coloneqq\floor{\log_y(m)}\\
-	\text{and}\qquad B&\coloneqq\left\{0,\floor{y^0},\ceil{y^0},\floor{y^1},\ceil{y^1},\dotsc,\floor{y^b},\ceil{y^b},m\right\}
+	\text{and}\qquad B&\coloneqq\left\{0,1,\floor{y^1},\ceil{y^1},\floor{y^2},\ceil{y^2},\dotsc,\floor{y^b},\ceil{y^b},m\right\}
 \end{align*}
-We can then consider the following adaption of our graph:
+We can then consider the following modification of our graph:
 \begin{align*}
 	V&\coloneqq\bigl\{v_{x,t\downarrow}\mid x\in B,t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in B, t\in[T-1]\bigr\}\dotcup\{v_{0,0}\}\\
 	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in B\bigr\}\\
-	E_\downarrow&\coloneqq\bigl\{(v_{\floor{y^i},t\downarrow},v_{\floor{y^{i-1}},t\downarrow})\mid i\in[b],t\in[T]\bigr\}\dotcup\bigl\{(v_{\floor{y^0},t\downarrow},v_{0,t\downarrow})\mid t\in[T]\bigr\}\dotcup\\
-	&\phantom{{}\coloneqq{}}\bigl\{(v_{m,t\downarrow},v_{\floor{y^b},t\downarrow})\mid t\in[T]\bigr\}\\
-	E_\uparrow&\coloneqq\bigl\{(v_{\floor{y^{i-1}},t\uparrow},v_{\floor{y^i},t\uparrow})\mid i\in[b],t\in[T-1]\bigr\}\dotcup\bigl\{(v_{0,t\uparrow},v_{\floor{y^0},t\uparrow})\mid t\in[T-1]\bigr\}\dotcup\\
-	&\phantom{{}\coloneqq{}}\bigl\{(v_{\floor{y^b},t\uparrow},v_{m,t\uparrow})\mid t\in[T-1]\bigr\}\\
+	E_\downarrow&\coloneqq\bigl\{(v_{\ceil{y^i},t\downarrow},v_{\floor{y^{i}},t\downarrow})\mid i\in[b],t\in[T]\bigr\}\cup\bigl\{(v_{\floor{y^i},t\downarrow},v_{\ceil{y^{i-1}},t\downarrow})\mid i\in[b],t\in[T]\bigr\}\\
+	&\phantom{{}\coloneqq{}}\cup\bigl\{(v_{y^0,t\downarrow},v_{0,t\downarrow})\mid t\in[T]\bigr\}\cup\bigl\{(v_{m,t\downarrow},v_{\ceil{y^b},t\downarrow})\mid t\in[T]\bigr\}\\
+	E_\uparrow&\coloneqq\bigl\{(v_{\floor{y^i},t\uparrow},v_{\ceil{y^i},t\uparrow})\mid i\in[b],t\in[T-1]\bigr\}\cup\bigl\{(v_{\ceil{y^{i-1}},t\uparrow},v_{\floor{y^i},t\uparrow})\mid i\in[b],t\in[T-1]\bigr\}\\
+	&\phantom{{}\coloneqq{}}\cup\bigl\{(v_{0,t\uparrow},v_{y^0,t\uparrow})\mid t\in[T-1]\bigr\}\cup\bigl\{(v_{\ceil{y^b},t\uparrow},v_{m,t\uparrow})\mid t\in[T-1]\bigr\}\\
 	E_{\downarrow\uparrow}&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in B,t\in[T-1]\bigr\}\\
 	E_{\uparrow\downarrow}&\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in B,t\in[T-1]\bigr\}\\
 	E&\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
@@ -434,13 +434,12 @@ We can then consider the following adaption of our graph:
 	\begin{cases}
 		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1\downarrow})\in E_s$}\\
 		\opcosts(x,\lambda_{t+1}), & \text{if $e=(v_{x,t\uparrow},v_{x,t+1\downarrow})\in E_{\uparrow\downarrow}$}\\
-		(x'-x)\beta, & \text{if $e=(v_{x,t\uparrow},v_{x',t\uparrow})\in E_\uparrow$}\\
+		\beta(x'-x), & \text{if $e=(v_{x,t\uparrow},v_{x',t\uparrow})\in E_\uparrow$}\\
 		0, & \text{if $e\in(E_\downarrow\dotcup E_{\downarrow\uparrow})$}
 	\end{cases}\\
 	G&\coloneqq(V,E,c_G)
 \end{align*}
-Unnecessary loops can again simply be ignored for our following work.
-A graphical representation of $G$ can be found in Figure~\ref{fig:graph_lin_approx_y}.
+Unnecessary loops can again simply be ignored for our following work. A graphical representation of $G$ can be found in Figure~\ref{fig:graph_lin_approx_y}.
 \begin{figure}[H]
 \includestandalone[width=\textwidth]{../figures/graph_lin_approx_y}
 \caption{Graph for a $y$-optimal linear-time offline algorithm; the path of the topological sorting is highlighted in red.}
@@ -704,3 +703,89 @@ where we used Inequality~\eqref{eq:beta_greater_sum_op_floor_u_hat} as well as $
 
 By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le y\costs(\mx)$.
 \end{proof}
+The remaining proofs for the verification of our graph are almost identical to those done in Section~\ref{sec:approx_2_opt}.
+\begin{lem}\label{lem:sched_reasn_path_approx_y}
+Let $\bm{\mx}$ be the set of all $B$-restricted schedules for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
+\begin{equation*}
+	\Phi:\bm{\mathcal{P}}\rightarrow\bm{\mx},\quad P\mapsto (x_1,\dotsc,x_T)
+\end{equation*}
+is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
+\end{lem}
+\begin{thm}\label{thm:approx_y}
+Any shortest reasonable path $P$ corresponds to a 2-optimal, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(P)=\costs(\mx)$.
+\end{thm} 
+\begin{cor}
+Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to a \makebox{2-optimal}, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(P)=\costs(\mx)$.
+\end{cor}
+\begin{proof}
+The proofs are, once the necessary changes have been made (mutatis mutandis), the same as the ones of Lemma~\ref{lem:sched_reasn_path_approx_2}, Theorem~\ref{thm:approx_2}, and Corollary~\ref{cor:approx_2_sched_short_path}, substituting $2$ with~$y$.
+\end{proof}
+To no surprise, our final algorithm will be almost similar to the algorithm for our 2-approximation. The only major thing that requires a change is our auxiliary function \textproc{nodes}, which has to account for the new set of possible scheduling choices $B$.
+
+Our runtime analysis also stays very similar. Subroutine \textproc{shortest\_paths} requires $\Theta\bigl(2\log_y(m)\bigr)$ steps for its initialization and \makebox{$\Theta\bigl(2T\cdot2\log_y(m)\bigr)$} steps for the iterative calculation of the selections and costs. Further, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a time complexity of
+\begin{equation*}
+	\Theta\bigl(2\log_y(m)+2T\cdot2\log_y(m)+T\bigr)=\Theta(T\log_y(m))
+\end{equation*}
+that is, the runtime is linear in the size of the input. Similarly, our memory demand amounts to $\Theta\bigl(T\log_y(m)\bigr)$ since the size of the tables $C$ and $S$ is given by $\Theta\bigl(2T\log_2(m)\bigr)$.
+
+We saw in this section that our reduction to logarithmic steps allows us to derive a 2-optimal linear-time algorithm. In our approach, we chose the base two logarithm for the graph's step sizes. It seems like an interesting question whether this approach can be generalized to arbitrary bases, allowing for more precise approximations. The answer of this question shall be final task of this thesis.
+
+\begin{algorithm}[H]
+  \caption{$(1+\beps)$-optimal linear-time offline scheduling}
+  \label{alg:approx_y_offline_linear}
+  \begin{algorithmic}[1]
+  \Function{$(1+\beps)$\_optimal\_offline\_scheduling}{$m,T,\Lambda,\beta,f,\beps$}
+	  \Let{$(C,S)$}{\Call{shortest\_paths}{$m,T,\Lambda,\beta,f,1+\beps$}}
+	  \Let{$\mx$}{\Call{extract\_schedule}{$S,T,m,1+\beps$}}
+	  \State \Return{$\mx$}
+  \EndFunction
+  \Statex
+  \Function{node}{$i,m,y$}
+	\If {$i\bmod2=0$}$\ $\Return{$\min\bigl\{m,\floor{y^{\floor{\frac{i-1}{2}}}}\bigr\}$}
+	\Else$\ $\Return{$\min\bigl\{m,\ceil{y^{\floor{\frac{i-1}{2}}}}\bigr\}$}
+	\EndIf
+  \EndFunction
+  \Statex
+  \Function{shortest\_paths}{$m,T,\Lambda,\beta,f,y$}
+	\Let{$b$}{$\floor{\log_y(m)}+1$}
+	\Blet{$C[0\dotso 2b+1,1\dotso T]$ and $S[0\dotso 2b+1,1\dotso T]$}{new tables}
+	\Statex \Comment{Allocate cost and selection tables}
+	\Let{$S[2b+1,1]$}{$2b+1$ and $C[2b+1,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node}
+	\For{$i \gets 2b \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
+		\If {$C[i+1,1]<\costs\bigl(0,\Call{node}{i,m,y},\lambda_1\bigr)$}
+			\Let{$S[i,1]$}{$S[i+1,1]$ and $C[i,1]\gets C[i+1,1]$}
+		\Else
+			\Let{$S[i,1]$}{$i$ and $C[i,1]\gets\costs\bigl(0,\Call{node}{i,m,y},\lambda_1\bigr)$}
+		\EndIf
+	\EndFor
+	\For{$t \gets 1 \textrm{ to } T-1$}\Comment{Iterative calculate costs and selections}
+		\For{$i \gets 1 \textrm{ to } 2b+1$}\Comment{Upward minimization step}
+			\If {$C[i-1,t]+\beta\bigl(\Call{node}{i,m,y}-\Call{node}{i-1,m,y}\bigr)<C[i,t]$}
+			    \Let{$S[i,t]$}{$S[i-1,t]$}
+			    \Let{$C[i,t]$}{$C[i-1,t]+\beta\bigl(\Call{node}{i,m,y}-\Call{node}{i-1,m,y}\bigr)$}
+			\EndIf
+		\EndFor
+		\Let{$S[2b+1,t+1]$}{$2b+1$ and $C[2b+1,t+1]\gets C[2b+1,t]+\opcosts(m,\lambda_{t+1})$}
+		\For{$i \gets 2b \textrm{ to } 0$}\Comment{Downward minimization step}
+			\If {$C[i+1,t+1]<C[i,t]+\opcosts\bigl(\Call{node}{i,m,y},\lambda_{t+1}\bigr)$}
+				\Let{$S[i,t+1]$}{$S[i+1,t+1]$ and $C[i,t+1]\gets C[i+1,t+1]$}
+			\Else
+				\Let{$S[i,t+1]$}{$i$ and $C[i,t+1]\gets C[i,t]+\opcosts\bigl(\Call{node}{i,m,y},\lambda_{t+1}\bigr)$}
+			\EndIf
+		\EndFor
+	\EndFor
+	\State \Return{$(C,S)$}
+  \EndFunction
+  \Statex
+  \Function{extract\_schedule}{$S,T,m,y$}
+	\Blet{$\mx[1\dotso T]$}{a new array}
+	\Let{$i$}{$S[0,T]$}\Comment{Get index of best selection for last time slot}
+    	\Let{$\mx[T]$}{$\Call{node}{i,m,y}$}\Comment{Calculate best selection for last time slot}
+        \For{$t \gets T-1 \textrm{ to } 1$}\Comment{Iteratively obtain schedule from selection table}
+		\Let{$i$}{$S[i,t]$}
+		\Let{$\mx[t]$}{$\Call{node}{i,m,y}$}	
+	\EndFor
+	\State \Return{$\mx$}
+  \EndFunction
+  \end{algorithmic}
+\end{algorithm}
