@@ -2,57 +2,45 @@
 % Add the above to each chapter to make compiling the PDF easier in some editors.
 
 \addchap{Notation}
-\begin{table}[H]
-\begin{tabularx}{\textwidth}{ | >{\centering\arraybackslash}X | >{\arraybackslash}m{0.7\textwidth} | }
-  \hline \multicolumn{2}{|c|}{\textbf{\large Input}} \\  
-  \hline $m\in\mathbb{N}$ & Number of homogeneous servers \\
-  \hline $T\in\mathbb{N}$& Number of time slots\\
-  \hline $\lambda_1,\dotsc,\lambda_{T}\in[0,m]$& Arrival rates\\
-  \hline $\Lambda\coloneqq(\lambda_1,\dotsc,\lambda_T)$& Sequence of arrival rates\\
-  \hline $\beta\in\mathbb{R}_{\ge 0}$& Switching costs of a server\\
-  \hline $f:[0,1]\rightarrow\mathbb{R}$& Convex operating cost function of a server. For Chapter~\ref{chap:approx_offline_scheduling}, $f$ is assumed to be non-negative and monotonically increasing.\\
-  \hline $\inp\coloneqq(m,T,\Lambda,\beta,f)$& Input of a problem instance\\
-  \hline
-\end{tabularx}
-\end{table}
-
-\begin{table}[H]
-\begin{tabularx}{\textwidth}{ | >{\centering\arraybackslash}X | >{\arraybackslash}m{0.7\textwidth} | }
-  \hline \multicolumn{2}{|c|}{\textbf{\large Problem Statement}} \\  
-  \hline $s_{i,t}\in\{0,1\}$& State of server $i$ at time $t$; either sleeping (0) or active (1)\\
-  \hline $S_i\coloneqq(s_{i,1},\dotsc,s_{i,T})$& Sequence of states for server $i$\\
-  \hline $\lambda_{i,t}\in[0,1]$& Assigned load for server $i$ at time $t$\\
-  \hline $L_i\coloneqq(\lambda_{i,1},\dotsc,\lambda_{i,T})$& Sequence of assigned loads for server $i$\\
-  \hline $\mathcal{S}\coloneqq(S_1,\dotsc,S_m)$& Sequence of all state changes\\
-  \hline $\mathcal{L}\coloneqq(L_1,\dotsc,L_m)$& Sequence of all assigned loads\\
-  \hline $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$& Schedule for a problem instance $\inp$\\
-  \hline $x_t\in[m]_0$& Number of active servers at time $t$\\
-  \hline $\mx\coloneqq(x_1,\ldots,x_T)$& Sequence of the number of active servers. Note that due to Chapter~\ref{chap:preliminaries}, $\mx$ can be interpreted as a schedule.\\
-  \hline $\opcosts(x,\lambda)$& Costs of processing $\lambda$ with $x$ servers (operating costs)\\
-  \hline $\swcosts(x_{t-1},x_{t})$& Costs of switching from $x_{t-1}$ to $x_t$ servers (switching costs)\\
-  \hline $\costs(x_{t-1},x_{t},\lambda_t)$& Costs of switching from $x_{t-1}$ to $x_t$ servers and processing $\lambda_t$ with $x_t$ servers\\
-  \hline $\costs(\mx)$& Costs of a schedule\\
-  \hline
-\end{tabularx}
-\end{table}
-
-\begin{table}[H]
-\begin{tabularx}{\textwidth}{ | >{\centering\arraybackslash}X | >{\arraybackslash}m{0.65\textwidth} | }
-  \hline \multicolumn{2}{|c|}{\textbf{\large Conventions}} \\  
-  \hline $\forall t\notin[T]:\lambda_t=0$ & There are no loads before and after the scheduling process.\\  
-  \hline $\forall t\notin[T]:s_{i,t}=x_t=0$ & All servers are shut down before and after the scheduling process.\\  
-  \hline
-\end{tabularx}
-\end{table}
-
-\begin{table}[H]
-\begin{tabularx}{\textwidth}{ | >{\centering\arraybackslash}X | >{\arraybackslash}m{0.65\textwidth} | }
-  \hline \multicolumn{2}{|c|}{\textbf{\large Miscellaneous}} \\  
-  \hline $[n]\coloneqq\fromto{1}{n}\subset\mathbb{N}$&Natural numbers from $1$ to $n$\\
-  \hline $[n]_0\coloneqq\fromto{0}{n}\subset\mathbb{N}_0$&Integers from $0$ to $n$\\
-  \hline Feasible schedule&A schedule is feasible if it processes all loads in due time.\\
-  \hline $y$-approximation&A schedule/operation is called $y$-approximative if its cost is at most $y$ times as much as the original schedule's/operation's cost.\\
-  \hline $y$-optimal algorithm&A scheduling algorithm is $y$-optimal if its calculated schedule is $y$-approximative when compared to an optimal schedule.\\
-  \hline
-\end{tabularx}
-\end{table}
+\large{\textbf{Input}}
+\bgroup
+\def\arraystretch{1.5}%  1 is the default, change whatever you need
+\begin{longtable}{p{0.25\textwidth} p{0.705\textwidth}}
+  $m\in\mathbb{N}$ & Number of homogeneous servers \\
+  $T\in\mathbb{N}$& Number of time slots\\
+  $\lambda_1,\dotsc,\lambda_{T}\in[0,m]$& Arrival rates\\
+  $\Lambda\coloneqq(\lambda_1,\dotsc,\lambda_T)$& Sequence of arrival rates\\
+  $\beta\in\mathbb{R}_{\ge 0}$& Switching costs of a server\\
+  $f:[0,1]\rightarrow\mathbb{R}$& Convex operating cost function of a server. For Chapter~\ref{chap:approx_offline_scheduling}, $f$ is assumed to be non-negative and monotonically increasing.\\
+  $\inp\coloneqq(m,T,\Lambda,\beta,f)$& Input of a problem instance
+\end{longtable}
+\large{\textbf{Problem Statement}}
+\begin{longtable}{p{0.25\textwidth} p{0.705\textwidth}}
+  $s_{i,t}\in\{0,1\}$& State of server $i$ at time $t$; either sleeping (0) or active (1)\\
+  $S_i\coloneqq(s_{i,1},\dotsc,s_{i,T})$& Sequence of states for server $i$\\
+  $\lambda_{i,t}\in[0,1]$& Assigned load for server $i$ at time $t$\\
+  $L_i\coloneqq(\lambda_{i,1},\dotsc,\lambda_{i,T})$& Sequence of assigned loads for server $i$\\
+  $\mathcal{S}\coloneqq(S_1,\dotsc,S_m)$& Sequence of all state changes\\
+  $\mathcal{L}\coloneqq(L_1,\dotsc,L_m)$& Sequence of all assigned loads\\
+  $\Sigma\coloneqq(\mathcal{S},\mathcal{L})$& Schedule for a problem instance $\inp$\\
+  $x_t\in[m]_0$& Number of active servers at time $t$\\
+  $\mx\coloneqq(x_1,\ldots,x_T)$& Sequence of the number of active servers. Note that due to Chapter~\ref{chap:preliminaries}, $\mx$ can be interpreted as a schedule.\\
+  $\opcosts(x,\lambda)$& Costs of processing $\lambda$ with $x$ servers (operating costs)\\
+  $\swcosts(x_{t-1},x_{t})$& Costs of switching from $x_{t-1}$ to $x_t$ servers (switching costs)\\
+  $\costs(x_{t-1},x_{t},\lambda_t)$& Costs of switching from $x_{t-1}$ to $x_t$ servers and processing $\lambda_t$ with $x_t$ servers\\
+  $\costs(\mx)$& Costs of a schedule
+\end{longtable}
+\large{\textbf{Conventions}}
+\begin{longtable}{p{0.30\textwidth} p{0.655\textwidth}}
+  $\forall t\notin[T]:\lambda_t=0$ & There are no loads before and after the scheduling process.\\  
+  $\forall t\notin[T]:s_{i,t}=x_t=0$ & All servers are shut down before and after the scheduling process.
+\end{longtable}
+\large{\textbf{Miscellaneous}}
+\begin{longtable}{p{0.3\textwidth} p{0.655\textwidth}}
+  $[n]\coloneqq\fromto{1}{n}\subset\mathbb{N}$&Natural numbers from $1$ to $n$\\
+  $[n]_0\coloneqq\fromto{0}{n}\subset\mathbb{N}_0$&Integers from $0$ to $n$\\
+  Feasible schedule&A schedule is feasible if it processes all loads in due time.\\
+  $y$-approximation&A schedule/operation is called $y$-approximative if its cost is at most $y$ times as much as the original schedule's/operation's cost.\\
+  $y$-optimal algorithm&A scheduling algorithm is $y$-optimal if its calculated schedule is $y$-approximative when compared to an optimal schedule.
+\end{longtable}
+\egroup
