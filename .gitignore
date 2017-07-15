@@ -184,3 +184,6 @@ TSWLatexianTemp*
 
 # temp files
 .fuse_hidden*
+
+# local bibliography
+papers/
