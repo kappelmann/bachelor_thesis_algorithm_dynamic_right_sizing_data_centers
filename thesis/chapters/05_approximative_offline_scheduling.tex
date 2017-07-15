@@ -351,6 +351,7 @@ For our runtime analysis, we again take the same assumptions as done for Algorit
 To our great joy, the runtime is linear in the size of the input. Similarly, our memory demand is reduced to linear space $\Theta\bigl(T\log_2(m)\bigr)$ since the size of the tables $C$ and $S$ shrinked to $\Theta\bigl(T\log_2(m)\bigr)$.
 
 We saw in this section that our reduction to logarithmic steps allows us to derive a 2-optimal linear-time algorithm. In our approach, we chose the base two logarithm for the graph's step sizes. It seems like an interesting question whether this approach can be generalized to arbitrary bases, allowing for more precise approximations. The answer of this question shall be final task of this thesis.
+\newpage
 \begin{algorithm}[H]
   \caption{2-optimal linear-time offline scheduling}
   \label{alg:approx_2_offline_linear}
@@ -448,19 +449,14 @@ Unnecessary loops can again simply be ignored. A graphical representation of $G$
 \caption{Graph for a $y$-optimal linear-time offline algorithm; the path of the topological sorting is highlighted in red.}
 \label{fig:graph_lin_approx_y}
 \end{figure}
-
+There is not much to say about the graph's working principle, since it stays the same as for our construction in Section~\ref{sec:approx_2_opt}. Instead, we dive right into proving process. To begin, we have to adapt Lemma~\ref{lem:transform_schedule_approx_2}, for which we have to generalize our definition of 2-state changes.
 \begin{defn}[y-state changes]\label{defn:y_state_changes}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T+1]$. We say that $\mx$ changes its \emph{$y$-state} at time $t$ if $\mx$ satisfies the formula
 \begin{equation*}
 	x_{t-1}\neq x_t\land \left(x_{t-1}=0 \lor x_t\notin\left[y^{\floor{\log_y(x_{t-1})}},y^{\floor{\log_y(x_{t-1})}+1}\right)\right)
 \end{equation*}
 \end{defn}
-
-
-
-
-TODO text
-The proof of the next lemma will be very similar to that done in Lemma~\ref{lem:transform_schedule_approx_2}.
+The proof of the next lemma will to a great extent be very similar to that of Lemma~\ref{lem:transform_schedule_approx_2}. However, as the interval boundaries of our $y$-state changes are not integer anymore, we will have to proceed more cautious and consider some more cases.
 \begin{lem}
 Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le y\costs(\mx)$}.
 \end{lem}
@@ -706,7 +702,7 @@ where we used Inequality~\eqref{eq:beta_greater_sum_op_floor_u_hat} as well as $
 
 By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le y\costs(\mx)$.
 \end{proof}
-The remaining proofs for the verification of our graph are almost identical to those done in Section~\ref{sec:approx_2_opt}.
+The remaining verfication of our graph proceeds similar to Section~\ref{sec:approx_2_opt}.
 \begin{lem}\label{lem:sched_reasn_path_approx_y}
 Let $\bm{\mx}$ be the set of all $B$-restricted schedules for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
 \begin{equation*}
@@ -715,24 +711,22 @@ Let $\bm{\mx}$ be the set of all $B$-restricted schedules for $\inp$, and let $\
 is a bijection satisfying $\costs(P)=\costs\bigl(\Phi(P)\bigr)$.
 \end{lem}
 \begin{thm}\label{thm:approx_y}
-Any shortest reasonable path $P$ corresponds to a 2-optimal, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(P)=\costs(\mx)$.
+Any shortest reasonable path $P$ corresponds to a $y$-optimal, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(P)=\costs(\mx)$.
 \end{thm} 
 \begin{cor}
-Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to a \makebox{2-optimal}, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(P)=\costs(\mx)$.
+Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed to a \makebox{$y$-optimal}, $B$-restricted schedule $\mx$ for $\inp$ with $\costs(P)=\costs(\mx)$.
 \end{cor}
 \begin{proof}
-The proofs are, once the necessary changes have been made (mutatis mutandis), the same as the ones of Lemma~\ref{lem:sched_reasn_path_approx_2}, Theorem~\ref{thm:approx_2}, and Corollary~\ref{cor:approx_2_sched_short_path}, substituting $2$ with~$y$.
+The proofs are, once the necessary changes have been made (i.e.\ substituting $2$ with~$y$), the same as the ones of Lemma~\ref{lem:sched_reasn_path_approx_2}, Theorem~\ref{thm:approx_2}, and Corollary~\ref{cor:approx_2_sched_short_path}.
 \end{proof}
-To no surprise, our final algorithm will be almost similar to the algorithm for our 2-approximation. The only major thing that requires a change is our auxiliary function \textproc{nodes}, which has to account for the new set of possible scheduling choices $B$.
-
-Our runtime analysis also stays very similar. Subroutine \textproc{shortest\_paths} requires $\Theta\bigl(2\log_y(m)\bigr)$ steps for its initialization and \makebox{$\Theta\bigl(2T\cdot2\log_y(m)\bigr)$} steps for the iterative calculation of the selections and costs. Further, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a time complexity of
+To no surprise, the final algorithm will be almost identical to the algorithm of our \makebox{2-approximation}. The only major thing that requires a change is the auxiliary function \textproc{nodes}, which has to account for the new set of possible scheduling choices $B$. Our runtime analysis consequently also stays very similar. Subroutine \textproc{shortest\_paths} requires $\Theta\bigl(2\log_y(m)\bigr)$ steps for its initialization and \makebox{$\Theta\bigl(2T\cdot2\log_y(m)\bigr)$} steps for the iterative calculation of the selections and costs. Further, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a time complexity of
 \begin{equation*}
 	\Theta\bigl(2\log_y(m)+2T\cdot2\log_y(m)+T\bigr)=\Theta(T\log_y(m))
 \end{equation*}
-that is, the runtime is linear in the size of the input. Similarly, our memory demand amounts to $\Theta\bigl(T\log_y(m)\bigr)$ since the size of the tables $C$ and $S$ is given by $\Theta\bigl(2T\log_2(m)\bigr)$.
+that is, the runtime is linear in the size of the input. Similarly, our memory demand amounts to $\Theta\bigl(T\log_y(m)\bigr)$ since the size of the tables $C$ and $S$ is given by $\Theta\bigl(2T\log_y(m)\bigr)$.
 
 We saw in this section that our reduction to logarithmic steps allows us to derive a 2-optimal linear-time algorithm. In our approach, we chose the base two logarithm for the graph's step sizes. It seems like an interesting question whether this approach can be generalized to arbitrary bases, allowing for more precise approximations. The answer of this question shall be final task of this thesis.
-
+\newpage
 \begin{algorithm}[H]
   \caption{$(1+\beps)$-optimal linear-time offline scheduling}
   \label{alg:approx_y_offline_linear}
@@ -752,7 +746,6 @@ We saw in this section that our reduction to logarithmic steps allows us to deri
   \Function{shortest\_paths}{$m,T,\Lambda,\beta,f,y$}
 	\Let{$b$}{$\floor{\log_y(m)}+1$}
 	\Blet{$C[0\dotso 2b+1,1\dotso T]$ and $S[0\dotso 2b+1,1\dotso T]$}{new tables}
-	\Statex \Comment{Allocate cost and selection tables}
 	\Let{$S[2b+1,1]$}{$2b+1$ and $C[2b+1,1]\gets\costs(0,m,\lambda_1)$}\Comment{Initialize first node}
 	\For{$i \gets 2b \textrm{ to } 0$}\Comment{Initialize first layer (downward minimization step)}
 		\If {$C[i+1,1]<\costs\bigl(0,\Call{node}{i,m,y},\lambda_1\bigr)$}
