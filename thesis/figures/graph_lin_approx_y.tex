@@ -1,105 +1,122 @@
 \documentclass{standalone}
 \usepackage{tikz}
 \begin{document}
-\begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.7cm,circle,draw}]
+\begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.65cm,circle,draw}]
   \node[node] (1) {0,0};
-  \node[node] (4) [below right=4cm of 1] {0,1$\downarrow$};
-  \node[node] (3) [above =0.5cm of 4] {$\floor{y^0}$,1$\downarrow$};
-  \node[node] (2) [above right=4cm of 1] {m,1$\downarrow$};
-  \node[node] (5) [below =0.5cm of 2] {$\floor{y^b}$,1$\downarrow$};
-  \node[node] (7) [right =of 3] {$\floor{y^0}$,1$\uparrow$};
+  \node[node] (4) [below right=5cm and 4.2cm of 1] {0,1$\downarrow$};
+  \node[node] (3) [above =0.5cm of 4] {$1$,1$\downarrow$};
+  \node[node] (2) [above right=4cm and 4.2cm of 1] {m,1$\downarrow$};
+  \node[node] (5) [below =0.5cm of 2] {$\ceil{y^b}$,1$\downarrow$};
+  \node[node] (7) [right =of 3] {$1$,1$\uparrow$};
   \node[node] (6) [right =of 2] {m,1$\uparrow$};
   \node[node] (8) [right =of 4] {0,1$\uparrow$};
-  \node[node] (9) [right =of 5] {$\floor{y^b}$,1$\uparrow$};
-  \node[node] (11) [right =of 7] {$\floor{y^0}$,2$\downarrow$};
+  \node[node] (9) [right =of 5] {$\ceil{y^b}$,1$\uparrow$};
+  \node[node] (11) [right =of 7] {$1$,2$\downarrow$};
   \node[node] (10) [right =of 6] {m,2$\downarrow$};
   \node[node] (12) [right =of 8] {0,2$\downarrow$};
-  \node[node] (13) [right =of 9] {$\floor{y^b}$,2$\downarrow$};
-  \node[node] (15) [right =of 11] {$\floor{y^0}$,2$\uparrow$};
+  \node[node] (13) [right =of 9] {$\ceil{y^b}$,2$\downarrow$};
+  \node[node] (15) [right =of 11] {$1$,2$\uparrow$};
   \node[node] (14) [right =of 10] {m,2$\uparrow$};
   \node[node] (16) [right =of 12] {0,2$\uparrow$};
-  \node[node] (17) [right =of 13] {$\floor{y^b}$,2$\uparrow$};
-  \node[node] (19) [right =5cm of 15] {$\floor{y^0}$,T$\downarrow$};
+  \node[node] (17) [right =of 13] {$\ceil{y^b}$,2$\uparrow$};
+  \node[node] (19) [right =5cm of 15] {$1$,T$\downarrow$};
   \node[node] (18) [right =5cm of 14] {m,T$\downarrow$};
   \node[node] (20) [right =5cm of 16] {0,T$\downarrow$};
-  \node[node] (21) [right =5cm of 17] {$\floor{y^b}$,T$\downarrow$};
+  \node[node] (21) [right =5cm of 17] {$\ceil{y^b}$,T$\downarrow$};
 
-  \node (22) at ($(2)!.5!(4)$) {};
-  \node (23) at ($(2)!.487!(4)$) {\vdots};
-  \node (24) at ($(6)!.487!(8)$) {\vdots};
-  \node (25) at ($(10)!.487!(12)$) {\vdots};
-  \node (26) at ($(14)!.487!(16)$) {\vdots};
-  \node at ($(18)!.487!(20)$) {\vdots};
-  \node at ($(23)!.487!(24)$) {\vdots};
-  \node at ($(24)!.487!(25)$) {\vdots};
-  \node at ($(25)!.487!(26)$) {\vdots};
+  \node[node] (29) [above =0.5cm of 3] {$\floor{y^1}$,1$\downarrow$};
+  \node[node] (30) [right =of 29] {$\floor{y^1}$,1$\uparrow$};
+  \node[node] (31) [right =of 30]  {$\floor{y^1}$,2$\downarrow$};
+  \node[node] (32) [right =of 31]  {$\floor{y^1}$,2$\uparrow$};
+  \node[node] (33) [right =5cm of 32]  {$\floor{y^1}$,T$\downarrow$};
 
-  \node (27) at ($(14)!.5!(18)$) {\ldots};
+  \node[node] (34) [above =0.5cm of 29] {$\ceil{y^1}$,1$\downarrow$};
+  \node[node] (35) [right =of 34] {$\ceil{y^1}$,1$\uparrow$};
+  \node[node] (36) [right =of 35]  {$\ceil{y^1}$,2$\downarrow$};
+  \node[node] (37) [right =of 36]  {$\ceil{y^1}$,2$\uparrow$};
+  \node[node] (38) [right =5cm of 37]  {$\ceil{y^1}$,T$\downarrow$};
+
+  \node (23) at ($(2)!.3!(4)$) {\vdots};
+  \node (24) at ($(6)!.3!(8)$) {\vdots};
+  \node (25) at ($(10)!.3!(12)$) {\vdots};
+  \node (26) at ($(14)!.3!(16)$) {\vdots};
+  \node at ($(18)!.3!(20)$) {\vdots};
+
+  \node at ($(14)!.5!(18)$) {\ldots};
   \node at ($(15)!.5!(19)$) {\ldots};
-  \node (28) at ($(16)!.5!(20)$) {\ldots};
-  \node at ($(17)!.5!(21)$) {\ldots};
+  \node at ($(16)!.5!(20)$) {\ldots};
+  \node (28) at ($(17)!.5!(21)$) {\ldots};
+  \node at ($(32)!.5!(33)$) {\ldots};
+  \node (27) at ($(37)!.5!(38)$) {\ldots};
   \node at ($(27)!.5!(28)$) {\ldots};
 
   \path[every node/.style={font=\sffamily\small}]
     (1) edge[red] node[black,above left] {$\costs(0,m,\lambda_1)$} (2)
-	edge node[label={[xshift=0.8cm, yshift=-1cm]$\costs\bigl(0,\floor{y^b},\lambda_1\bigr)$}] {} (5)
-	edge node[above right=-0.28cm] {$\costs\bigl(0,\floor{y^0},\lambda_1\bigr)$} (3)
+	edge node[label={[xshift=1.1cm, yshift=-0.8cm]$\costs\bigl(0,\ceil{y^b},\lambda_1\bigr)$}] {} (5)
+	edge node[above right=-0.45cm and 0.15cm] {$\costs\bigl(0,1,\lambda_1\bigr)$} (3)
 	edge node[below left] {$\costs(0,0,\lambda_1)$} (4)
-    (1) edge ($(1)!.82!(22)$)
+	edge node[above right=-0.2cm] {$\costs(0,\floor{y^1},\lambda_1)$} (29)
+	edge node[above right=0cm and -0.7cm] {$\costs(0,\ceil{y^1},\lambda_1)$} (34)
 
     (2) edge node[above] {$0$} (6)
     (3) edge node[above] {$0$} (7)
     (4) edge[red] node[black,above] {$0$} (8)
     (5) edge node[above] {$0$} (9)
+    (29) edge node[above] {$0$} (30)
+    (34) edge node[above] {$0$} (35)
 
     (2) edge[red] node[black,right] {$0$} (5)
     (3) edge[red] node[black,right] {$0$} (4)
+    (29) edge[red] node[black,right] {$0$} (3)
+    (34) edge[red] node[black,right] {$0$} (29)
 
-    (9) edge[red] node[black,right] {$\beta\bigl(m-\floor{y^b}\bigr)$} (6)
+    (9) edge[red] node[black,right] {$\beta\bigl(m-\ceil{y^b}\bigr)$} (6)
     (8) edge[red] node[black,right] {$\beta$} (7)
+    (7) edge[red] node[black,right] {$\beta(\floor{y^1}-1)$} (30)
+    (30) edge[red] node[black,right] {$\beta(\ceil{y^1}-\floor{y^1})$} (35)
 
     (6) edge[red] node[black,above] {$\opcosts(m,\lambda_2)$} (10)
-    (7) edge node[above] {$\opcosts\bigl(\floor{y^0},\lambda_2\bigr)$} (11)
+    (7) edge node[above] {$\opcosts\bigl(1,\lambda_2\bigr)$} (11)
     (8) edge node[above] {$\opcosts(0,\lambda_2)$} (12)
-    (9) edge node[above] {$\opcosts\bigl(\floor{y^b},\lambda_2\bigr)$} (13)
+    (9) edge node[above] {$\opcosts\bigl(\ceil{y^b},\lambda_2\bigr)$} (13)
+    (30) edge node[above] {$\opcosts\bigl(\floor{y^1},\lambda_2\bigr)$} (31)
+    (35) edge node[above] {$\opcosts\bigl(\ceil{y^1},\lambda_2\bigr)$} (36)
 
     (10) edge node[above] {$0$} (14)
     (11) edge node[above] {$0$} (15)
     (12) edge[red] node[black,above] {$0$} (16)
     (13) edge node[above] {$0$} (17)
+    (31) edge node[above] {$0$} (32)
+    (36) edge node[above] {$0$} (37)
 
     (10) edge[red] node[black,right] {$0$} (13)
     (11) edge[red] node[black,right] {$0$} (12)
+    (31) edge[red] node[black,right] {$0$} (11)
+    (36) edge[red] node[black,right] {$0$} (31)
 
-    (17) edge[red] node[black,right] {$\beta\bigl(m-\floor{y^b}\bigr)$} (14)
+    (17) edge[red] node[black,right] {$\beta\bigl(m-\ceil{y^b}\bigr)$} (14)
     (16) edge[red] node[black,right] {$\beta$} (15)
-
-    (5) edge[red] node[black,right] {$0$} ($(5)!.35!(3)$)
-    ($(5)!.65!(3)$) edge[red] node[black,right] {$0$} (3)
-
-    ($(7)!.65!(9)$) edge[red] node[black,right] {$\beta\bigl(\floor{y^b}-\floor{y^{b-1}}\bigr)$} (9)
-    (7) edge[red] node[black,right] {$\beta\bigl(\floor{y^1}-\floor{y^{0}}\bigr)$} ($(7)!.35!(9)$)
- 
-    (13) edge[red] node[black,right] {$0$} ($(13)!.35!(11)$)
-    ($(13)!.65!(11)$) edge[red] node[black,right] {$0$} (11)
-
-    ($(15)!.65!(17)$) edge[red] node[black,right] {$\beta\bigl(\floor{y^b}-\floor{y^{b-1}}\bigr)$} (17)
-    (15) edge[red] node[black,right] {$\beta\bigl(\floor{y^1}-\floor{y^{0}}\bigr)$} ($(15)!.35!(17)$)
-
+    (15) edge[red] node[black,right] {$\beta(\floor{y^1}-1)$} (32)
+    (32) edge[red] node[black,right] {$\beta(\ceil{y^1}-\floor{y^1})$} (37)
 
     (14) edge[red] node[label={[black,xshift=0cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
-    (15) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^0},\lambda_3\bigr)$}] {} ($(15)!.4!(19)$)
+    (15) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(1,\lambda_3\bigr)$}] {} ($(15)!.4!(19)$)
     (16) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
-    (17) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^b},\lambda_3\bigr)$}] {} ($(17)!.4!(21)$)
+    (17) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\ceil{y^b},\lambda_3\bigr)$}] {} ($(17)!.4!(21)$)
+    (32) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^1},\lambda_3\bigr)$}] {} ($(32)!.4!(33)$)
+    (37) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\ceil{y^1},\lambda_3\bigr)$}] {} ($(37)!.4!(38)$)
 
     ($(14)!.6!(18)$) edge[red] node[black,above] {$\opcosts(m,\lambda_T)$} (18)
-    ($(15)!.6!(19)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^0},\lambda_T\bigr)$}] {} (19)
+    ($(15)!.6!(19)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(1,\lambda_T\bigr)$}] {} (19)
     ($(16)!.6!(20)$) edge node[above] {$\opcosts(0,\lambda_T)$} (20)
-    ($(17)!.6!(21)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^b},\lambda_T\bigr)$}] {} (21)
+    ($(17)!.6!(21)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(\ceil{y^b},\lambda_T\bigr)$}] {} (21)
+    ($(32)!.6!(33)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^1},\lambda_T\bigr)$}] {} (33)
+    ($(37)!.6!(38)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(\ceil{y^1},\lambda_T\bigr)$}] {} (38)
+
 
     (18) edge[red] node[black,right] {$0$} (21)
     (19) edge[red] node[black,right] {$0$} (20)
-    (21) edge[red] node[black,right] {$0$} ($(21)!.35!(19)$)
-    ($(21)!.65!(19)$) edge[red] node[black,right] {$0$} (19);
+    (33) edge[red] node[black,right] {$0$} (19)
+    (38) edge[red] node[black,right] {$0$} (33);
 \end{tikzpicture}
 \end{document}

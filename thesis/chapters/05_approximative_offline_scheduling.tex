@@ -39,7 +39,7 @@ If $m$ is a power of two, i.e.\ $m=2^b$, it happens that we add unnecessary loop
 A graphical representation of $G$ can be found in Figure~\ref{fig:graph_lin_approx_2}.
 \begin{figure}[H]
 \includestandalone[width=\textwidth]{../figures/graph_lin_approx_2}
-\caption{Graph for a 2-optimal linear-time offline algorithm; the path of the topological sorting is highlighted in red. Note that $\beta(2^i-2^{i-1})=\beta2^{i-1}$.}
+\caption{Graph for a 2-optimal linear-time offline algorithm; the path of the topological sorting is highlighted in red.}
 \label{fig:graph_lin_approx_2}
 \end{figure}
 The nodes' and edges' semantical meaning and the graph's working principle stays similar to that given in Section~\ref{sec:opt_offline_pseudo_lin}. Again, by following the colored path of the topological sorting, we can work our way through the graph to calculate the shortest paths, ultimately reaching the destination $v_{0,T\downarrow}$. However, since some possible scheduling choices are not representable in this new graph, we may just obtain approximative costs for our nodes. Thus, the shortest path in our graph might not correspond to an optimal schedule, but it will at least correspond to an approximative one. Before we start to establish the graph's approximation guarantee, we first have to conduct some observations. We start by making a convenient definition that helps us to identify schedules that are representable in our graph.
