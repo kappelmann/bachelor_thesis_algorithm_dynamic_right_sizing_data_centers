@@ -4,5 +4,10 @@
 \chapter{Conclusion}\label{chap:conclusion}
 
 \section{Summary}
+Our work started with a fairly general data center model consisting of a homogeneous collection of servers with fixed switching costs and convex operating costs. The data center's load varies with time. Consequently, the number of active servers and workload distribution has to be dynamically adapted to minimize the data center's incurring costs. To accomplish this task, we first transferred our model's optimization problem to a simpler form in Chapter~\ref{chap:preliminaries} by exploiting discovered patterns and properties of optimal schedules. 
+
+We then observed in Chapter~\ref{chap:opt_offline_schedule} that the data center's optimization problem can be reduced to the shortest path problem of an acyclic graph. This observation was then used to derive an optimal algorithm with pseudo-polynomial time complexity, which in a second step was improved to pseudo-linear time by adapting the graph's structure.
+
+Lastly, we sought to reduce the algorithm's time complexity to polynomial time. For this, we had to move to approximative methods and slightly adapt our assumptions concerning the servers' operating costs function $f$ in Chapter~\ref{chap:approx_offline_scheduling}. More specifically, we assumed $f$ to be non-negative and monotonically increasing; these assumptions, however, do not interfer with practical applicability, as discussed in Section~\ref{sec:approx_2_opt}. We first derived a 2-optimal algortihm with linear time complexity by modifying the previously used graph. In a second, we generalized our initial approach to a $(1+\beps)$-optimal linear time algorithm, able to approximate optimal solutions with arbitrary precision.
 
 \section{Future Work}

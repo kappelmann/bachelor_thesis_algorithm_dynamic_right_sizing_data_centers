@@ -16,7 +16,7 @@
 \end{longtable}
 \large{\textbf{Problem Statement}}
 \begin{longtable}{p{0.25\textwidth} p{0.705\textwidth}}
-  $s_{i,t}\in\{0,1\}$& State of server $i$ at time $t$; either sleeping (0) or active (1)\\
+  $s_{i,t}\in\{0,1\}$& State of server $i$ at time $t$; either shut-down (0) or active (1)\\
   $S_i\coloneqq(s_{i,1},\dotsc,s_{i,T})$& Sequence of states for server $i$\\
   $\lambda_{i,t}\in[0,1]$& Assigned load for server $i$ at time $t$\\
   $L_i\coloneqq(\lambda_{i,1},\dotsc,\lambda_{i,T})$& Sequence of assigned loads for server $i$\\
@@ -41,6 +41,6 @@
   $[n]_0\coloneqq\fromto{0}{n}\subset\mathbb{N}_0$&Integers from $0$ to $n$\\
   Feasible schedule&A schedule is feasible if it processes all loads in due time.\\
   $y$-approximation&A schedule/operation is called $y$-approximative if its cost is at most $y$ times as much as the original schedule's/operation's cost.\\
-  $y$-optimal algorithm&A scheduling algorithm is $y$-optimal if its calculated schedule is $y$-approximative when compared to an optimal schedule.
+  $y$-optimal algorithm&A scheduling algorithm is $y$-optimal if its calculated schedule's cost is at most $y$ times as much as an optimal schedule's cost.
 \end{longtable}
 \egroup

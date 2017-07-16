@@ -6,7 +6,7 @@ Heretofore, we have derived two optimal offline algorithms for our scheduling pr
 Further, in the course of the next section, we will see that we need to assume that our convex operating cost function $f$ is non-negative and monotonically increasing; however, this restriction is of no great significance in practice, as will be discussed later.
 
 In this chapter, we will first modify our algorithm derived in Section~\ref{sec:opt_offline_pseudo_lin} to obtain a 2-optimal offline algorithm with linear time complexity. To clarify, given a number $y\in\mathbb{R}$, we say that a scheduling algorithm is \emph{$y$-optimal} if its calculated solution incurs at most $y$ times as much cost as an optimal solution does. Similarly, we say that a schedule/operation is \emph{$y$-approximative} if its cost is at most $y$ times as much as much as the original schedule's/operation's cost.
-As a final step of this thesis, we will generalize the 2-optimal algorithm to derive an $(1+\beps)$-optimal algorithm with linear time complexity.
+As a final step of this thesis, we will generalize the \makebox{2-optimal} algorithm to derive an $(1+\beps)$-optimal algorithm with linear time complexity.
 
 \section{A 2-Optimal Linear-Time Algorithm}\label{sec:approx_2_opt}
 Recall our algorithm and its corresponding graph $G$ derived in Section~\ref{sec:opt_offline_pseudo_lin}. The algorithm's time complexity of $\Theta(Tm)$ is determined by the number of nodes and edges of $G$. Since we desire to reduce our runtime complexity, we need to reduce the number of nodes and edges in $G$. In particular, we must get rid of the factor $m$. This factor is a consequence of the ``height'' of our graph, i.e.\ the number of nodes in each layer. Therefore, we have to ``thin out'' $G$ by reducing its number of nodes in each layer.
@@ -725,7 +725,6 @@ To no surprise, the final algorithm will be almost identical to the algorithm of
 \end{equation*}
 that is, the runtime is linear in the size of the input. Similarly, our memory demand amounts to $\Theta\bigl(T\log_y(m)\bigr)$ since the size of the tables $C$ and $S$ is given by $\Theta\bigl(2T\log_y(m)\bigr)$.
 
-We saw in this section that our reduction to logarithmic steps allows us to derive a 2-optimal linear-time algorithm. In our approach, we chose the base two logarithm for the graph's step sizes. It seems like an interesting question whether this approach can be generalized to arbitrary bases, allowing for more precise approximations. The answer of this question shall be final task of this thesis.
 \newpage
 \begin{algorithm}[H]
   \caption{$(1+\beps)$-optimal linear-time offline scheduling}
