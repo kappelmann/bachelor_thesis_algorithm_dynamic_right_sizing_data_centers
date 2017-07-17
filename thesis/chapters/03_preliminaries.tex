@@ -49,7 +49,7 @@ We now want to verify that $\Sigma'$ is a feasible schedule, that is $\Sigma'$ s
 Further, $\Sigma$ and $\Sigma'$ coincide in their operating costs; however, by exchanging $\mathcal{S}$ with $\mathcal{S}'$, we reduced the number of servers powering up at time $t$. As we assume $\beta\ge0$, we conclude $\costs(\Sigma')\le \costs(\Sigma)$. Moreover, we decreased the number of servers violating~\eqref{eq:reasonable_switching} at time $t$. Hence, by repeating the described process on $\Sigma'$, we obtain a terminating procedure that returns a schedule satisfying the conditions.
 \end{proof}
 
-Our next proposition -- which will pose the cornerstone of our subsequent works -- requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is less than or equal to the convex-combination of the function values at the sampling points.
+Our next proposition -- which will pose a cornerstone of our subsequent works -- requires the use of Jensen's inequality, a well-known and frequently used analytic result found by Johan Jensen in 1906. It generalizes the idea that the secant line of a convex function lies above the graph of the function; more specifically, it states that the value of a convex function at a finite convex-combination of sampling points is less than or equal to the convex-combination of the function values at the sampling points.
 \begin{lem}[Jensen's inequality]\label{lem:jensens-inequality}
 Let $f:D\rightarrow\mathbb{R}$ be a convex function, $n\in\mathbb{N}$, \makebox{$\lambda_1,\dotsc,\lambda_n\in D$}, and $\mu_1,\dotsc,\mu_n\in[0,1]$ satisfying $\sum\limits_{i=1}^{n}\mu_i=1$. Then the following inequality holds:
 \begin{equation*}
@@ -90,7 +90,7 @@ Thus, the assertion holds for any natural number $n$.
 \end{proof}
 Next, we want to consider the sequence of the number of active servers $\mx$ defined as
 \begin{flalign*}
-	&&\mx\coloneqq(x_1,\dotsc,x_T)\in[m]_0^T&&\text{where}&&x_t\coloneqq\sum\limits_{i=1}^{m}s_{i,t}\in[m]_0&&&
+	&&\mx\coloneqq(x_1,\dotsc,x_T)\in[m]_0^T&&\text{where}&&x_t\coloneqq\left(\sum\limits_{i=1}^{m}s_{i,t}\right)\in[m]_0&&&
 \end{flalign*}	
 As we assume that all machines are shut down at times $t\notin[T]$, we have $x_t=0$ for $t\notin[T]$. We now want to establish an optimal scheduling strategy given a fixed number of active servers. It turns out that an even load distribution seems a very desirable strategy.\begin{prop}[Even load distribution]\label{prop:even_load_distribution}
 Given $x_t\in\mathbb{N}$ active servers in time slot $t$, an arrival rate $\lambda_t\in[0,x_t]$, and a convex operating cost function $f$, a most cost-efficient and feasible scheduling strategy is to assign each active server a load of $\lambda_t/x_t$.
@@ -111,7 +111,7 @@ Hence, we can obtain weights $\mu_1,\dotsc,\mu_{x_t}\in[0,1]$ that relate $\lamb
 \end{align}
 In particular, we have 
 \begin{equation}
-	\sum_{j=1}^{x_t}\mu_j\lambda_t=\lambda_t\label{eq:mu_convex_comb}
+	\sum_{j=1}^{x_t}(\mu_j\lambda_t)=\lambda_t\label{eq:mu_convex_comb}
 \end{equation}
 Using these weights, we now consider the operating costs of a schedule $\Sigma^*$ that evenly distributes $\lambda_t$ to its $x_t$ active servers:
 \begin{align*}
