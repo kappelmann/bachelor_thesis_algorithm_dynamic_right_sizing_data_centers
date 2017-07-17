@@ -449,7 +449,7 @@ Unnecessary loops can again simply be ignored. A graphical representation of $G$
 \caption{Graph for a $y$-optimal linear-time offline algorithm; the path of the topological sorting is highlighted in red.}
 \label{fig:graph_lin_approx_y}
 \end{figure}
-There is not much to say about the graph's working principle, since it stays the same as for our construction in Section~\ref{sec:approx_2_opt}. Instead, we dive right into proving process. To begin, we have to adapt Lemma~\ref{lem:transform_schedule_approx_2}, for which we have to generalize our definition of 2-state changes.
+There is not much to say about the graph's working principle, since it stays the same as for our construction in Section~\ref{sec:approx_2_opt}. Instead, we dive right into the proving process. To begin, we have to adapt Lemma~\ref{lem:transform_schedule_approx_2}, for which we have to generalize our definition of 2-state changes.
 \begin{defn}[y-state changes]\label{defn:y_state_changes}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T+1]$. We say that $\mx$ changes its \emph{$y$-state} at time $t$ if $\mx$ satisfies the formula
 \begin{equation*}
@@ -474,8 +474,8 @@ and the lower and upper bound of $\mx$ at time $j+1$ as
 	\end{cases}
 &&\text{and}&&u'\coloneqq\min\bigl\{yl',m\bigr\}&&&
 \end{flalign*}
-In the proof of Lemma~\ref{lem:transform_schedule_approx_2}, we knew that, for example, $u$ is contained in $B$, and thus we were able to simply use $u$ servers for $\mx'$. This time, however, we have to appropriately round our choices, e.g.\ use $\floor{u}\in B$ or $\ceil{u}\in B$ instead of $u$ servers.  
-Note that $\mx$ does not change its $y$-state between $i$ and $j$, which means that $l\le x_t\le u$ holds for $i\le t\le j$. Since~$x_t$ is integer, $\ceil{l}$ is the smallest integer contained in~$[l,u]$, and $\floor{u}$ is the largest integer contained in~$[l,u]$, we can even refine our bounds to $\ceil{l}\le x_t\le\floor{u}$. Further, by using the fact that $u\le yl$, we can infer that $\floor{u}\le yx_t$ holds for any $i\le t\le j$.
+In the proof of Lemma~\ref{lem:transform_schedule_approx_2}, we knew that, for example, $u$ is contained in $B$, and thus we were able to simply use $u$ servers for $\mx'$. This time, however, we have to appropriately round the upper bound, e.g.\ use $\floor{u}\in B$ or $\ceil{u}\in B$ instead of $u$ servers.  
+Note that~$\mx$ does not change its $y$-state between $i$ and $j$, which means that $l\le x_t\le u$ holds for $i\le t\le j$. Since~$x_t$ is integer, $\ceil{l}$ is the smallest integer contained in~$[l,u]$, and $\floor{u}$ is the largest integer contained in~$[l,u]$, we can even refine our bounds to $\ceil{l}\le x_t\le\floor{u}$. Further, by using the fact that $u\le yl$, we can infer that $\floor{u}\le yx_t$ holds for any $i\le t\le j$.
 
 We adapt the invariant used in Lemma~\ref{lem:transform_schedule_approx_2} in that we are going to ensure that $\mx'$ can potentially move to $\floor{u}$ at time $i$ in a $y$-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most $y$ times as much switching costs as $\mx$ if we set $x_i'\coloneqq \floor{u}$. Further, we are going to ensure that $x_t'\ge \floor{u}$ holds for any $i\le t\le j$ after every transformation step. Since $x_t\le \floor{u}$, this guarantees that $\mx'$ will be feasible.
 Moreover, we show that our credit will be greater than or equal to $\beta(yx_{j+1}-\floor{u'})$ if $\mx$ exits $[l,u)$ by ascending to $[l',u')$ at time $j+1$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(yx_i-\floor{u})$ if $\mx$ enters $[l,u)$ at time~$i$ from below.
@@ -605,11 +605,13 @@ Further rearranging the left hand side gives us
 	&=&&\sum\limits_{t=i}^j\left(0\cdot f\left(\frac{\lambda_t}{\floor{u}}\right)\right)=0
 \end{align*}
 which finishes the case with assumption $yd\le\floor{\hat{u}}$. We are left with case $yd>\floor{\hat{u}}$. For this case, we have to analyze the behavior of $\mx$ more precisely. To do so, let $h<i$ be the closest time before $i$ at which $\mx$ changes its $y$-state. There are three possible behaviors of $\mx$ that can lead to case~\ref{itm:schedule_behavior_down_up_y}.
+
+\vbox{
 \begin{enumerate}[label=(\roman*)]
 	\item $\mx$ ascends to $[u,\hat{u})$ at time $h$ and then descends to $[l,u)$ at time $i$.\label{itm:schedule_behavior_down_up_y_subcase_1}
 	\item $\mx$ descends to $[u,\hat{u})$ at time $h$ and then descends to $[l,u)$ at time $i$.\label{itm:schedule_behavior_down_up_y_subcase_2}
 	\item $\mx$ descends to $[l,u)$ at time $i$ from a region above $[u,\hat{u})$.\label{itm:schedule_behavior_down_up_y_subcase_3}
-\end{enumerate}
+\end{enumerate}}
 All three possibilities are illustrated in Figure~\ref{fig:schedule_behavior_down_up_y}. For each case, we have to show that at least one of our three strategies satisfies our conditions, to wit, it incurs $y$-approximative costs including the costs to satisfy the invariant at time $j+1$.
 \begin{figure}[H]
 \renewcommand\thesubfigure{\roman{subfigure}}
@@ -678,7 +680,7 @@ Further, we can can infer that $u\neq\floor{u}$; otherwise, we know that $d\le u
 	&&yd&>\floor{\hat{u}}&\stackrel{u-1\ge d}{\implies}&&y(u-1)&>\floor{\hat{u}}&\stackrel{\hat{u}=yu}{\iff}&&y(u-1)&>\floor{yu}&&\\
 	&&&&\iff&&yu-\floor{yu}&>y\quad\lightning
 \end{flalign*}
-The contradiction follows from $1>yu-\floor{yu}$ and $y>1$. We can use these observations to derive
+The contradiction follows from $1>yu-\floor{yu}$ and $y>1$. We can use the just made observations to derive
 \begin{flalign*}
 	&&yd&>\floor{\hat{u}}&\stackrel{\hat{u}\neq\floor{\hat{u}}}{\iff}&&yd&>\ceil{\hat{u}}-1&\stackrel{\floor{u}\ge d}{\implies}&&y\floor{u}&>\ceil{\hat{u}}-1&&\\
 	\stackrel{u\neq\floor{u}}{\iff}&&y(\ceil{u}-1)&>\ceil{\hat{u}}-1&\iff&&y\ceil{u}&>\ceil{\hat{u}}+y-1&\stackrel{y>1}{\implies}&&y\ceil{u}&>\ceil{\hat{u}}&&
@@ -702,7 +704,7 @@ where we used Inequality~\eqref{eq:beta_greater_sum_op_floor_u_hat} as well as $
 
 By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le y\costs(\mx)$.
 \end{proof}
-The remaining verification of our graph proceeds similar to Section~\ref{sec:approx_2_opt}.
+The remaining required verification proofs for our graph are similar to those of Section~\ref{sec:approx_2_opt}.
 \begin{lem}\label{lem:sched_reasn_path_approx_y}
 Let $\bm{\mx}$ be the set of all $B$-restricted schedules for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
 \begin{equation*}
@@ -724,6 +726,8 @@ To no surprise, the final algorithm will be almost identical to the algorithm of
 	\Theta\bigl(2\log_y(m)+2T\cdot2\log_y(m)+T\bigr)=\Theta(T\log_y(m))
 \end{equation*}
 that is, the runtime is linear in the size of the input. Similarly, our memory demand amounts to $\Theta\bigl(T\log_y(m)\bigr)$ since the size of the tables $C$ and $S$ is given by $\Theta\bigl(2T\log_y(m)\bigr)$.
+
+The correctness of Algorithm~\ref{alg:approx_y_offline_linear} directly follows from Theorem~\ref{thm:approx_y} and the correctness of the shortest path calculation for directed acyclic graphs (for a proof see~\parencite[Section~24.2]{intro-algo}).\unsure{always cite this?}
 
 \newpage
 \begin{algorithm}[H]
