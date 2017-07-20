@@ -352,7 +352,7 @@ The function returns the minimum costs to all nodes $v_{x,T\downarrow}$ and to a
   \end{algorithmic}
 \label{alg:opt_offline_pseudo_linear}
 \end{algorithm}
-The correctness of Algorithm~\ref{alg:opt_offline_pseudo_linear} directly follows from Theorem~\ref{thm:opt_sched_reasn_path} and the correctness of the shortest path calculation for directed acyclic graphs.
+The correctness of Algorithm~\ref{alg:opt_offline_pseudo_linear} directly follows from Theorem~\ref{thm:opt_sched_reasn_path} (and the correctness of the shortest path calculation for directed acyclic graphs).
 
 For our runtime analysis, we take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} needs $\Theta(m)$ steps for its initialization and $\Theta(2Tm)$ steps for the iterative calculation of the selections and costs. In addition, \textproc{extract\_schedule} requires $\Theta(T)$ iterations for its schedule retrieval. Thus, Algorithm~\ref{alg:opt_offline_pseudo_linear} has a time complexity of
 \begin{equation*}
