@@ -420,13 +420,29 @@ For the rest of this section, we denote the algorithm's desired precision as $y$
 \end{equation*}
 Previously, we chose the base two logarithm for the step sizes of our graph and derived an 2-optimal algorithm. Consequently, one might conjecture that choosing the base $y$ for the graph's logarithmic step sizes will result in a $y$-optimal algorithm. But to make this conjecture a theorem, it requires some more work than merely changing the base from 2 to $y$.
 
-Recall the graph's structure from Section~\ref{sec:approx_2_opt}. For any power of two smaller than~$m$, we added a node in each layer of our graph. As a result, the set of possible scheduling choices was given by $B=\{0,2^0,2^1,\dotsc,2^{\floor{\log_2(m)}},m\}$. Now consider an analogous attempt for arbitrary bases~$y$, that is $B=\{0,y^0,y^1,\dotsc,y^{\floor{\log_y(m)}},m\}$. Since~$y$ is not necessarily integer, an arbitrary power of~$y$ can also be non-integer. Consequently, scheduling a number picked from the new set~$B$ potentially fails as one cannot schedule a non-integer number of servers in practice. We thus have to adapt the new set. To do so, we simply round the powers of~$y$ to their closest integers. More formally, given an input $\inp$, we set
-TODO example
+Recall the graph's structure from Section~\ref{sec:approx_2_opt}. For any power of two smaller than~$m$, we added a node in each layer of our graph. As a result, the set of possible scheduling choices was given by $B=\{0,2^0,2^1,\dotsc,2^{\floor{\log_2(m)}},m\}$. 
+Sadly, we cannot simply pursue the same strategy for arbitrary bases $y$, but we have to slightly adapt our set of scheduling choices~$B$, as one can see in the following example:
+\begin{exmpl}
+Let $m=7,y=1.5$, and $b=\floor{\log_y(m)}=4$. The set $B$ is then given by 
+\begin{equation*}
+	B=\{0,y^0,y^1,y^2,y^3,y^b,7\}=\{0,1,1.5,2.25,3.375,5.0625,7\}
+\end{equation*}	
+The first apparent issue is that $B$ contains non-integer numbers, which we cannot schedule in practice. We thus try to adapt the new set by rounding the contained numbers:
+\begin{equation*}
+	B'=\left\{0,y^0,\floor{y^1},\floor{y^2},\floor{y^3},\floor{y^b},7\right\}=\{0,1,2,3,5,7\}
+\end{equation*}
+This adaption may seem promising at first glance, but there is still another issue with this approach: The distance between two possible scheduling choices may become too large. For instance, the ratio $5/3=1.666\dotso$ is greater than $y=1.5$, and thus the distance is not logarithmic with base $y$. As a consequence, the approximated schedule's switching costs may become too large. This issue, however, can be solved by additionally adding the rounded up powers of $y$:\unsure{TODO okay?}
+\begin{equation*}
+	B''=\left\{0,y^0,\floor{y^1},\ceil{y^1},\floor{y^2},\ceil{y^2},\floor{y^3},\ceil{y^3},\floor{y^b},\ceil{y^b},7\right\}=\{0,1,2,3,4,5,6,7\}
+\end{equation*}
+In this example, $B''$ degenerates to the complete set of non-negative integers up to $m$, but this is just a special case and does not happen in general.
+\end{exmpl}
+Given a fixed precision $y$, we take the ideas discussed in the previous example to define the set of possible scheduling choices by setting
 \begin{align*}
 	b&\coloneqq\floor{\log_y(m)}\\
 	\text{and}\qquad B&\coloneqq\left\{0,1,\floor{y^1},\ceil{y^1},\floor{y^2},\ceil{y^2},\dotsc,\floor{y^b},\ceil{y^b},m\right\}
 \end{align*}
-Note that $|B|\in\Theta(\log_y(m))$. Using this new set of scheduling choices, we consider the following modification of our graph:
+Note that $|B|\in\Theta\bigl(\log_y(m)\bigr)$, i.e.\ the size of $B$ is linear in the size of the input $\inp$ for some fixed precision $y$. Using this new set of scheduling choices, we consider the following modification of our graph:
 \begin{align*}
 	V&\coloneqq\{v_{0,0}\}\dotcup\bigl\{v_{x,t\downarrow}\mid x\in B,t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in B, t\in[T-1]\bigr\}\\
 	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in B\bigr\}\\
@@ -436,7 +452,7 @@ Note that $|B|\in\Theta(\log_y(m))$. Using this new set of scheduling choices, w
 	&\phantom{{}\coloneqq{}}\cup\bigl\{(v_{\floor{y^i},t\uparrow},v_{\ceil{y^i},t\uparrow})\mid i\in[b],t\in[T-1]\bigr\}\cup\bigl\{(v_{\ceil{y^b},t\uparrow},v_{m,t\uparrow})\mid t\in[T-1]\bigr\}\\
 	E_{\downarrow\uparrow}&\coloneqq\bigl\{(v_{x,t\downarrow},v_{x,t\uparrow})\mid x\in B,t\in[T-1]\bigr\}\\
 	E_{\uparrow\downarrow}&\coloneqq\bigl\{(v_{x,t\uparrow},v_{x,t+1\downarrow})\mid x\in B,t\in[T-1]\bigr\}\\
-	E&\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\displaybreak[0]\\
+	E&\coloneqq E_s\dotcup E_\downarrow\dotcup E_\uparrow\dotcup E_{\downarrow\uparrow}\dotcup E_{\uparrow\downarrow}\\
 	c_G(e)&\coloneqq
 	\begin{cases}
 		\costs(0,x,\lambda_1), & \text{if $e=(v_{0,0},v_{x,1\downarrow})\in E_s$}\\
@@ -446,13 +462,13 @@ Note that $|B|\in\Theta(\log_y(m))$. Using this new set of scheduling choices, w
 	\end{cases}\\
 	G&\coloneqq(V,E,c_G)
 \end{align*}
-Unnecessary loops TODO can again simply be ignored. A graphical representation of $G$ can be found in Figure~\ref{fig:graph_lin_approx_y}.
-\begin{figure}[H]
+A graphical representation of $G$ can be found in Figure~\ref{fig:graph_lin_approx_y}. Note that unnecessary loops with cost $0$ may be added in $E_\downarrow$ and $E_\uparrow$ if some rounded powers of $y$ coincide. For example, if $y=1.5$, the numbers $\ceil{y^1}=2$ and $\floor{y^2}=2$ coincide. These loops can again simply be ignored for our following work. 
+\begin{figure}[ht]
 \includestandalone[width=\textwidth]{../figures/graph_lin_approx_y}
 \caption{Graph for a $y$-optimal linear-time offline algorithm; the path of the topological sorting is highlighted in red.}
 \label{fig:graph_lin_approx_y}
 \end{figure}
-There is not much to say about the graph's working principle, since it stays the same as for our construction in Section~\ref{sec:approx_2_opt}. Instead, we dive right into the proving process. To begin, we have to adapt Lemma~\ref{lem:transform_schedule_approx_2}, for which we have to generalize our definition of 2-state changes.
+There is not much to say about the graph's working principle, since it stays the same as for our construction in Section~\ref{sec:approx_2_opt}. Instead, we dive right into the proving process. To begin, we need to adapt Lemma~\ref{lem:transform_schedule_approx_2}, for which we have to generalize our definition of 2-state changes.
 \begin{defn}[y-state changes]\label{defn:y_state_changes}
 Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T+1]$. We say that $\mx$ changes its \emph{$y$-state} at time $t$ if $\mx$ satisfies the formula
 \begin{equation*}

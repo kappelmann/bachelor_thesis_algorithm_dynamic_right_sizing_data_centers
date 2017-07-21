@@ -4,22 +4,22 @@
 \begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.65cm,circle,draw}]
   \node[node] (1) {0,0};
   \node[node] (4) [below right=5cm and 4.2cm of 1] {0,1$\downarrow$};
-  \node[node] (3) [above =0.5cm of 4] {$1$,1$\downarrow$};
+  \node[node] (3) [above =0.5cm of 4] {$y^0$,1$\downarrow$};
   \node[node] (2) [above right=4cm and 4.2cm of 1] {m,1$\downarrow$};
   \node[node] (5) [below =0.5cm of 2] {$\ceil{y^b}$,1$\downarrow$};
-  \node[node] (7) [right =of 3] {$1$,1$\uparrow$};
+  \node[node] (7) [right =of 3] {$y^0$,1$\uparrow$};
   \node[node] (6) [right =of 2] {m,1$\uparrow$};
   \node[node] (8) [right =of 4] {0,1$\uparrow$};
   \node[node] (9) [right =of 5] {$\ceil{y^b}$,1$\uparrow$};
-  \node[node] (11) [right =of 7] {$1$,2$\downarrow$};
+  \node[node] (11) [right =of 7] {$y^0$,2$\downarrow$};
   \node[node] (10) [right =of 6] {m,2$\downarrow$};
   \node[node] (12) [right =of 8] {0,2$\downarrow$};
   \node[node] (13) [right =of 9] {$\ceil{y^b}$,2$\downarrow$};
-  \node[node] (15) [right =of 11] {$1$,2$\uparrow$};
+  \node[node] (15) [right =of 11] {$y^0$,2$\uparrow$};
   \node[node] (14) [right =of 10] {m,2$\uparrow$};
   \node[node] (16) [right =of 12] {0,2$\uparrow$};
   \node[node] (17) [right =of 13] {$\ceil{y^b}$,2$\uparrow$};
-  \node[node] (19) [right =5cm of 15] {$1$,T$\downarrow$};
+  \node[node] (19) [right =5cm of 15] {$y^0$,T$\downarrow$};
   \node[node] (18) [right =5cm of 14] {m,T$\downarrow$};
   \node[node] (20) [right =5cm of 16] {0,T$\downarrow$};
   \node[node] (21) [right =5cm of 17] {$\ceil{y^b}$,T$\downarrow$};
@@ -53,7 +53,7 @@
   \path[every node/.style={font=\sffamily\small}]
     (1) edge[red] node[black,above left] {$\costs(0,m,\lambda_1)$} (2)
 	edge node[label={[xshift=1.1cm, yshift=-0.8cm]$\costs\bigl(0,\ceil{y^b},\lambda_1\bigr)$}] {} (5)
-	edge node[above right=-0.45cm and 0.15cm] {$\costs\bigl(0,1,\lambda_1\bigr)$} (3)
+	edge node[above right=-0.38cm and 0.07cm] {$\costs\bigl(0,y^0,\lambda_1\bigr)$} (3)
 	edge node[below left] {$\costs(0,0,\lambda_1)$} (4)
 	edge node[above right=-0.2cm] {$\costs(0,\floor{y^1},\lambda_1)$} (29)
 	edge node[above right=0cm and -0.7cm] {$\costs(0,\ceil{y^1},\lambda_1)$} (34)
@@ -72,11 +72,11 @@
 
     (9) edge[red] node[black,right] {$\beta\bigl(m-\ceil{y^b}\bigr)$} (6)
     (8) edge[red] node[black,right] {$\beta$} (7)
-    (7) edge[red] node[black,right] {$\beta(\floor{y^1}-1)$} (30)
+    (7) edge[red] node[black,right] {$\beta(\floor{y^1}-y^0)$} (30)
     (30) edge[red] node[black,right] {$\beta(\ceil{y^1}-\floor{y^1})$} (35)
 
     (6) edge[red] node[black,above] {$\opcosts(m,\lambda_2)$} (10)
-    (7) edge node[above] {$\opcosts\bigl(1,\lambda_2\bigr)$} (11)
+    (7) edge node[above] {$\opcosts\bigl(y^0,\lambda_2\bigr)$} (11)
     (8) edge node[above] {$\opcosts(0,\lambda_2)$} (12)
     (9) edge node[above] {$\opcosts\bigl(\ceil{y^b},\lambda_2\bigr)$} (13)
     (30) edge node[above] {$\opcosts\bigl(\floor{y^1},\lambda_2\bigr)$} (31)
@@ -96,18 +96,18 @@
 
     (17) edge[red] node[black,right] {$\beta\bigl(m-\ceil{y^b}\bigr)$} (14)
     (16) edge[red] node[black,right] {$\beta$} (15)
-    (15) edge[red] node[black,right] {$\beta(\floor{y^1}-1)$} (32)
+    (15) edge[red] node[black,right] {$\beta(\floor{y^1}-y^0)$} (32)
     (32) edge[red] node[black,right] {$\beta(\ceil{y^1}-\floor{y^1})$} (37)
 
     (14) edge[red] node[label={[black,xshift=0cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
-    (15) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(1,\lambda_3\bigr)$}] {} ($(15)!.4!(19)$)
+    (15) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(y^0,\lambda_3\bigr)$}] {} ($(15)!.4!(19)$)
     (16) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
     (17) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\ceil{y^b},\lambda_3\bigr)$}] {} ($(17)!.4!(21)$)
     (32) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^1},\lambda_3\bigr)$}] {} ($(32)!.4!(33)$)
     (37) edge node[label={[xshift=0.1cm, yshift=-0.26cm]$\opcosts\bigl(\ceil{y^1},\lambda_3\bigr)$}] {} ($(37)!.4!(38)$)
 
     ($(14)!.6!(18)$) edge[red] node[black,above] {$\opcosts(m,\lambda_T)$} (18)
-    ($(15)!.6!(19)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(1,\lambda_T\bigr)$}] {} (19)
+    ($(15)!.6!(19)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(y^0,\lambda_T\bigr)$}] {} (19)
     ($(16)!.6!(20)$) edge node[above] {$\opcosts(0,\lambda_T)$} (20)
     ($(17)!.6!(21)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(\ceil{y^b},\lambda_T\bigr)$}] {} (21)
     ($(32)!.6!(33)$) edge node[label={[xshift=-0.1cm, yshift=-0.26cm]$\opcosts\bigl(\floor{y^1},\lambda_T\bigr)$}] {} (33)
