@@ -136,7 +136,7 @@ As a result of Corollary~\ref{cor:even_load_distribution}, we can restrict ourse
 Given a problem instance $\inp$, there exists an optimal schedule $\Sigma^*$ that evenly distributes its arrival rates and never powers on and shuts down servers at the same time slot.
 \end{thm}
 \begin{proof}
-By Corollary~\ref{cor:even_load_distribution}, we obtain an optimal schedule $\Sigma$ that evenly distributes its arrival rates to its active servers. Applying the procedure given in Proposition~\ref{prop:reasonable_switching} to $\Sigma$ yields~$\Sigma^*$ that further satisfies~\eqref{eq:reasonable_switching} for all $t\in[T]$ and $\costs(\Sigma^*)\le\costs(\Sigma)$. Since $\Sigma$ is optimal, we conclude $\costs(\Sigma^*)=\costs(\Sigma)$, and the claim follows.
+By Corollary~\ref{cor:even_load_distribution}, we obtain an optimal schedule $\Sigma$ that evenly distributes its arrival rates to its active servers. Applying the procedure given in Proposition~\ref{prop:reasonable_switching} to $\Sigma$ yields~$\Sigma^*$ with $\costs(\Sigma^*)\le\costs(\Sigma)$ and that further satisfies~\eqref{eq:reasonable_switching} for all $t\in[T]$. Since $\Sigma$ is optimal, we conclude $\costs(\Sigma^*)=\costs(\Sigma)$, and the claim follows.
 \end{proof}
 
 Theorem~\ref{thm:even_load_distribution_reasonable_switching} allows us to identify an optimal schedule by its sequence of the number of active servers $\mx$ and thereby to simplify our optimization conditions~\eqref{eq:schedule_costs} and \eqref{eq:feasible_constraint}. 
