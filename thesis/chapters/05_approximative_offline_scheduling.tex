@@ -151,7 +151,7 @@ as well as to the lower and upper bound of $\mx$ at time $j+1$:
 	\end{cases}
 &&\text{and}&&u'\coloneqq\min\bigl\{2l',m\bigr\}&&&
 \end{flalign*}
-Note that $u,u'\in B$ and that $x_t\le u\le 2x_t$ holds for any $i\le t\le j$ since $\mx$ does not change its 2-state between $i$ and $j$. More precisely, we know that $x_t\in[l,u)$ if $u=2l$, and $x_t\in[l,u]$ if $u=m<2l$, for $i\le t\le j$. To conveniently combine both cases at some points, given two boundaries $a,b\in\mathbb{N}$, we define the conditional interval\unsure{TODO okay?}
+Note that $u,u'\in B$ and that $x_t\le u\le 2x_t$ holds for any $i\le t\le j$ since $\mx$ does not change its 2-state between $i$ and $j$. More precisely, we know that $x_t\in[l,u)$ if $u=2l$, and $x_t\in[l,u]$ if $u=m<2l$, for $i\le t\le j$. To conveniently combine both cases at some points, given two boundaries $a,b\in\mathbb{N}$, we define the conditional interval
 \begin{equation*}
 	[a,b)^m\coloneqq\begin{cases}
 		[a,b), & \text{if $b=2a$}\\
@@ -436,7 +436,7 @@ The first apparent issue is that $B$ contains non-integer numbers, which we cann
 \begin{equation*}
 	B'=\left\{0,y^0,\floor{y^1},\floor{y^2},\floor{y^3},\floor{y^b},7\right\}=\{0,1,2,3,5,7\}
 \end{equation*}
-This adaption may seem promising at first glance, but there is still another issue with this approach: The distance between two possible scheduling choices may become too large. For instance, the ratio $5/3=1.666\dotso$ is greater than $y=1.5$, and thus the distance is not logarithmic with base $y$. As a consequence, the approximated schedule's switching costs may become too large. This issue, however, can be solved by additionally adding the rounded up powers of $y$:\unsure{TODO okay?}
+This adaption may seem promising at first glance, but there is still another issue with this approach: The distance between two possible scheduling choices may become too large. For instance, the ratio $5/3=1.666\dotso$ is greater than $y=1.5$, and thus the distance is not logarithmic with base $y$. As a consequence, the approximated schedule's switching costs may become too large. This issue, however, can be solved by additionally adding the rounded up powers of $y$:
 \begin{equation*}
 	B''=\left\{0,y^0,\floor{y^1},\ceil{y^1},\floor{y^2},\ceil{y^2},\floor{y^3},\ceil{y^3},\floor{y^b},\ceil{y^b},7\right\}=\{0,1,2,3,4,5,6,7\}
 \end{equation*}
