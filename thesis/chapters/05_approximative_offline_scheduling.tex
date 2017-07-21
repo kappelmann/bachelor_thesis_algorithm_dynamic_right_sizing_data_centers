@@ -151,7 +151,7 @@ as well as to the lower and upper bound of $\mx$ at time $j+1$:
 	\end{cases}
 &&\text{and}&&u'\coloneqq\min\bigl\{2l',m\bigr\}&&&
 \end{flalign*}
-Note that $u,u'\in B$ and that $x_t\le u\le 2x_t$ holds for any $i\le t\le j$ since $\mx$ does not change its 2-state between $i$ and $j$. More precisely, we know that $x_t\in[l,u)$ if $u=2l$, and $x_t\in[l,u]$ if $u=m<2l$, for $i\le t\le j$. To combine both cases, given two boundaries $a,b\in\mathbb{N}$, we define a conditional interval:\unsure{TODO okay?}
+Note that $u,u'\in B$ and that $x_t\le u\le 2x_t$ holds for any $i\le t\le j$ since $\mx$ does not change its 2-state between $i$ and $j$. More precisely, we know that $x_t\in[l,u)$ if $u=2l$, and $x_t\in[l,u]$ if $u=m<2l$, for $i\le t\le j$. To conveniently combine both cases at some points, given two boundaries $a,b\in\mathbb{N}$, we define the conditional interval\unsure{TODO okay?}
 \begin{equation*}
 	[a,b)^m\coloneqq\begin{cases}
 		[a,b), & \text{if $b=2a$}\\
@@ -171,7 +171,6 @@ Now, let us have a closer look on the possible behaviors of $\mx$ between its 2-
 \end{enumerate}
 To finish the proof, we show that any case can be transformed to a 2-approximative period in $\mx'$ while ensuring that our invariant will not be violated. Additionally, we have to verify that the credit of our amortized analysis stays non-negative.
 	
-We begin with cases~\ref{itm:schedule_behavior_up_down} and~\ref{itm:schedule_behavior_down_down}, which are both depicted in Figure~\ref{fig:schedule_behavior_down}.
 \begin{figure}[ht]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.49\textwidth}
@@ -184,6 +183,7 @@ We begin with cases~\ref{itm:schedule_behavior_up_down} and~\ref{itm:schedule_be
 \caption{The original schedule comes from below (case~\ref{itm:schedule_behavior_up_down}) or above (case~\ref{itm:schedule_behavior_down_down}), stays between $[l,u)^m$, and then descends to $[l',u')$. The approximative schedule stays put at $u$ for time slots $i\le t\le j$.}
 \label{fig:schedule_behavior_down}
 \end{figure}
+We begin with cases~\ref{itm:schedule_behavior_up_down} and~\ref{itm:schedule_behavior_down_down}, which are both depicted in Figure~\ref{fig:schedule_behavior_down}.
 Due to our invariant, we know that we can set $x_i'\coloneqq u$ with 2-approximative switching costs. Consequently, setting $x_i'\coloneqq x_{i+1}'\coloneqq\dotsb\coloneqq x_j'\coloneqq u\in B$ gives us a strategy with 2-approximative switching costs between $i$ and $j$. Further, since $x_t\le u\le2x_t$ for any $i\le t\le j$, and $f$ is non-negative and monotonically increasing, the operating costs of $\mx'_{i,j}$ can be estimated by
 \begin{equation*}
 	\opcosts\bigl(\mx_{i,j}'\bigr)\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}\sum\limits_{t=i}^j\left(uf\left(\frac{\lambda_t}{u}\right)\right)\le\sum\limits_{t=i}^j\left(2x_tf\left(\frac{\lambda_t}{u}\right)\right)\le2\sum\limits_{t=i}^j\left(x_tf\left(\frac{\lambda_t}{x_t}\right)\right)\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}2\opcosts\bigl(\mx_{i,j}\bigr)
@@ -211,7 +211,7 @@ Finally, we have to consider case~\ref{itm:schedule_behavior_down_up}. As we hav
 	&&\text{and}\quad\mx_{i,j}^{\hat{u}}&\coloneqq\bigl(x_i^{\hat{u}},\dotsc,x_j^{\hat{u}}\bigr),&&\text{where}&x_t^{\hat{u}}\coloneqq \hat{u},\,\text{for } i\le t\le j&&&&
 \end{flalign*}
 with $\hat{u}\coloneqq\min\{2u,m\}\in B$. Both strategies are illustrated in Figure~\ref{fig:schedule_behavior_down_up}.
-\begin{figure}[H]
+\begin{figure}[ht]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.48\textwidth}
 \includestandalone[width=\textwidth]{../figures/schedule_behavior_down_up_1}
@@ -225,9 +225,9 @@ with $\hat{u}\coloneqq\min\{2u,m\}\in B$. Both strategies are illustrated in Fig
 \caption{The original schedule (case~\ref{itm:schedule_behavior_down_up}) comes from above, stays between $[l,u)$, and then rises to $[l',u')^m$. The approximative schedule has two different possibilities.}
 \label{fig:schedule_behavior_down_up}
 \end{figure}
-Due to our invariant and the fact that $\mx$ descends at time $i$, we know that $x_{i-1}'\ge \hat{u}\ge u$, and thus both strategies do no incur switching costs up to time $j$ (we can simply move down from $x_{i-1}'$ to $\hat{u}$ or $u$).
+Due to our invariant and the fact that $\mx$ descends at time $i$, we know that $x_{i-1}'\ge \hat{u}\ge u$, and thus both strategies do no incur switching costs up to time $j$ (we can simply move down from~$x_{i-1}'$ to~$\hat{u}$ or~$u$).
 We are now going to prove that either the cost of $\mx_{i,j}^u$ or of $\mx_{i,j}^{\hat{u}}$, including costs to satisfy our invariant at time $j+1$, must be 2-approximative. 
-First, we examine the switching costs of $\mx$ from $i$ up to $j+1$. To do so, we set $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to refer to the smallest number of active servers used by $\mx_{i,j}$. Then, since $\mx$ has to power on at least $x_{j+1}-d$ servers between $i$ and $j+1$, we can give a lower bound for its switching costs:
+First, we examine the switching costs of $\mx$ from $i$ up to $j+1$. To do so, we set $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to refer to the smallest number of active servers used by $\mx_{i,j}$. Then, since $\mx$ has to power on at least $x_{j+1}-d$ servers between $i$ and $j+1$, we can give a lower bound for its switching~costs:
 \begin{equation*}
 	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta(x_{j+1}-d)
 \end{equation*}
@@ -480,7 +480,7 @@ Let $\mx=(x_1,\dotsc,x_T)$ be a schedule and $t\in[T+1]$. We say that $\mx$ chan
 	x_{t-1}\neq x_t\land \left(x_{t-1}=0 \lor x_t\notin\left[y^{\floor{\log_y(x_{t-1})}},y^{\floor{\log_y(x_{t-1})}+1}\right)\right)
 \end{equation*}
 \end{defn}
-The proof of the next lemma will, to a great extent, be very similar to that of Lemma~\ref{lem:transform_schedule_approx_2}. However, as the interval boundaries of our $y$-state changes are not integer anymore, we will have to proceed more cautious and consider some more cases.
+The proof of the next lemma will to a great extent be very similar to that of Lemma~\ref{lem:transform_schedule_approx_2}. However, as the interval boundaries of our $y$-state changes are not integer anymore, we will have to proceed more cautious and consider some more cases.
 \begin{lem}
 Let $\mx$ be a schedule for $\inp$. There exists a $B$-restricted schedule $\mx'$ satisfying \makebox{$\costs(\mx')\le y\costs(\mx)$}.
 \end{lem}
@@ -498,7 +498,7 @@ and the lower and upper bound of $\mx$ at time $j+1$ as
 	\end{cases}
 &&\text{and}&&u'\coloneqq\min\bigl\{yl',m\bigr\}&&&
 \end{flalign*}
-Further, given two boundaries $a,b\in\mathbb{R}$, we again define a conditional interval:
+Further, given two boundaries $a,b\in\mathbb{R}$, we again define the conditional interval
 \begin{equation*}
 	[a,b)^m\coloneqq\begin{cases}
 		[a,b), & \text{if $b=ya$}\\
