@@ -185,5 +185,6 @@ TSWLatexianTemp*
 # temp files
 .fuse_hidden*
 
-# local bibliography
+# local files
 papers/
+test_calculations.ods
