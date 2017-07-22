@@ -57,7 +57,7 @@ Albeit our approximative schedule uses only one server in addition, the schedule
 \begin{figure}[H]
 \centering
 \includestandalone{../figures/non_mono_incr_f_1}
-\caption{Example of a non monotonically increasing operating cost function \makebox{$f(\lambda)=(\lambda-1)^2$}, where smaller loads incur higher costs.}
+\caption{Example of a non-monotonically increasing operating cost function \makebox{$f(\lambda)=(\lambda-1)^2$}, where smaller loads incur higher costs.}
 \label{fig:non_mono_incr_f}
 \end{figure}
 \end{exmpl}
@@ -77,7 +77,7 @@ Ultimately, we can combine our observations and conclude
 \begin{equation*}
 	\opcosts(x_t,\lambda_t)\le\opcosts(x_t',\lambda_t)\le2\opcosts(x_t,\lambda_t)
 \end{equation*}
-which shows us that our approximative scheduling choice incurs at most twice as much operating costs as an optimal scheduling strategy does. We thus subsequently restrict ourselves to non-negative, monotonically increasing convex cost functions. This evidently reduces the theoretical generality of our initial approach, but it does not interfere with practical applicability. On the one hand, negative cost functions would semantically allow to ``generate profit by consuming energy'', which seems unreasonable in practice. On the other hand, if we have a non monotonically increasing convex cost function, we can simply add artificial loads to our machines to reduce our costs in given circumstances. For instance, in our previous example, we could assign every machine a load of $1$ instead of $\frac{3}{4}$ to reduce the approximative schedule's cost. This trick, which is exemplarily outlined in Figure~\ref{fig:transform_to_mono_incr}, allows us to transform any arbitrary convex cost function to a monotonically increasing one.
+which shows us that our approximative scheduling choice incurs at most twice as much operating costs as an optimal scheduling strategy does. We thus subsequently restrict ourselves to non-negative, monotonically increasing convex cost functions. This evidently reduces the theoretical generality of our initial approach, but it does not interfere with practical applicability. On the one hand, negative cost functions would semantically allow to ``generate profit by consuming energy'', which seems unreasonable in practice. On the other hand, if we have a non-monotonically increasing convex cost function, we can simply add artificial loads to our machines to reduce our costs in given circumstances. For instance, in our previous example, we could assign every machine a load of $1$ instead of $\frac{3}{4}$ to reduce the approximative schedule's cost. This trick, which is exemplarily outlined in Figure~\ref{fig:transform_to_mono_incr}, allows us to transform any arbitrary convex cost function to a monotonically increasing one.
 \begin{figure}[H]
 \captionsetup[subfigure]{labelformat=empty}
 \begin{subfigure}[b]{0.5\textwidth}
@@ -87,7 +87,7 @@ which shows us that our approximative scheduling choice incurs at most twice as 
 \begin{subfigure}[b]{0.5\textwidth}
 \includestandalone[width=\textwidth]{../figures/mono_incr_f}
 \end{subfigure}
-\caption{The non monotonically increasing convex function $f$ can be transformed to the monotonically increasing convex function $f'$ by adding artificial loads $\lambda^+$ to assignments $\lambda\in[0,0.5)$ such that we obtain a new assignment $\lambda'\coloneqq\lambda+\lambda^+=0.5$.}
+\caption{The non-monotonically increasing convex function $f$ can be transformed to the monotonically increasing convex function $f'$ by adding artificial loads $\lambda^+$ to assignments $\lambda\in[0,0.5)$ such that we obtain a new assignment $\lambda'\coloneqq\lambda+\lambda^+=0.5$.}
 \label{fig:transform_to_mono_incr}
 \end{figure}
 Next, we examine the incurring switching costs of a $B$-restricted schedule $\mx'$. Again, given an optimal scheduling choice $x_t$, we use the idea to choose the nearest scheduling choice $x_t'$ that is contained in $B$ to construct $\mx'$. Once more, one might hope that $\mx'$ would incur at most twice as much switching costs as an optimal schedule. Needless to say, the next example dashes this hope.
@@ -139,7 +139,7 @@ First, if $\mx$ is not feasible, we have $\costs(\mx)=\infty$, and thus any arbi
 Next, we show that we can iteratively construct $\mx'$ by transforming every period between two 2-state changes of $\mx$ to a 2-approximative period in $\mx'$. 
 To prove that our transformations will be 2-approximative, we have to conduct an amortized analysis for the switching costs of $\mx'$ using the \emph{accounting method}. The basic idea of the accounting method is to overcharge some operations and to save the excess charge as a \emph{credit}, which can be used to compensate for subsequent, more expensive operations. An introduction about the accounting method can be found in~\parencite[Section~17.2]{intro-algo}. To see the necessity of such an amortized analysis, and to get a basic idea about its working principle, consider the schedule $\mx=(7,9)$ and its approximative counterpart $\mx'=(8,16)$. Although the total switching costs of $\mx'$ are 2-approximative, the individual switching steps of $\mx'$ are not, since $\mx'$ has to turn on $8$ machines at time $t=2$ while $\mx$ only turns on $2$ machines. However, at time $t=1$, $\mx'$ only turns on $8$ servers while it would be allowed to turn on $2\cdot7=14$. We can thus overcharge the first switching operation and use the excess charge $14-8=6$ as a credit to compensate for the second switching step, which misses $8-2\cdot2=4$ credit points.
 
-For our iterative construction, let $i$ and $j+1$ with \makebox{$i,j\in[T]$} and $i\le j$ be the first unprocessed time slots at which $\mx$ changes its \makebox{2-state}. To conveniently refer to the schedules' periods between $i$ and $j$, we define the subschedules \makebox{$\mx_{i,j}\coloneqq(x_i,\dotsc,x_j)$} and $\mx'_{i,j}\coloneqq(x_i',\dotsc,x_j')$. We then have to show that $\mx_{i,j}$ can be transformed to $\mx_{i,j}'$ with 2-approximative costs. Note that the periods are consecutive, i.e.\ after processing the period $[i,j]$, the next pair of indices $i',j'$ will be chosen such that $j+1=i'$. To conduct the transformations, we will need to refer to the lower and upper bound of~$\mx_{i,j}$, namely
+For our iterative construction, let $i$ and $j+1$ with \makebox{$i,j\in[T]$} and $i\le j$ be the first unprocessed time slots at which $\mx$ changes its \makebox{2-state}. To conveniently refer to the schedules' periods between $i$ and $j$, we define the subschedules \makebox{$\mx_{i,j}\coloneqq(x_i,\dotsc,x_j)$} and $\mx'_{i,j}\coloneqq(x_i',\dotsc,x_j')$. We then have to show that $\mx_{i,j}$ can be transformed to $\mx_{i,j}'$ with 2-approximative costs. Note that the periods are consecutive, i.e.\ after processing the period between $i$ and $j$, the next pair of indices $i',j'$ will be chosen such that $j+1=i'$. To conduct the transformations, we will need to refer to the lower and upper bound of~$\mx_{i,j}$, namely
 \begin{flalign*}
 	&&l\coloneqq2^{\floor{\log_2(x_i)}}&&\text{and}&&u\coloneqq\min\bigl\{2l,m\bigr\}&&&
 \end{flalign*}
@@ -151,14 +151,14 @@ as well as to the lower and upper bound of $\mx$ at time $j+1$:
 	\end{cases}
 &&\text{and}&&u'\coloneqq\min\bigl\{2l',m\bigr\}&&&
 \end{flalign*}
-Note that $u,u'\in B$ and that $x_t\le u\le 2x_t$ holds for any $i\le t\le j$ since $\mx$ does not change its 2-state between $i$ and $j$. More precisely, we know that $x_t\in[l,u)$ if $u=2l$, and $x_t\in[l,u]$ if $u=m<2l$, for $i\le t\le j$. To conveniently combine both cases at some points, given two boundaries $a,b\in\mathbb{N}$, we define the conditional interval
+Note that $u,u'\in B$ and that $x_t\le u\le 2x_t$ holds for any $i\le t\le j$ since $\mx$ does not change its 2-state between $i$ and $j$. More precisely, we know that $x_t\in[l,u)$ if $u=2l$, and $x_t\in[l,u]$ if $u=m<2l$, for $i\le t\le j$. To conveniently combine both cases in some circumstances, given two boundaries $a,b\in\mathbb{N}$, we define the conditional interval
 \begin{equation*}
 	[a,b)^m\coloneqq\begin{cases}
 		[a,b), & \text{if $b=2a$}\\
 		[a,b], & \text{if $b=m<2a$}
 	\end{cases}
 \end{equation*}
-As an \emph{invariant} of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most twice as much switching costs as $\mx$ if we set $x_i'\coloneqq u$, whether this step will be taken in the end or not. Further, we are going to ensure that $x_t'\ge u$ holds for any $i\le t\le j$ after every transformation step. This guarantees that $\mx'$ will be feasible, since $x_t\le u$. Moreover, we show that the credit of our amortized analysis will be greater than or equal to $\beta(2x_{j+1}-u')$ if $u'\neq m$ and $\mx$ exits~$[l,u)$ by ascending to $[l',u')$ at time $j+1$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(2x_i-u)$ if $u\neq m$ and $\mx$ enters~$[l,u)$ at time~$i$ from below.
+As an \emph{invariant} of the following transformations, we are going to ensure that $\mx'$ can potentially move to $u$ at time $i$ in a 2-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most twice as much switching costs as $\mx$ if we set $x_i'\coloneqq u$, whether this step will be taken in the end or not. Further, we are going to ensure that $x_t'\ge u$ holds for any $i\le t\le j$ after every transformation step. This guarantees that $\mx'$ will be feasible, since $x_t\le u$. Moreover, we show that the credit of our amortized analysis will be greater than or equal to $\beta(2x_{j+1}-u')$ if $u'=2l'$ and $\mx$ exits~$[l,u)$ by ascending to $[l',u')$ at time $j+1$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(2x_i-u)$ if $u=2l$ and $\mx$ enters~$[l,u)$ at time~$i$ from below.
 	
 First, we have to check that our invariant initially holds. For the initial start-up process \makebox{(i.e.\ $i=1$)}, we can simply move to the next power of 2 larger than $x_1$ contained in $B$, that is we set $x_1'\coloneqq u\in B$. Since we know that $u\le2x_1$, we can conclude that $\beta x_1'\le\beta 2x_1$, which shows that $\mx'$ has 2-approximative start-up switching costs. Moreover, we can use the difference of switching costs $\beta(2x_1-x_1')=\beta(2x_1-u)$ for the credit of our amortized analysis. Thus, the invariant initially holds. 
 
@@ -237,7 +237,7 @@ The next idea is to split $\mx_{i,j}$ and its associated switching costs at the 
 	&=\beta(\hat{u}-2u)\\
 	&=0
 \end{align*}
-where we assumed that $\hat{u}=2u$ holds; otherwise, we have $u'=\hat{u}=m$ and thus do not need to account for the new credit to satisfy our invariant (recall that we require the credit only if $u\neq m$), which allows us to infer that
+where we assumed that $\hat{u}=2u$ holds; otherwise, we have $u'=\hat{u}=m<2l'$ and thus do not need to account for the new credit to satisfy our invariant (recall that we require the credit only if $u'=2l'$), which allows us to infer that
 \begin{align*}
 	2\beta(x_{j+1}-u)-\beta(u'-\hat{u})=2\beta(x_{j+1}-u)-\beta(m-m)=2\beta(x_{j+1}-u)\ge 0
 \end{align*}
@@ -289,7 +289,7 @@ To show this inequality, we have to take a closer look on the schedules' operati
 	&&&2(\hat{u}-u)\opcosts\bigl(\mx_{i,j}\bigr)-2(u-d)\opcosts\bigl(\mx_{i,j}^u\bigr)-(\hat{u}-3u+2d)\opcosts\bigl(\mx_{i,j}^{\hat{u}}\bigr)\\
 	&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}&&\sum\limits_{t=i}^j\left(2(\hat{u}-u)x_tf\left(\frac{\lambda_t}{x_t}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{\hat{u}}\right)\right)
 \end{align*}
-First, we notice that $u\le\hat{u}$ and $x_t<u$ for $i\le t\le j$. Together with the fact that $f$ is monotonically increasing, we infer that
+First, we notice that $u\le\hat{u}$ and $x_t\le u$ for $i\le t\le j$. Together with the fact that $f$ is monotonically increasing, we infer that
 \begin{align*}
 	&&&\sum\limits_{t=i}^j\left(2(\hat{u}-u)x_tf\left(\frac{\lambda_t}{x_t}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{\hat{u}}\right)\right)\\
 	&\ge&&\sum\limits_{t=i}^j\left(2(\hat{u}-u)x_tf\left(\frac{\lambda_t}{u}\right)-2(u-d)uf\left(\frac{\lambda_t}{u}\right)-(\hat{u}-3u+2d)\hat{u}f\left(\frac{\lambda_t}{u}\right)\right)
@@ -314,7 +314,7 @@ Now let $g(\hat{u})\coloneqq-(u-\hat{u})(2u-\hat{u})$. Since $f$ is non-negative
 
 By iteratively applying above procedure to $\mx$, starting with $i=1$ and stopping with $j=T+1$, we obtain a $B$-restricted schedule $\mx'$ that satisfies $\costs(\mx')\le2\costs(\mx)$.
 \end{proof}
-Safe in the knowledge that there always exists a 2-approximative $B$-restricted schedule $\mx'$ for any schedule $\mx$, we are just left with the verification of our modified graph. Since we did not change the graph's general construction idea, this verification turns out to be very similar to that done in Section~\ref{sec:opt_offline_pseudo_lin}. For the proof of the next lemma, which establishes the bijection between $B$-restricted schedules and reasonable paths, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}.
+Safe in the knowledge that there always exists a 2-approximative, $B$-restricted schedule $\mx'$ for any schedule $\mx$, we are just left with the verification of our modified graph. Since we did not change the graph's general construction idea, this verification turns out to be very similar to that done in Section~\ref{sec:opt_offline_pseudo_lin}. For the proof of the next lemma, which establishes the bijection between $B$-restricted schedules and reasonable paths, we need to recall our notion of ``maximum'' nodes $x_t$ in reasonable paths $P$, as described in Definition~\ref{defn:max_path_node}.
 \begin{lem}\label{lem:sched_reasn_path_approx_2}
 Let $\bm{\mx}$ be the set of all $B$-restricted schedules for $\inp$, and let $\bm{\mathcal{P}}$ be the set of all reasonable paths. The map
 \begin{equation*}
@@ -505,13 +505,13 @@ Further, given two boundaries $a,b\in\mathbb{R}$, we again define the conditiona
 		[a,b], & \text{if $b=m<ya$}
 	\end{cases}
 \end{equation*}
-In the proof of Lemma~\ref{lem:transform_schedule_approx_2}, we knew that, for example, $u$ is contained in $B$, and thus we were able to simply use $u$ servers for $\mx'$. This time, however, we have to appropriately round the upper bound, e.g.\ use $\floor{u}\in B$ or $\ceil{u}\in B$ instead of $u$ servers.  
+In the proof of Lemma~\ref{lem:transform_schedule_approx_2}, we knew that, for example, $u$ is contained in $B$, and thus we were able to simply use $u$ servers for $\mx'$. This time, however, we have to appropriately round the upper bound, i.e.\ use $\floor{u}\in B$ or $\ceil{u}\in B$ instead of $u$ servers.  
 Note that~$\mx$ does not change its $y$-state between $i$ and $j$, which means that $l\le x_t\le u$ holds for $i\le t\le j$. Since~$x_t$ is integer, $\ceil{l}$ is the smallest integer contained in~$[l,u)^m$, and $\floor{u}$ is the largest integer contained in~$[l,u)^m$, we can even refine our bounds to $\ceil{l}\le x_t\le\floor{u}$. Further, by using the fact that $u\le yl$, we can infer that $\floor{u}\le yx_t$ holds for any $i\le t\le j$.
 
 We adapt the invariant used in Lemma~\ref{lem:transform_schedule_approx_2} in that we are going to ensure that $\mx'$ can potentially move to $\floor{u}$ at time $i$ in a $y$-approximative manner, i.e.\ we ensure that~$\mx'$ incurs at most $y$ times as much switching costs as $\mx$ if we set $x_i'\coloneqq \floor{u}$. Further, we are going to ensure that $x_t'\ge \floor{u}$ holds for any $i\le t\le j$ after every transformation step. Since $x_t\le \floor{u}$, this guarantees that $\mx'$ will be feasible.
 Moreover, we show that our credit will be greater than or equal to $\beta(yx_{j+1}-\floor{u'})$ if $\mx$ exits $[l,u)$ by ascending to $[l',u')^m$ at time $j+1$. Since the periods are consecutive, this equivalently means that the credit will be greater than or equal to $\beta(yx_i-\floor{u})$ if $\mx$ enters $[l,u)^m$ at time~$i$ from below.
 
-For the initial start-up process (i.e.\ $i=1$), we can simply set $x_1'\coloneqq \floor{u} \in B$. Since we know that $x_1'\le yx_1$, we can conclude that $\beta x_1'\le\beta yx_1$. Further, we can use the difference of switching costs $\beta(yx_1-x_1')=\beta(yx_1-\floor{u})$ for the credit of our amortized analysis. Thus, the invariant initially holds.
+	For the initial start-up process (i.e.\ $i=1$), we can simply set $x_1'\coloneqq \floor{u} \in B$. Since we know that $\floor{u}\le yx_1$, we can conclude that $\beta x_1'\le\beta yx_1$. Further, we can use the difference of switching costs $\beta(yx_1-x_1')=\beta(yx_1-\floor{u})$ for the credit of our amortized analysis. Thus, the invariant initially holds.
 
 Now recall the possible behaviors of $\mx$ between its $y$-state changes:
 \begin{enumerate}[label=(\alph*)]
@@ -556,7 +556,7 @@ Finally, we have to study case~\ref{itm:schedule_behavior_down_up_y}, i.e.\ $\mx
 	&&\mx_{i,j}^{\floor{\hat{u}}}&\coloneqq\left(x_i^{\floor{\hat{u}}},\dotsc,x_j^{\floor{\hat{u}}}\right),&&\text{where}&x_t^{\floor{\hat{u}}}&\coloneqq \floor{\hat{u}},\,\text{for } i\le t\le j,&&&\\
 	&&\text{and}\quad\mx_{i,j}^{\ceil{\hat{u}}}&\coloneqq\left(x_i^{\ceil{\hat{u}}},\dotsc,x_j^{\ceil{\hat{u}}}\right),&&\text{where}&x_t^{\ceil{\hat{u}}}&\coloneqq \ceil{\hat{u}},\,\text{for } i\le t\le j&&&
 \end{flalign*}
-with $\hat{u}\coloneqq\min\{yu,m\}$. Notice that due to our invariant and the fact that $\mx$ descends at time $i$, strategies $\mx_{i,j}^{\floor{u}}$ and $\mx_{i,j}^{\floor{\hat{u}}}$ do no incur switching costs up to time $j$, since $x_{i-1}'\ge\floor{\hat{u}}\ge\floor{u}$. We are now going to prove that the cost of at least one of the three schedules, including costs to satisfy our invariant at time $j+1$, must be $y$-approximative. 
+with $\hat{u}\coloneqq\min\{yu,m\}$, which implies $\floor{\hat{u}},\ceil{\hat{u}}\in B$. Notice that due to our invariant and the fact that $\mx$ descends at time $i$, strategies $\mx_{i,j}^{\floor{u}}$ and $\mx_{i,j}^{\floor{\hat{u}}}$ do no incur switching costs up to time $j$, since $x_{i-1}'\ge\floor{\hat{u}}\ge\floor{u}$. We are now going to prove that the cost of at least one of the three schedules, including costs to satisfy our invariant at time $j+1$, must be $y$-approximative. 
 First, we define $d\coloneqq\min\{x_t\mid i\le t\le j\}$ to be the smallest number of active servers used by $\mx_{i,j}$. We can use $d$ to give a lower bound for the switching costs of $\mx$ between $i$ and~$j+1$:
 \begin{equation*}
 	\sum\limits_{t=i+1}^{j+1}\swcosts(x_{t-1},x_t)\ge\beta(x_{j+1}-d)
@@ -645,7 +645,7 @@ Further rearranging the left hand side gives us
 	&=&&\sum\limits_{t=i}^j\left(0\cdot f\left(\frac{\lambda_t}{\floor{u}}\right)\right)\\
 	&=&&0
 \end{align*}
-which finishes case~\hyperref[itm:schedule_behavior_down_up_y_subcases_I]{(I)}. We are left with case~\hyperref[itm:schedule_behavior_down_up_y_subcases_I]{(II)}, i.e.\ $yd>\floor{\hat{u}}$. For this case, we have to analyze the behavior of $\mx$ more precisely. To do so, let $h<i$ be the closest time before $i$ at which $\mx$ changes its $y$-state. There are three possible behaviors of $\mx$ that can lead to case~\ref{itm:schedule_behavior_down_up_y}.
+which finishes case~\hyperref[itm:schedule_behavior_down_up_y_subcases_I]{(I)}. We are left with case~\hyperref[itm:schedule_behavior_down_up_y_subcases_I]{(II)}, that is $yd>\floor{\hat{u}}$. For this case, we have to analyze the behavior of $\mx$ more precisely. To do so, let $h<i$ be the closest time before $i$ at which $\mx$ changes its $y$-state. There are three possible behaviors of $\mx$ that can lead to case~\ref{itm:schedule_behavior_down_up_y}.
 
 \vbox{
 \begin{enumerate}[label=(\roman*)]
@@ -772,7 +772,7 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 \begin{proof}
 The proofs are, once the necessary changes have been made (i.e.\ substituting $2$ with~$y$), the same as the ones of Lemma~\ref{lem:sched_reasn_path_approx_2}, Theorem~\ref{thm:approx_2}, and Corollary~\ref{cor:approx_2_sched_short_path}.
 \end{proof}
-To no surprise, the final algorithm will be almost identical to the algorithm of our \makebox{2-approximation}. The only major things that require a change are the auxiliary function \textproc{node}, which has to account for the new set of possible scheduling choices $B$, and the tables $C$ and $S$, whose sizes have to be adapted. Since some rounded powers of $y$ may coincide (cf.\ the definition of $G$), the function \textproc{node} may return the same number for two different indices $i\neq i'$. However, this is not an issue; the cost the corresponding number's node will merely be calculated multiple times.
+To no surprise, the final algorithm will be almost identical to the algorithm of our \makebox{2-approximation}. The only major things that require a change are the auxiliary function \textproc{node}, which has to account for the new set of possible scheduling choices $B$, and the tables $C$ and $S$, whose sizes have to be adapted. Since some rounded powers of $y$ may coincide (cf.\ the definition of $G$), the function \textproc{node} may return the same number for two different indices $i\neq i'$. However, this is not an issue; the cost of the corresponding number's node will merely be calculated multiple times.
 The correctness of Algorithm~\ref{alg:approx_y_offline_linear} directly follows from Theorem~\ref{thm:approx_y}.
 
 Our runtime analysis naturally also stays very similar. Subroutine \textproc{shortest\_paths} requires $\Theta\bigl(2\log_y(m)\bigr)$ steps for its initialization and \makebox{$\Theta\bigl(2T\cdot2\log_y(m)\bigr)$} steps for the iterative calculation of the selections and costs. Further, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a time complexity of
