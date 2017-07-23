@@ -618,7 +618,7 @@ which can be simplified to
 \begin{equation*}
 	y(\floor{\hat{u}}-\floor{u})\opcosts\bigl(\mx_{i,j}\bigr)-(\floor{\hat{u}}-yd)\opcosts\bigl(\mx_{i,j}^{\floor{u}}\bigr)-(yd-\floor{u})\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)\ge 0
 \end{equation*}
-To show this inequality, we have to take a closer look on the the schedules' operating costs:
+To show this inequality, we have to take a closer look on the schedules' operating costs:
 \begin{align*}
 	&&&y(\floor{\hat{u}}-\floor{u})\opcosts\bigl(\mx_{i,j}\bigr)-(\floor{\hat{u}}-yd)\opcosts\bigl(\mx_{i,j}^{\floor{u}}\bigr)-(yd-\floor{u})\opcosts\bigl(\mx_{i,j}^{\floor{\hat{u}}}\bigr)\\
 	&\stackrel{\eqref{eq:mx_schedule_op_costs_complete}}{=}&&\sum\limits_{t=i}^j\left(y(\floor{\hat{u}}-\floor{u})x_tf\left(\frac{\lambda_t}{x_t}\right)-(\floor{\hat{u}}-yd)\floor{u}f\left(\frac{\lambda_t}{\floor{u}}\right)-(yd-\floor{u})\floor{\hat{u}}f\left(\frac{\lambda_t}{\floor{\hat{u}}}\right)\right)
@@ -726,7 +726,7 @@ which we can rearrange to get our desired estimation for $\beta$:
 \end{flalign}
 We are now going to prove that $\mx_{i,j}^{\ceil{\hat{u}}}$ is $y$-approximative. The just derived lower bound for~$\beta$ will be needed at the very end of this endeavor.
 First note that $\mx$ descends at time~$h$ to $[u,\hat{u})$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_2} and at time~$i$ in case~\ref{itm:schedule_behavior_down_up_y_subcase_3}. Hence, we know that $\hat{u}=yu$; otherwise, we have $\hat{u}=m<yu$, and $\mx$ would consequently not be able to descend at time~$h$ or~$i$, respectively. Next, we show that $\mx_{i,j}^{\ceil{\hat{u}}}$ does not incur switching costs to move to $\ceil{\hat{u}}$ at time $i$. This is evidently true for case~\ref{itm:schedule_behavior_down_up_y_subcase_3} as $\mx$ descends at time $i$ from a region above $[u,\hat{u})$. Case~\ref{itm:schedule_behavior_down_up_y_subcase_2} requires some more effort. We first infer that $\hat{u}\neq\floor{\hat{u}}$; in other words, $\hat{u}$ is not integer. If $\hat{u}$ would be integer, we could derive from our assumption that $yd>\floor{\hat{u}}=\floor{yu}=yu$, which leads to a contradiction since $d\le\floor{u}$. 
-Further, we can can infer that $u\neq\floor{u}$; otherwise, we know that $d\le u-1$ because $d$ is integer and must be smaller than $u$ (by our Definition~\ref{defn:y_state_changes} of $y$-state changes), which again leads to a contradiction:
+Further, we can infer that $u\neq\floor{u}$; otherwise, we know that $d\le u-1$ because $d$ is integer and must be smaller than $u$ (by our Definition~\ref{defn:y_state_changes} of $y$-state changes), which again leads to a contradiction:
 \begin{flalign*}
 	&&yd&>\floor{\hat{u}}&\stackrel{u-1\ge d}{\implies}&&y(u-1)&>\floor{\hat{u}}&\stackrel{\hat{u}=yu}{\iff}&&y(u-1)&>\floor{yu}&&\\
 	&&&&\iff&&yu-\floor{yu}&>y\quad\lightning
