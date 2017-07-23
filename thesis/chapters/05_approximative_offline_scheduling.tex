@@ -348,7 +348,7 @@ Any shortest path $P$ from $v_{0,0}$ to $v_{0,T\downarrow}$ can be transformed t
 Let $P$ be a shortest path from $v_{0,0}$ to $v_{0,T\downarrow}$. By using a small adaption of Proposition~\ref{prop:path_to_reasn_path} that uses logarithmic instead of incremental switching steps, we can transform $P$ to a reasonable path $P'$ with $\costs(P')=\costs(P)$.
 In turn, $P'$ corresponds to a 2-optimal, \makebox{$B$-restricted} schedule $\mx$ with $\costs(\mx)=\costs(P')=\costs(P)$ by Theorem~\ref{thm:approx_2}, which finishes the proof.
 \end{proof}
-To finish this section, we give an algorithm based on our verified constructions. Naturally, since we did not change the graph's overall structure and working principle, a small adaption of Algorithm~\ref{alg:opt_offline_pseudo_linear} will serve its purpose. To account for the logarithmic steps in our graph, we introduce an auxiliary function \textproc{nodes}, which calculates the number of servers associated to an given index $i$ in our tables $C$ and $S$. As a matter of implementation convenience, the variable $b$ is defined as $\ceil{\log_2(m)}$ instead of $\floor{\log_2(m)}$ in Algorithm~\ref{alg:approx_2_offline_linear}.
+To finish this section, we give an algorithm based on our verified constructions. Naturally, since we did not change the graph's overall structure and working principle, a small adaption of Algorithm~\ref{alg:opt_offline_pseudo_linear} will serve its purpose. To account for the logarithmic steps in our graph, we introduce an auxiliary function \textproc{node}, which calculates the number of servers associated to an given index $i$ in our tables $C$ and $S$. As a matter of implementation convenience, the variable $b$ is defined as $\ceil{\log_2(m)}$ instead of $\floor{\log_2(m)}$ in Algorithm~\ref{alg:approx_2_offline_linear}.
 The correctness of the algorithm directly follows from Theorem~\ref{thm:approx_2}.
 
 For our runtime analysis, we again take the same assumptions as done for Algorithm~\ref{alg:opt_offline_pseudo_poly}. Subroutine \textproc{shortest\_paths} requires $\Theta\bigl(\log_2(m)\bigr)$ steps for its initialization and \makebox{$\Theta\bigl(2T\log_2(m)\bigr)$} steps for the iterative calculation of the selections and costs. Further, \textproc{extract\_schedule} needs $\Theta(T)$ iterations for its schedule retrieval. Hence, we receive a time complexity of
@@ -436,7 +436,7 @@ The first apparent issue is that $B$ contains non-integer numbers, which we cann
 \begin{equation*}
 	B'=\left\{0,y^0,\floor{y^1},\floor{y^2},\floor{y^3},\floor{y^b},7\right\}=\{0,1,2,3,5,7\}
 \end{equation*}
-This adaption may seem promising at first glance, but there is still another issue with this approach: The distance between two possible scheduling choices may become too large. For instance, the ratio $5/3=1.666\dotso$ is greater than $y=1.5$, and thus the distance is not logarithmic with base $y$. As a consequence, the approximated schedule's switching costs may become too large. This issue, however, can be solved by additionally adding the rounded up powers of $y$:
+This adaption may seem promising at first glance, but there is still another issue with this approach: the distance between two possible scheduling choices may become too large. For instance, the ratio $5/3=1.666\dotso$ is greater than $y=1.5$, and thus the distance is not logarithmic with base $y$. As a consequence, the approximated schedule's switching costs may become too large. This issue, however, can be solved by additionally adding the rounded up powers of $y$:
 \begin{equation*}
 	B''=\left\{0,y^0,\floor{y^1},\ceil{y^1},\floor{y^2},\ceil{y^2},\floor{y^3},\ceil{y^3},\floor{y^b},\ceil{y^b},7\right\}=\{0,1,2,3,4,5,6,7\}
 \end{equation*}
@@ -447,7 +447,7 @@ Given a fixed precision $y$, we take the ideas discussed in the previous example
 	b&\coloneqq\floor{\log_y(m)}\\
 	\text{and}\qquad B&\coloneqq\left\{0,1,\floor{y^1},\ceil{y^1},\floor{y^2},\ceil{y^2},\dotsc,\floor{y^b},\ceil{y^b},m\right\}
 \end{align*}
-Note that $|B|\in\Theta\bigl(\log_y(m)\bigr)$, i.e.\ the size of $B$ is linear in the size of the input $\inp$ for some fixed precision $y$. Using this new set of scheduling choices, we consider the following modification of our graph:
+Note that $|B|\in\Theta\bigl(\log_y(m)\bigr)$, i.e.\ the size of $B$ is linear in the size of the input $\inp$ for fixed precisions $y$. Using this new set of scheduling choices, we consider the following modification of our graph:
 \begin{align*}
 	V&\coloneqq\{v_{0,0}\}\dotcup\bigl\{v_{x,t\downarrow}\mid x\in B,t\in[T]\bigr\}\dotcup\bigl\{v_{x,t\uparrow}\mid x\in B, t\in[T-1]\bigr\}\\
 	E_s&\coloneqq\bigl\{(v_{0,0},v_{x,1\downarrow})\mid x\in B\bigr\}\\
