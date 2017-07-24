@@ -122,53 +122,18 @@ Operating costs for one time step
 \pause
 \begin{figure}
 	\includestandalone[width=\textwidth]{../thesis/figures/graph_lin_approx_2}
+	\caption*{\small{where $b\coloneqq\floor{\log_2(m)}$}}
 \end{figure}
+\vspace{-\baselineskip}
+\centering\pause\alert{Claim: Shortest Path in graph corresponds to 2-optimal schedule.}
 \end{frame}
 %------------------------------------------------
-\begin{frame}{Proof Sketch}
-\centering Transform periods between two powers of 2
-	
-Original schedule between $[l,u)$ where $l=2^k,u=2^{k+1}$
-\begin{columns}[T,onlytextwidth]
-	\begin{column}{0.5\textwidth}
-		\pause\begin{figure}
-		\includestandalone[width=\textwidth]{../thesis/figures/schedule_behavior_up_down}
-		\end{figure}
-	\end{column}
-	\begin{column}{0.5\textwidth}
-		\pause\begin{figure}
-		\includestandalone[width=\textwidth]{../thesis/figures/schedule_behavior_down_down}
-		\end{figure}
-	\end{column}
-\end{columns}
-\end{frame}
-%------------------------------------------------
-\begin{frame}{Proof Sketch}
-\centering{Original schedule between $[l,u)$ where $l=2^k,u=2^{k+1}$
-}
+\begin{frame}{Proof Idea}
+\centering Take a schedule and transform periods between two powers of 2
 
-\begin{figure}
-	\includestandalone[width=0.6\textwidth]{../thesis/figures/schedule_behavior_up_up}
+\pause\begin{figure}
+	\includestandalone[width=0.85\textwidth]{figures/schedule_behavior}
 \end{figure}
-\end{frame}
-%------------------------------------------------
-\begin{frame}{Proof Sketch}
-\centering Original schedule between $[l,u)$ where $l=2^k,u=2^{k+1}$
-
-Decide between $u$ and $\hat{u}=2^{k+2}$
-
-\begin{columns}[T,onlytextwidth]
-	\begin{column}{0.5\textwidth}
-		\begin{figure}
-		\includestandalone[width=\textwidth]{../thesis/figures/schedule_behavior_down_up_1}
-		\end{figure}
-	\end{column}
-	\begin{column}{0.5\textwidth}
-		\begin{figure}
-		\includestandalone[width=\textwidth]{../thesis/figures/schedule_behavior_down_up_2}
-		\end{figure}
-	\end{column}
-\end{columns}
 \end{frame}
 %------------------------------------------------
 \begin{frame}{Approximative Scheduling}
@@ -177,7 +142,7 @@ Shortest Path in graph corresponds to 2-optimal schedule.
 \pause Time complexity: $\Theta\bigl(T\log_2(m)\bigr)$
 \vspace{\baselineskip}
 \pause\begin{alertbox} 
-\centering Approach can be generalized to allow for arbitrary precisions\\with time complexity $\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
+\centering Approach can be generalized to allow for arbitrary precisions\\with time complexity $\Theta\bigl(T\log_{1+\beps}(m)\bigr)$
 \end{alertbox}
 \end{frame}
 %------------------------------------------------
@@ -192,12 +157,12 @@ We reduced the scheduling problem to the shortest path problem of acyclic graphs
 \end{alertbox}
 \pause
 \begin{alertbox}
-\centering $(1+\beps)$-Optimal Offline Algorithm with runtime $\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
+\centering $(1+\beps)$-Optimal Offline Algorithm with runtime $\Theta\bigl(T\log_{1+\beps}(m)\bigr)=\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
 \end{alertbox}
 \end{frame}
 %------------------------------------------------
 \begin{frame}{Prospects}
-Can approach be modified to\dotso
+Can our approach be modified to\dotso
 \pause
 \begin{itemize}[<+->]
 	\item deal with more than one homogeneous server collection?
