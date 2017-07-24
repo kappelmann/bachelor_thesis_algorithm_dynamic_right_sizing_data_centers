@@ -80,7 +80,7 @@ Input:
   \item $\beta\in\mathbb{R}_{\ge 0}$\dotso Switching costs of a server
   \item $f:[0,1]\rightarrow\mathbb{R}$\dotso Convex operating cost function of a server
   \item $T\in\mathbb{N}$\dotso Number of time slots
-  \item $\lambda_1,\dotsc,\lambda_{T}\in[0,m]$\dotso Arrival rates
+  \item $\lambda_1,\dotsc,\lambda_{T}\in[0,m]$\dotso Arrival rates (workloads)
 \end{itemize}
 \pause[\thebeamerpauses]
 Notation:
@@ -90,7 +90,7 @@ Notation:
 \end{frame}
 %------------------------------------------------
 \begin{frame}{Problem Statement}
-Operating costs for one time step 
+Operating costs for one time step $t$
 \begin{equation*}
 	\opcosts(x_t,\lambda_t)\coloneqq\begin{cases}
 	  \pause\infty, & \text{if $\lambda_t>x_t$}\hspace{16mm}\text{//too few servers}\\
@@ -127,18 +127,8 @@ Operating costs for one time step
 \pause
 \begin{figure}
 	\includestandalone[width=\textwidth]{../thesis/figures/graph_lin_approx_2}
-	\caption*{\small{where $b\coloneqq\floor{\log_2(m)}$}}
 \end{figure}
-\vspace{-\baselineskip}
-\centering\pause\alert{Claim: Shortest Path in graph corresponds to 2-optimal schedule.}
-\end{frame}
-%------------------------------------------------
-\begin{frame}{Proof Idea}
-\centering Take a schedule and transform periods between two powers of 2
-
-\pause\begin{figure}
-	\includestandalone[width=0.85\textwidth]{figures/schedule_behavior}
-\end{figure}
+\centering where $b\coloneqq\floor{\log_2(m)}$
 \end{frame}
 %------------------------------------------------
 \begin{frame}{Approximative Scheduling}
@@ -184,6 +174,15 @@ Thanks for your attention!
 Any questions?
 \end{frame}
 %----------------------------------------------------------------------------------------
+%------------------------------------------------
+\begin{frame}{Proof Idea}
+\centering Take a schedule and transform periods between two powers of 2
+
+\pause\begin{figure}
+	\includestandalone[width=0.85\textwidth]{figures/schedule_behavior}
+\end{figure}
+\end{frame}
+%------------------------------------------------
 \begin{frame}[allowframebreaks]{Image Sources}
 \begin{itemize}
 \item Data center: \url{datacentervoice.com/wp-content/uploads/2015/12/data-center.jpg}
