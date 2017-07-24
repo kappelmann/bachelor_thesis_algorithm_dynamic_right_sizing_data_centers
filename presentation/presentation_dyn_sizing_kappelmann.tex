@@ -74,13 +74,18 @@
 \end{frame}
 %------------------------------------------------
 \begin{frame}{Our Model}
+Input:
 \begin{itemize}[<+->]
   \item $m\in\mathbb{N}$\dotso Number of homogeneous servers 
-  \item $T\in\mathbb{N}$\dotso Number of time slots
   \item $\beta\in\mathbb{R}_{\ge 0}$\dotso Switching costs of a server
   \item $f:[0,1]\rightarrow\mathbb{R}$\dotso Convex operating cost function of a server
+  \item $T\in\mathbb{N}$\dotso Number of time slots
   \item $\lambda_1,\dotsc,\lambda_{T}\in[0,m]$\dotso Arrival rates
-  \item $x_1,\dotsc,x_{T}\in\fromto{0}{m}$\dotso Numbers of active servers
+\end{itemize}
+\pause[\thebeamerpauses]
+Notation:
+\begin{itemize}
+	\item $x_1,\dotsc,x_{T}\in\fromto{0}{m}$\dotso Numbers of active servers
 \end{itemize}
 \end{frame}
 %------------------------------------------------
@@ -88,9 +93,9 @@
 Operating costs for one time step 
 \begin{equation*}
 	\opcosts(x_t,\lambda_t)\coloneqq\begin{cases}
-	  \infty, & \text{if $\lambda_t>x_t$}\hspace{16mm}\text{//too few servers}\\
-	  x_tf(\lambda_t/x_t), & \text{if $x_t\ne 0\land\lambda_t\le x_t$}\hspace{1mm}\text{//even distribution}\\
-          0, & \text{if $x_t=\lambda_t=0$\hspace{8mm}\text{//no active servers}}
+	  \pause\infty, & \text{if $\lambda_t>x_t$}\hspace{16mm}\text{//too few servers}\\
+          \pause 0, & \text{if $x_t=\lambda_t=0$\hspace{9mm}\text{//no active servers}}\\
+	  \pause x_tf(\lambda_t/x_t), & \text{otherwise}\hspace{16mm}\text{//even distribution}
 	  \end{cases}
 \end{equation*}
 \pause
