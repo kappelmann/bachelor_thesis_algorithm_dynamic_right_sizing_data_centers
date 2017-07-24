@@ -57,23 +57,9 @@
 \maketitle
 
 %------------------------------------------------
-\section{Motivation and Problem Statement}
+\section{Model and Problem Formulation}
 %------------------------------------------------
-\begin{frame}{Data Centers' Costs}
-\centering{\Large Fast-growing demand for data collection, processing, and storage}
-
-\vspace{0.5\baselineskip}
-\visible<2>{\centering\includegraphics[height=0.5\textheight]{img/data_center.jpg}}
-\end{frame}
-%------------------------------------------------
-\begin{frame}{Data Centers' Costs}
-\centering{\Large Fast-growing demand for data collection, processing, and storage}
-
-\vspace{0.5\baselineskip}
-\centering\includegraphics[height=0.5\textheight]{img/data_center_costs.jpg}
-\end{frame}
-%------------------------------------------------
-\begin{frame}{Our Model}
+\begin{frame}{Model Description}
 Input:
 \begin{itemize}[<+->]
   \item $m\in\mathbb{N}$\dotso Number of homogeneous servers 
@@ -137,7 +123,7 @@ Shortest Path in graph corresponds to 2-optimal schedule.
 \pause Time complexity: $\Theta\bigl(T\log_2(m)\bigr)$
 \vspace{\baselineskip}
 \pause\begin{alertbox} 
-\centering Approach can be generalized to allow for arbitrary precisions\\with time complexity $\Theta\bigl(T\log_{1+\beps}(m)\bigr)$
+\centering Approach can be generalized to allow for arbitrary precisions\\with time complexity $\Theta\bigl(T\log_{1+\beps}(m)\bigr)=\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
 \end{alertbox}
 \end{frame}
 %------------------------------------------------
@@ -152,7 +138,7 @@ We reduced the scheduling problem to the shortest path problem of acyclic graphs
 \end{alertbox}
 \pause
 \begin{alertbox}
-\centering $(1+\beps)$-Optimal Offline Algorithm with runtime $\Theta\bigl(T\log_{1+\beps}(m)\bigr)=\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
+\centering $(1+\beps)$-Optimal Offline Algorithm with runtime $\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
 \end{alertbox}
 \end{frame}
 %------------------------------------------------
@@ -175,11 +161,31 @@ Any questions?
 \end{frame}
 %----------------------------------------------------------------------------------------
 %------------------------------------------------
+\begin{frame}{Data Centers' Costs}
+\centering{\Large Fast-growing demand for data collection, processing, and storage}
+
+\vspace{0.5\baselineskip}
+\visible<2>{\centering\includegraphics[height=0.5\textheight]{img/data_center.jpg}}
+\end{frame}
+%------------------------------------------------
+\begin{frame}{Data Centers' Costs}
+\centering{\Large Fast-growing demand for data collection, processing, and storage}
+
+\vspace{0.5\baselineskip}
+\centering\includegraphics[height=0.5\textheight]{img/data_center_costs.jpg}
+\end{frame}
+%------------------------------------------------
 \begin{frame}{Proof Idea}
 \centering Take a schedule and transform periods between two powers of 2
 
 \pause\begin{figure}
 	\includestandalone[width=0.85\textwidth]{figures/schedule_behavior}
+\end{figure}
+\end{frame}
+%------------------------------------------------
+\begin{frame}{$(1+\beps)$-Optimal Offline Algorithm}
+\begin{figure}
+	\includestandalone[width=\textwidth]{../thesis/figures/graph_lin_approx_y}
 \end{figure}
 \end{frame}
 %------------------------------------------------
