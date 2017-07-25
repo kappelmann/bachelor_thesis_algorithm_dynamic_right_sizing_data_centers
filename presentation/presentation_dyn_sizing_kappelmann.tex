@@ -91,6 +91,7 @@ Operating costs for one time step $t$
 \pause
 \begin{alertbox}
 \centering \textbf{Goal: Minimize total costs}
+\pause
 \begin{align*}
 	\text{minimize}\quad \sum\limits_{t=1}^{T}\Bigl(\underbrace{\opcosts(x_t,\lambda_t)+\beta\max\{0,x_t-x_{t-1}\}}_{\costs(x_{t-1},x_t,\lambda_t)}\Bigr)
 \end{align*}
@@ -125,10 +126,17 @@ Operating costs for one time step $t$
 Shortest Path in graph corresponds to 2-optimal schedule.
 
 \pause Time complexity: $\Theta\bigl(T\log_2(m)\bigr)$
+
 \vspace{\baselineskip}
-\pause\begin{alertbox} 
-\centering Approach can be generalized to allow for arbitrary precisions\\with time complexity $\Theta\bigl(T\log_{1+\beps}(m)\bigr)=\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
-\end{alertbox}
+\only<1-2>{\visible<4>{Can we generalize to alllow for arbitrary precisions?}}
+\only<3>{\alert{Can we generalize to allow for arbitrary precisions?}}
+\only<4>{Can we generalize to allow for arbitrary precisions? \alert{Yes!}}
+\only<5>{Can we generalize to allow for arbitrary precisions? Yes!}
+\visible<5>{\begin{alertbox} 
+\centering Approximation for arbitrary precision $\beps>0$
+
+with time complexity $\Theta\bigl(T\log_{1+\beps}(m)\bigr)=\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
+\end{alertbox}}
 \end{frame}
 %------------------------------------------------
 \section{Summary and Prospects}
