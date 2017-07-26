@@ -51,7 +51,7 @@
 
 \author{Kevin Kappelmann} % Your name
 \institute[TUM]{Technical University of Munich}
-\date{\today} % Date, can be changed to a custom date
+\date{August 03, 2017} % Date, can be changed to a custom date
 
 \begin{document}
 \maketitle
@@ -59,6 +59,9 @@
 %------------------------------------------------
 \begin{frame}{Dynamic Right-Sizing}
 \centering{\Large{Dynamically adjust the number of active servers and efficiently distribute the varying workloads}}
+
+\vspace{0.5\baselineskip}
+\centering\includegraphics[height=0.5\textheight]{img/data_center.jpg}
 \end{frame}
 %------------------------------------------------
 \section{Model and Problem Formulation}
@@ -114,12 +117,15 @@ Operating costs for one time step $t$
 \section{Offline Approximation Algorithm}
 %------------------------------------------------
 \begin{frame}{2-Optimal Linear-Time Algorithm}
-\centerline{Use logarithmic steps to reduce number of nodes}
+\only<1-2>{\centerline{Use logarithmic steps to reduce number of nodes}
 \pause
 \begin{figure}
 	\includestandalone[width=\textwidth]{../thesis/figures/graph_lin_approx_2}
 \end{figure}
-\centering where $b\coloneqq\floor{\log_2(m)}$
+\centering where $b\coloneqq\floor{\log_2(m)}$}
+\only<3>{\begin{figure}
+	\includestandalone[height=0.85\textheight]{figures/schedule_behavior_exmpl}
+\end{figure}}
 \end{frame}
 %------------------------------------------------
 \begin{frame}{Approximative Scheduling}
@@ -133,9 +139,7 @@ Shortest Path in graph corresponds to 2-optimal schedule.
 \only<4>{Can we generalize to allow for arbitrary precisions? \alert{Yes!}}
 \only<5>{Can we generalize to allow for arbitrary precisions? Yes!}
 \visible<5>{\begin{alertbox} 
-\centering Approximation for arbitrary precision $\beps>0$
-
-with time complexity $\Theta\bigl(T\log_{1+\beps}(m)\bigr)=\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
+\centering Approximation for arbitrary precision $\beps>0$ with time~complexity~$\Theta\bigl(T\log_{1+\beps}(m)\bigr)$
 \end{alertbox}}
 \end{frame}
 %------------------------------------------------
@@ -146,11 +150,11 @@ We reduced the scheduling problem to the shortest path problem of acyclic graphs
 
 \pause
 \begin{alertbox}
-\centering Optimal Offline Algorithm with runtime $\Theta(Tm)$
+\centering Optimal Offline Algorithm with pseudo-linear runtime $\Theta(Tm)$
 \end{alertbox}
 \pause
 \begin{alertbox}
-\centering $(1+\beps)$-Optimal Offline Algorithm with runtime $\Theta\left(T\,\frac{\log(m)}{\log(1+\beps)}\right)$
+\centering $(1+\beps)$-Optimal Offline Algorithm with linear runtime $\Theta\bigl(T\log_{1+\beps}(m)\bigr)$
 \end{alertbox}
 \end{frame}
 %------------------------------------------------
@@ -163,7 +167,7 @@ Can our approach be modified to\dotso
 	\item work as an online algorithm?
 \end{itemize}
 \pause[\thebeamerpauses]
-Open question: Is there a polynomial optimal algorithm or is it an $\textbf{NP}$ problem?
+Open question: Is there a polynomial optimal algorithm or is it an NP-hard problem?
 \end{frame}
 %------------------------------------------------
 \begin{frame}[standout]
@@ -172,13 +176,6 @@ Thanks for your attention!
 Any questions?
 \end{frame}
 %----------------------------------------------------------------------------------------
-%------------------------------------------------
-\begin{frame}{Data Centers' Costs}
-\centering{\Large Fast-growing demand for data collection, processing, and storage}
-
-\vspace{0.5\baselineskip}
-\visible<2>{\centering\includegraphics[height=0.5\textheight]{img/data_center.jpg}}
-\end{frame}
 %------------------------------------------------
 \begin{frame}{Data Centers' Costs}
 \centering{\Large Fast-growing demand for data collection, processing, and storage}
