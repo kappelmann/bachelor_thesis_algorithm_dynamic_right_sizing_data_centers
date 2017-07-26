@@ -104,12 +104,133 @@ Operating costs for one time step $t$
 \section{Optimal Offline Algorithm}
 %------------------------------------------------
 \begin{frame}{Pseudo-Linear-Time Algorithm}
-\centerline{Fundamental idea: reduce problem to shortest path problem}
-\pause
-\begin{figure}
-	\includestandalone[width=\textwidth]{../thesis/figures/graph_pseudo_lin}
+%\setbeamercovered{invisible}
+\centering{Fundamental idea: reduce problem to shortest path problem}
+\vspace{-\baselineskip}
+\pause \begin{figure}
+\resizebox{\textwidth}{!}{
+\begin{tikzpicture}[->,>=stealth',auto,node distance=2.2cm,thick,node/.style={minimum size=1.5cm,circle,draw}]
+  \node[node] (1) {0,0};\pause
+  \node[node] (4) [below right=4cm of 1] {0,1$\downarrow$};
+  \node[node] (3) [above =0.5cm of 4] {1,1$\downarrow$};
+  \node[node] (2) [above right=4cm of 1] {m,1$\downarrow$};
+  \node[node] (5) [below =0.5cm of 2] {m-1,1$\downarrow$};
+  \node (22) at ($(2)!.5!(4)$) {};
+  \node (23) at ($(2)!.487!(4)$) {\vdots};\pause
+
+
+  \path[every node/.style={font=\sffamily\small}]
+    (1) edge[red] node[black,above left] {$\costs(0,m,\lambda_1)$} (2)
+	edge node[label={[xshift=0.8cm, yshift=-0.95cm]$\costs(0,m-1,\lambda_1)$}] {} (5)
+	edge node[above right=-0.13cm] {$\costs(0,1,\lambda_1)$} (3)
+	edge node[below left] {$\costs(0,0,\lambda_1)$} (4)
+    (1) edge ($(1)!.82!(22)$);\pause
+
+
+  \path[every node/.style={font=\sffamily\small}]
+    (2) edge[red] node[black,right] {$0$} (5)
+    (3) edge[red] node[black,right] {$0$} (4)
+    (5) edge[red] node[black,right] {$0$} ($(5)!.35!(3)$)
+    ($(5)!.65!(3)$) edge[red] node[black,right] {$0$} (3);\pause
+
+
+  \node[node] (7) [right =of 3] {1,1$\uparrow$};
+  \node[node] (6) [right =of 2] {m,1$\uparrow$};
+  \node[node] (8) [right =of 4] {0,1$\uparrow$};
+  \node[node] (9) [right =of 5] {m-1,1$\uparrow$};
+  \node (24) at ($(6)!.487!(8)$) {\vdots};\pause
+
+ \path[every node/.style={font=\sffamily\small}]
+    (2) edge node[above] {$0$} (6)
+    (3) edge node[above] {$0$} (7)
+    (4) edge[red] node[black,above] {$0$} (8)
+    (5) edge node[above] {$0$} (9);
+  \node at ($(23)!.5!(24)$) {\vdots};\pause
+
+
+  \path[every node/.style={font=\sffamily\small}]
+    (9) edge[red] node[black,right] {$\beta$} (6)
+    (8) edge[red] node[black,right] {$\beta$} (7)
+    ($(7)!.65!(9)$) edge[red] node[black,right] {$\beta$} (9)
+    (7) edge[red] node[black,right] {$\beta$} ($(7)!.35!(9)$);\pause
+
+
+  \node[node] (11) [right =of 7] {1,2$\downarrow$};
+  \node[node] (10) [right =of 6] {m,2$\downarrow$};
+  \node[node] (12) [right =of 8] {0,2$\downarrow$};
+  \node[node] (13) [right =of 9] {m-1,2$\downarrow$};
+  \node (25) at ($(10)!.487!(12)$) {\vdots};\pause
+
+
+  \path[every node/.style={font=\sffamily\small}]
+    (6) edge[red] node[black,above] {$\opcosts(m,\lambda_2)$} (10)
+    (7) edge node[above] {$\opcosts(1,\lambda_2)$} (11)
+    (8) edge node[above] {$\opcosts(0,\lambda_2)$} (12)
+    (9) edge node[above] {$\opcosts(m-1,\lambda_2)$} (13);
+  \node at ($(24)!.5!(25)$) {\vdots};\pause
+
+
+  \path[every node/.style={font=\sffamily\small}]
+    (13) edge[red] node[black,right] {$0$} ($(13)!.35!(11)$)
+    ($(13)!.65!(11)$) edge[red] node[black,right] {$0$} (11)
+    (10) edge[red] node[black,right] {$0$} (13)
+    (11) edge[red] node[black,right] {$0$} (12);\pause
+
+
+  \node[node] (15) [right =of 11] {1,2$\uparrow$};
+  \node[node] (14) [right =of 10] {m,2$\uparrow$};
+  \node[node] (16) [right =of 12] {0,2$\uparrow$};
+  \node[node] (17) [right =of 13] {m-1,2$\uparrow$};
+  \node (26) at ($(14)!.487!(16)$) {\vdots};\pause
+
+
+  \path[every node/.style={font=\sffamily\small}]
+    (10) edge node[above] {$0$} (14)
+    (11) edge node[above] {$0$} (15)
+    (12) edge[red] node[black,above] {$0$} (16)
+    (13) edge node[above] {$0$} (17);
+  \node at ($(25)!.5!(26)$) {\vdots};\pause
+
+
+  \path[every node/.style={font=\sffamily\small}]
+    (17) edge[red] node[black,right] {$\beta$} (14)
+    (16) edge[red] node[black,right] {$\beta$} (15)
+    ($(15)!.65!(17)$) edge[red] node[black,right] {$\beta$} (17)
+    (15) edge[red] node[black,right] {$\beta$} ($(15)!.35!(17)$);\pause
+
+
+  \node[node] (19) [right =5cm of 15] {1,T$\downarrow$};
+  \node[node] (18) [right =5cm of 14] {m,T$\downarrow$};
+  \node[node] (20) [right =5cm of 16] {0,T$\downarrow$};
+  \node[node] (21) [right =5cm of 17] {m-1,T$\downarrow$};
+
+
+  \node at ($(18)!.5!(20)$) {\vdots};
+
+  \node (27) at ($(14)!.5!(18)$) {\ldots};
+  \node at ($(15)!.5!(19)$) {\ldots};
+  \node (28) at ($(16)!.5!(20)$) {\ldots};
+  \node at ($(17)!.5!(21)$) {\ldots};
+  \node at ($(27)!.5!(28)$) {\ldots};
+
+  \path[every node/.style={font=\sffamily\small}]
+    (14) edge[red] node[label={[black,xshift=0cm, yshift=-0.26cm]$\opcosts(m,\lambda_3)$}] {} ($(14)!.4!(18)$)
+    (15) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(1,\lambda_3)$}] {} ($(15)!.4!(19)$)
+    (16) edge node[label={[xshift=0cm, yshift=-0.26cm]$\opcosts(0,\lambda_3)$}] {} ($(16)!.4!(20)$)
+    (17) edge node[label={[xshift=0.3cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_3)$}] {} ($(17)!.4!(21)$)
+
+    ($(14)!.6!(18)$) edge[red] node[black,above] {$\opcosts(m,\lambda_T)$} (18)
+    ($(15)!.6!(19)$) edge node[above] {$\opcosts(1,\lambda_T)$} (19)
+    ($(16)!.6!(20)$) edge node[above] {$\opcosts(0,\lambda_T)$} (20)
+    ($(17)!.6!(21)$) edge node[label={[xshift=-0.2cm, yshift=-0.26cm]$\opcosts(m-1,\lambda_T)$}] {} (21)
+
+    (18) edge[red] node[black,right] {$0$} (21)
+    (19) edge[red] node[black,right] {$0$} (20)
+    (21) edge[red] node[black,right] {$0$} ($(21)!.35!(19)$)
+    ($(21)!.65!(19)$) edge[red] node[black,right] {$0$} (19);
+\end{tikzpicture}}
 \end{figure}
-\pause \centering{Time complexity: $\Theta(Tm)$}
+\vspace{-0.5\baselineskip}\pause \centering{Time complexity: $\Theta(Tm)$}
 
 \pause\ldots only $\log_2(m)$ bits required to encode $m$.
 \end{frame}
